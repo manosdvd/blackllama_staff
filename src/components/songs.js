@@ -16,6 +16,28 @@ export function renderSongs() {
           Campfire Songbook
         </div>
 
+        <!-- Filter Chips Section -->
+        <div class="song-filters" style="display: flex; flex-direction: column; gap: 8px; margin: 0 6px 12px 6px; padding-bottom: 10px; border-bottom: 1px solid hsl(var(--border) / 0.5);">
+          <!-- Setting Filter -->
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <span style="font-size: 10px; font-weight: 700; color: hsl(var(--muted-foreground));">Setting:</span>
+            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+              <button class="filter-chip active" data-filter-type="setting" data-value="all" style="font-size: 11px; padding: 4px 8px; border-radius: 12px; border: 1px solid hsl(var(--border)); background: hsl(var(--card)); cursor: pointer; font-weight: 600;">All</button>
+              <button class="filter-chip" data-filter-type="setting" data-value="Logs" style="font-size: 11px; padding: 4px 8px; border-radius: 12px; border: 1px solid hsl(var(--border)); background: hsl(var(--card)); cursor: pointer; font-weight: 600;">🪵 Logs</button>
+              <button class="filter-chip" data-filter-type="setting" data-value="Campfire" style="font-size: 11px; padding: 4px 8px; border-radius: 12px; border: 1px solid hsl(var(--border)); background: hsl(var(--card)); cursor: pointer; font-weight: 600;">🔥 Campfire</button>
+            </div>
+          </div>
+          <!-- Energy Filter -->
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <span style="font-size: 10px; font-weight: 700; color: hsl(var(--muted-foreground));">Energy:</span>
+            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+              <button class="filter-chip active" data-filter-type="energy" data-value="all" style="font-size: 11px; padding: 4px 8px; border-radius: 12px; border: 1px solid hsl(var(--border)); background: hsl(var(--card)); cursor: pointer; font-weight: 600;">All</button>
+              <button class="filter-chip" data-filter-type="energy" data-value="rowdy" style="font-size: 11px; padding: 4px 8px; border-radius: 12px; border: 1px solid hsl(var(--border)); background: hsl(var(--card)); cursor: pointer; font-weight: 600;">⚡ Rowdy</button>
+              <button class="filter-chip" data-filter-type="energy" data-value="calm" style="font-size: 11px; padding: 4px 8px; border-radius: 12px; border: 1px solid hsl(var(--border)); background: hsl(var(--card)); cursor: pointer; font-weight: 600;">🧘 Calm</button>
+            </div>
+          </div>
+        </div>
+
         <!-- Injected dynamic songs list -->
         <div id="songs-list-mount" style="display: flex; flex-direction: column; gap: 8px;"></div>
       </div>
@@ -35,13 +57,37 @@ export function initSongs() {
 
   if (!songsMount || !detailsMount) return;
 
+  const songTags = {
+    'song-funky': { tune: 'Rhythm Rap', energy: 'rowdy', setting: 'Logs' },
+    'song-alfalfa': { tune: 'Auld Lang Syne', energy: 'calm', setting: 'Logs' },
+    'song-alive': { tune: 'If You\'re Happy', energy: 'rowdy', setting: 'Campfire' },
+    'song-bananas': { tune: 'Action Shout', energy: 'rowdy', setting: 'Campfire' },
+    'song-birdie': { tune: 'Morning Action Chant', energy: 'calm', setting: 'Logs' },
+    'song-crazy': { tune: 'Zipper Song', energy: 'rowdy', setting: 'Campfire' },
+    'song-camper': { tune: 'Drunken Sailor', energy: 'rowdy', setting: 'Logs' }
+  };
+
   let activeSongId = null;
   let metronomeInterval = null;
   let currentBeat = 0;
   let activeSongActions = [];
+  let activeSettingFilter = 'all';
+  let activeEnergyFilter = 'all';
 
   function renderSongsList() {
-    songsMount.innerHTML = songbookSongs.map(song => `
+    const filteredSongs = songbookSongs.filter(song => {
+      const tags = songTags[song.id] || { tune: '', energy: 'rowdy', setting: 'Logs' };
+      const matchesSetting = activeSettingFilter === 'all' || tags.setting === activeSettingFilter;
+      const matchesEnergy = activeEnergyFilter === 'all' || tags.energy === activeEnergyFilter;
+      return matchesSetting && matchesEnergy;
+    });
+
+    if (filteredSongs.length === 0) {
+      songsMount.innerHTML = `<div style="font-size: 13px; color: hsl(var(--muted-foreground)); padding: 12px 6px; font-weight: 500; text-align: center;">No matching songs.</div>`;
+      return;
+    }
+
+    songsMount.innerHTML = filteredSongs.map(song => `
       <button class="song-sidebar-btn ${song.id === activeSongId ? 'active' : ''}" data-song-id="${song.id}">
         <span class="song-sidebar-title">${song.title}</span>
         <span class="song-sidebar-desc">${song.description.substring(0, 50)}...</span>
@@ -61,6 +107,29 @@ export function initSongs() {
         if (song) {
           renderSongDetails(song);
         }
+      });
+    });
+  }
+
+  function setupFilters() {
+    const chips = document.querySelectorAll('.filter-chip');
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        const filterType = chip.getAttribute('data-filter-type');
+        const val = chip.getAttribute('data-value');
+
+        document.querySelectorAll(`.filter-chip[data-filter-type="${filterType}"]`).forEach(c => {
+          c.classList.remove('active');
+        });
+        chip.classList.add('active');
+
+        if (filterType === 'setting') {
+          activeSettingFilter = val;
+        } else if (filterType === 'energy') {
+          activeEnergyFilter = val;
+        }
+
+        renderSongsList();
       });
     });
   }
@@ -246,4 +315,5 @@ export function initSongs() {
   // Init
   renderSongsList();
   renderComedyDetails();
+  setupFilters();
 }

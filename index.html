@@ -10,13 +10,16 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   </head>
   <body>
     <!-- Canvas for confetti celebrations -->
     <canvas id="confetti-canvas"></canvas>
 
-    <div class="app-container">
+    <!-- Canvas for dynamic background ambiance -->
+    <canvas id="bg-ambiance-canvas" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: -1;"></canvas>
+
+    <div class="app-container" style="padding-bottom: 60px;">
       <!-- Sidebar Navigation -->
       <aside class="sidebar">
         <div class="logo-container">
@@ -27,47 +30,32 @@
         <ul class="nav-links">
           <li class="nav-item active" data-view="dashboard">
             <button id="nav-btn-dashboard" aria-label="Go to Dashboard">
-              <span class="nav-icon">📊</span> Dashboard
+              <span class="nav-icon">🔥</span> Welcome / Home
             </button>
           </li>
-          <li class="nav-item" data-view="training">
-            <button id="nav-btn-training" aria-label="Go to Training & Culture">
-              <span class="nav-icon">🎓</span> Training & Culture
+          <li class="nav-item" data-view="part1">
+            <button id="nav-btn-part1" aria-label="Go to Part 1: Culture & Training">
+              <span class="nav-icon">🧭</span> Part 1: Culture & Training
             </button>
           </li>
-          <li class="nav-item" data-view="schedule">
-            <button id="nav-btn-schedule" aria-label="Go to Camp Schedule">
-              <span class="nav-icon">📅</span> Camp Schedule
+          <li class="nav-item" data-view="part2">
+            <button id="nav-btn-part2" aria-label="Go to Part 2: Policies & Safety" style="font-weight: 700;">
+              <span class="nav-icon">🛟</span> Part 2: Policies & Safety
             </button>
           </li>
-          <li class="nav-item" data-view="officemap">
-            <button id="nav-btn-officemap" aria-label="Go to Camp Map & EAP">
-              <span class="nav-icon">🗺️</span> Camp Map & EAP
+          <li class="nav-item" data-view="part3">
+            <button id="nav-btn-part3" aria-label="Go to Part 3: Campfire & Songbook">
+              <span class="nav-icon">🎤</span> Part 3: Songbook & Comedy
             </button>
           </li>
-          <li class="nav-item" data-view="safetyguides">
-            <button id="nav-btn-safetyguides" aria-label="Go to Policies & Procedures">
-              <span class="nav-icon">🛡️</span> Policies & Procedures
+          <li class="nav-item" data-view="part4">
+            <button id="nav-btn-part4" aria-label="Go to Part 4: Onboarding">
+              <span class="nav-icon">🎒</span> Part 4: Onboarding
             </button>
           </li>
-          <li class="nav-item" data-view="packing">
-            <button id="nav-btn-packing" aria-label="Go to Onboarding">
-              <span class="nav-icon">🎒</span> Onboarding
-            </button>
-          </li>
-          <li class="nav-item" data-view="songs">
-            <button id="nav-btn-songs" aria-label="Go to Songbook & Comedy">
-              <span class="nav-icon">🎵</span> Songbook & Comedy
-            </button>
-          </li>
-          <li class="nav-item" data-view="quiz">
-            <button id="nav-btn-quiz" aria-label="Go to Welcome Quiz">
-              <span class="nav-icon">🏆</span> Staff Quiz
-            </button>
-          </li>
-          <li class="nav-item" data-view="application">
-            <button id="nav-btn-application" aria-label="Go to Staff Application" style="color: hsl(var(--accent)); font-weight: 700;">
-              <span class="nav-icon">📝</span> Apply Now
+          <li class="nav-item" data-view="admin" id="nav-item-admin" style="display: none;">
+            <button id="nav-btn-admin" aria-label="Go to Admin Panel">
+              <span class="nav-icon">🛡️</span> Admin Portal
             </button>
           </li>
         </ul>
@@ -89,6 +77,17 @@
             <p id="view-subtitle">Welcome to your digital onboarding portal.</p>
           </div>
 
+          <!-- Global search bar -->
+          <div class="global-search-container" style="position: relative; margin-left: auto; margin-right: 16px;">
+            <div class="search-input-wrapper" style="width: 240px; display: flex; align-items: center; background: var(--glass-bg); border: 1px solid hsl(var(--border)); border-radius: var(--radius-sm); padding: 4px 10px; gap: 8px;">
+              <svg class="search-icon-svg" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: hsl(var(--muted-foreground));">
+                <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input type="text" id="global-search-input" placeholder="Search handbook..." aria-label="Search handbook content" style="background: none; border: none; outline: none; font-size: 14px; width: 100%; color: inherit;" />
+            </div>
+            <div id="global-search-dropdown" class="search-results-dropdown hidden" style="position: absolute; top: 100%; right: 0; width: 320px; background: hsl(var(--card)); border: 1px solid hsl(var(--border)); border-radius: var(--radius-sm); box-shadow: var(--shadow-lg); z-index: 1000; max-height: 400px; overflow-y: auto; margin-top: 6px; display: none;"></div>
+          </div>
+
           <!-- User Profile Badge -->
           <div class="user-profile-badge" id="user-badge" aria-label="Edit Profile">
             <div class="user-avatar-placeholder" id="user-avatar">?</div>
@@ -101,6 +100,16 @@
           <!-- Injected views go here -->
         </section>
       </main>
+    </div>
+
+    <!-- Pinned bottom quick access helpline bar -->
+    <div class="quick-helpline-bar" id="quick-helpline-bar">
+      <span class="helpline-title">🛟 NEED THIS NOW:</span>
+      <div class="helpline-buttons">
+        <a href="tel:1-844-726-8871" class="helpline-btn emergency" title="Scouts First Helpline">🚨 Scouts First (1-844-726-8871)</a>
+        <a href="tel:1-888-767-2445" class="helpline-btn" title="Arizona Department of Child Safety">📞 Arizona DCS (1-888-SOS-CHILD)</a>
+        <button class="helpline-btn" id="quick-emergency-btn">⚡ Emergency Protocols</button>
+      </div>
     </div>
 
     <!-- Reusable Dialog modal for detail view cards -->

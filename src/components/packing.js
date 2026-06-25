@@ -5,7 +5,7 @@ export function renderPacking() {
   return `
     <div style="display: flex; flex-direction: column; gap: 32px; width: 100%;">
       <!-- Paperwork Checklist Section -->
-      <div class="glass-panel" style="display: flex; flex-direction: column; gap: 20px;">
+      <div class="glass-panel paperwork-panel" style="display: flex; flex-direction: column; gap: 20px;">
         <div class="packing-header-bar">
           <h3 style="color: hsl(var(--primary)); font-size: 18px; display: flex; align-items: center; gap: 8px;">
             <span>📝</span> Required Paperwork Checklist
@@ -18,7 +18,7 @@ export function renderPacking() {
       </div>
 
       <!-- Packing List Section -->
-      <div class="glass-panel" style="display: flex; flex-direction: column; gap: 20px;">
+      <div class="glass-panel packing-panel" style="display: flex; flex-direction: column; gap: 20px;">
         <div class="packing-header-bar">
           <h3 style="color: hsl(var(--primary)); font-size: 18px; display: flex; align-items: center; gap: 8px;">
             <span>🎒</span> Camp Packing Assistant
@@ -42,7 +42,7 @@ export function renderPacking() {
       </div>
 
       <!-- Code of Conduct Commitment Signer -->
-      <div class="glass-panel" style="display: flex; flex-direction: column; gap: 20px;">
+      <div class="glass-panel conduct-panel" style="display: flex; flex-direction: column; gap: 20px;">
         <h3 style="color: hsl(var(--primary)); font-size: 18px; display: flex; align-items: center; gap: 8px;">
           <span>✍️</span> Code of Conduct Commitment Signer
         </h3>

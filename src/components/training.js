@@ -26,6 +26,99 @@ export function initTraining() {
 
   if (!panelMount) return;
 
+  let currentEdgeStep = 0;
+  const edgeSteps = [
+    {
+      title: "1. Explain (Talk about it)",
+      desc: "Tell them what you are going to do and why it is important. Describe the steps, use analogies, and encourage questions before touching any ropes.",
+      tip: "💡 <strong>Camp Tip:</strong> Tell the scouts: 'Today we will learn the Square Knot, which is used to join two ropes of equal width. Remember the rule: Left over right, right over left.'",
+      badge: "🗣️"
+    },
+    {
+      title: "2. Demonstrate (Show it)",
+      desc: "Perform the skill yourself slowly and clearly. Talk through each action as you do it. Make sure they have a clear line of sight from your perspective.",
+      tip: "💡 <strong>Camp Tip:</strong> Tie the knot in front of them slowly. Say: 'I take the left rope, put it over the right one, twist it under. Now I take the right rope, put it over the left, twist it under, and pull.'",
+      badge: "👀"
+    },
+    {
+      title: "3. Guide (Practice together)",
+      desc: "Hand the materials to the learner. Let them try the skill while you guide them verbally. Offer encouraging corrections. Do not tie the knot for them!",
+      tip: "💡 <strong>Camp Tip:</strong> Hand them the ropes. Let them try. If they get stuck, ask questions: 'Which side did you put over first? Yes, left over right. Now what is the next part?'",
+      badge: "🤝"
+    },
+    {
+      title: "4. Enable (Let them lead)",
+      desc: "Step back and let them do it independently. They have mastered the skill when they can do it without your guidance and can explain it to someone else.",
+      tip: "💡 <strong>Camp Tip:</strong> Ask the scout to tie three square knots successfully. Then ask them to teach it to a new scout. Once they can teach it, they are fully enabled!",
+      badge: "🎓"
+    }
+  ];
+
+  function updateEdgeSimulator() {
+    const stepContent = document.getElementById('edge-step-content');
+    const prevBtn = document.getElementById('edge-prev-btn');
+    const nextBtn = document.getElementById('edge-next-btn');
+    const progressSteps = document.querySelectorAll('.edge-progress-step');
+
+    if (!stepContent) return;
+
+    const step = edgeSteps[currentEdgeStep];
+    stepContent.innerHTML = `
+      <div style="display: flex; gap: 16px; align-items: flex-start; animation: tabFadeIn 0.3s ease both;">
+        <div style="font-size: 48px; background: hsl(var(--primary) / 0.1); width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+          ${step.badge}
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <h4 style="font-size: 18px; color: hsl(var(--primary)); font-family: var(--font-heading); margin: 0;">${step.title}</h4>
+          <p style="font-size: 13.5px; line-height: 1.5; color: hsl(var(--foreground)); margin: 0;">${step.desc}</p>
+          <div style="background: hsl(var(--card)); border: 1px solid hsl(var(--border)); padding: 10px 14px; border-radius: var(--radius-sm); font-size: 13px; line-height: 1.4; margin-top: 4px; color: hsl(var(--muted-foreground)); font-weight: 500;">
+            ${step.tip}
+          </div>
+        </div>
+      </div>
+    `;
+
+    progressSteps.forEach((bar, idx) => {
+      if (idx <= currentEdgeStep) {
+        bar.style.background = 'hsl(var(--accent))';
+      } else {
+        bar.style.background = 'hsl(var(--muted-foreground) / 0.2)';
+      }
+    });
+
+    prevBtn.disabled = currentEdgeStep === 0;
+    if (currentEdgeStep === edgeSteps.length - 1) {
+      nextBtn.innerHTML = `Restart Simulator 🔄`;
+    } else {
+      const nextStepName = edgeSteps[currentEdgeStep + 1].title.split(" ")[1];
+      nextBtn.innerHTML = `Next step (${nextStepName}) ➜`;
+    }
+  }
+
+  function setupEdgeListeners() {
+    const prevBtn = document.getElementById('edge-prev-btn');
+    const nextBtn = document.getElementById('edge-next-btn');
+
+    if (prevBtn && nextBtn) {
+      prevBtn.addEventListener('click', () => {
+        if (currentEdgeStep > 0) {
+          currentEdgeStep--;
+          updateEdgeSimulator();
+        }
+      });
+
+      nextBtn.addEventListener('click', () => {
+        if (currentEdgeStep < edgeSteps.length - 1) {
+          currentEdgeStep++;
+          updateEdgeSimulator();
+        } else {
+          currentEdgeStep = 0;
+          updateEdgeSimulator();
+        }
+      });
+    }
+  }
+
   function setupFlipListeners() {
     const cards = panelMount.querySelectorAll('.flip-card');
     cards.forEach(card => {
@@ -172,9 +265,40 @@ export function initTraining() {
 
           </div>
         </div>
+
+        <!-- Interactive EDGE Method step-through -->
+        <div class="glass-panel" style="display: flex; flex-direction: column; gap: 16px;">
+          <h3 style="color: hsl(var(--primary)); font-family: var(--font-heading); display: flex; align-items: center; gap: 8px;">
+            <span>🎓</span> Interactive EDGE Method Simulator
+          </h3>
+          <p style="font-size: 14.5px; color: hsl(var(--muted-foreground)); line-height: 1.5;">
+            The EDGE method is how we teach skills in Scouting. Use the interactive step-through below to experience the E-D-G-E process for tying a Square Knot:
+          </p>
+
+          <div class="edge-simulator-card" style="background: hsl(var(--secondary) / 0.1); border: 1px solid hsl(var(--border)); border-radius: var(--radius-md); padding: 24px; position: relative;">
+            <div class="edge-progress-bar" style="display: flex; gap: 8px; margin-bottom: 20px;">
+              <div class="edge-progress-step active" data-step="0" style="flex: 1; height: 6px; background: hsl(var(--accent)); border-radius: 3px; transition: background 0.3s;"></div>
+              <div class="edge-progress-step" data-step="1" style="flex: 1; height: 6px; background: hsl(var(--muted-foreground) / 0.2); border-radius: 3px; transition: background 0.3s;"></div>
+              <div class="edge-progress-step" data-step="2" style="flex: 1; height: 6px; background: hsl(var(--muted-foreground) / 0.2); border-radius: 3px; transition: background 0.3s;"></div>
+              <div class="edge-progress-step" data-step="3" style="flex: 1; height: 6px; background: hsl(var(--muted-foreground) / 0.2); border-radius: 3px; transition: background 0.3s;"></div>
+            </div>
+
+            <div id="edge-step-content" style="min-height: 160px; display: flex; flex-direction: column; justify-content: center; gap: 12px; transition: all 0.3s ease;">
+              <!-- Dynamic step content goes here -->
+            </div>
+
+            <div style="display: flex; justify-content: space-between; margin-top: 20px; border-top: 1px solid hsl(var(--border) / 0.5); padding-top: 16px;">
+              <button class="welcome-banner-btn" id="edge-prev-btn" style="padding: 8px 16px; font-size: 13.5px;" disabled>Previous</button>
+              <button class="welcome-banner-btn" id="edge-next-btn" style="padding: 8px 16px; font-size: 13.5px;">Next step (Demonstrate) ➜</button>
+            </div>
+          </div>
+        </div>
+
       </div>
     `;
     setupFlipListeners();
+    updateEdgeSimulator();
+    setupEdgeListeners();
   }
 
   function renderService() {

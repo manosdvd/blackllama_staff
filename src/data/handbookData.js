@@ -499,3 +499,173 @@ export const onboardingData = {
     { id: 'pw-7', name: 'I-9 Form and W-4 (if paid)' }
   ]
 };
+
+export const orgChartData = [
+  {
+    id: 'emp-1',
+    name: 'Phil Shipley',
+    role: 'Territorial Director, Acting CEO',
+    department: 'Executive',
+    email: 'Philip.shipley@scouting.org',
+    phone: '555-0100',
+    bio: 'Acting Council CEO overseeing territorial camping programs and resources.',
+    funFact: 'Can name all BSA camps in Arizona in under 20 seconds.',
+    avatarGradient: 'linear-gradient(135deg, #11998e, #38ef7d)',
+    reportsTo: null
+  },
+  {
+    id: 'emp-2',
+    name: 'Mike Korcheck',
+    role: 'Council Operations Manager',
+    department: 'Executive',
+    email: 'Michael.korcheck@scouting.org',
+    phone: '555-0101',
+    bio: 'Manages operations and resources across Council camps and properties.',
+    funFact: 'Once hiked the entire Grand Canyon rim-to-rim in a single day.',
+    avatarGradient: 'linear-gradient(135deg, #fc4a1a, #f7b733)',
+    reportsTo: 'emp-1'
+  },
+  {
+    id: 'emp-3',
+    name: 'Ethan Crisp',
+    role: 'Council District Executive',
+    department: 'Executive',
+    email: 'ethan.crisp@scouting.org',
+    phone: '555-0102',
+    bio: 'Coordinates camping programs and community district outreach initiatives.',
+    funFact: 'Collects vintage Scouting memorabilia and merit badge patches.',
+    avatarGradient: 'linear-gradient(135deg, #00b09b, #96c93d)',
+    reportsTo: 'emp-1'
+  },
+  {
+    id: 'emp-4',
+    name: 'MaryLou Chopelas',
+    role: 'Council Camp Ranger & Camp Director',
+    department: 'People Ops',
+    email: 'marylou.chopelas@scouting.org',
+    phone: '555-0103',
+    bio: 'Full-time Ranger and Camp Director for Camp Lawton. Oversees facilities and safety.',
+    funFact: 'Has met four bears in person on Staff Hill and won every stare-down.',
+    avatarGradient: 'linear-gradient(135deg, #FF512F, #DD2476)',
+    reportsTo: 'emp-2'
+  },
+  {
+    id: 'emp-5',
+    name: 'Alexis Smith',
+    role: 'Camp Program Director',
+    department: 'People Ops',
+    email: 'lexismith8600@gmail.com',
+    phone: '555-0104',
+    bio: 'Directs the daily program schedule, campfires, and merit badge areas.',
+    funFact: 'Writes all the campfire opening skits and plays the banjo.',
+    avatarGradient: 'linear-gradient(135deg, #8A2387, #E94057)',
+    reportsTo: 'emp-2'
+  },
+  {
+    id: 'emp-6',
+    name: 'Jim Tarleton',
+    role: 'Scoutcraft Area Director',
+    department: 'Engineering',
+    email: 'jhtarleton@comcast.net',
+    phone: '555-0105',
+    bio: 'Area Director for Scoutcraft. Teaches pioneering, camping, and wilderness survival.',
+    funFact: 'Can tie a running bowline behind his back in under 3 seconds.',
+    avatarGradient: 'linear-gradient(135deg, #4286f4, #373B44)',
+    reportsTo: 'emp-3'
+  },
+  {
+    id: 'emp-7',
+    name: 'Jack Erickson',
+    role: 'Handicraft Area Director',
+    department: 'Engineering',
+    email: 'ericksonjack2@gmail.com',
+    phone: '555-0106',
+    bio: 'Area Director for Handicraft. Teaches woodcarving, basketry, and leatherwork.',
+    funFact: 'Carved a full-size wooden eagle using only a pocket knife during siesta.',
+    avatarGradient: 'linear-gradient(135deg, #f12711, #f5af19)',
+    reportsTo: 'emp-3'
+  },
+  {
+    id: 'emp-8',
+    name: 'Andrew Rasmussen',
+    role: 'Nature Area Director',
+    department: 'Engineering',
+    email: 'andrewdr2@gmail.com',
+    phone: '555-0107',
+    bio: 'Area Director for Nature & Ecology. Teaches environmental science and forestry.',
+    funFact: 'Can identify 42 species of mountain birds by their call alone.',
+    avatarGradient: 'linear-gradient(135deg, #56ab2f, #a8e063)',
+    reportsTo: 'emp-3'
+  },
+  {
+    id: 'emp-9',
+    name: 'Brian Rome',
+    role: 'Range & Target Sports Director',
+    department: 'Product',
+    email: 'scoutdad@rome1989.com',
+    phone: '555-0108',
+    bio: 'Area Director for Shooting Sports. Manages rifle, shotgun, and archery ranges.',
+    funFact: 'Has a perfect bullseye record at the archery range since 2018.',
+    avatarGradient: 'linear-gradient(135deg, #7F00FF, #E100FF)',
+    reportsTo: 'emp-3'
+  },
+  {
+    id: 'emp-10',
+    name: 'Jim Harrington',
+    role: 'Climbing Wall Director',
+    department: 'Product',
+    email: 'jnherriman@gmail.com',
+    phone: '555-0109',
+    bio: 'Area Director for Climbing & Rappelling. Manages cook rosters and climbing wall.',
+    funFact: 'Cooks a legendary Dutch Oven peach cobbler over open campfire coals.',
+    avatarGradient: 'linear-gradient(135deg, #ff007f, #7f00ff)',
+    reportsTo: 'emp-3'
+  },
+  {
+    id: 'emp-11',
+    name: 'Jack Pickell',
+    role: 'Camp Maintenance Director',
+    department: 'People Ops',
+    email: 'jjpickell58@gmail.com',
+    phone: '555-0110',
+    bio: 'Manages facilities repair, water pumps, electrical systems, and campgrounds.',
+    funFact: 'Has fixed every single water leak in camp using only spare washers and duct tape.',
+    avatarGradient: 'linear-gradient(135deg, #3a7bd5, #3a6073)',
+    reportsTo: 'emp-2'
+  }
+];
+
+export const companyValues = [
+  {
+    id: 'val-1',
+    icon: '🌲',
+    title: 'Trustworthiness',
+    tagline: 'A Scout is trustworthy.',
+    description: 'Honesty, integrity, and safety are the bedrock of our staff. We protect the physical and emotional safety of scouts under our care, keeping our word to leaders, parents, and each other.',
+    example: 'When a parent dropped a wallet containing troop funds on the trail, a CIT immediately turned it in to the Camp Office, securing the money for the troop.'
+  },
+  {
+    id: 'val-2',
+    icon: '🤝',
+    title: 'Helpful Service',
+    tagline: 'A Scout is helpful.',
+    description: 'We are here to serve our campers and unit leaders. Whether it is helping a scoutmaster back their vehicle, teaching a complex merit badge, or clearing dining hall tables, we do it cheerfully.',
+    example: 'Ranger MaryLou spent four hours in the cold mountain rain helping Troop 402 set up their dining canopy when their trailer axle snapped on the access road.'
+  },
+  {
+    id: 'val-3',
+    icon: '😊',
+    title: 'Cheerful Character',
+    tagline: 'A Scout is friendly and cheerful.',
+    description: 'Summer camp can be exhausting and high-stimulus, but a positive attitude is contagious. We greet everyone with a smile, lead energetic songs on the logs, and support each other backstage.',
+    example: 'During a heavy afternoon storm delay, Alexis Smith led a 20-minute indoor rhythmic clapping game that turned a room of cold campers into a roaring, laughing party.'
+  },
+  {
+    id: 'val-4',
+    icon: '🌌',
+    title: 'Outdoor Stewardship',
+    tagline: 'A Scout is clean and reverent.',
+    description: 'We protect the natural beauty of the Catalina Mountains. We practice Leave No Trace, lock up smellables to protect native wildlife, and teach scouts to respect and protect their outdoor surroundings.',
+    example: 'The entire staff stayed out for 30 minutes after campfire to conduct a clean-sweep for micro-trash, leaving the amphitheater cleaner than they found it.'
+  }
+];

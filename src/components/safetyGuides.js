@@ -111,129 +111,155 @@ export function initSafetyGuides() {
 
     panelMount.innerHTML = `
       <div class="schedule-content-panel" style="animation: tabFadeIn 0.3s ease both;">
-        <p style="color: hsl(var(--muted-foreground)); font-size: 15px; max-width: 750px; line-height: 1.5; margin-bottom: 10px;">
-          As camp staff, protecting youth and ensuring property safety is your primary duty. Review these interactive guides for severe weather drills, wildlife protocols, and mandatory Arizona reporting laws.
+        <p style="color: hsl(var(--muted-foreground)); font-size: 15px; max-width: 750px; line-height: 1.5; margin-bottom: 20px;">
+          As camp staff, protecting youth and ensuring property safety is your primary duty. Review these structured, step-by-step procedures for emergencies, severe weather, and mandatory Arizona reporting laws.
         </p>
 
-        <div class="safety-flowcharts-grid">
-          <!-- Lightning Safety Flowchart -->
-          <div class="glass-panel flowchart-container">
-            <h3 style="color: hsl(var(--primary)); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-              <span>⚡</span> Lightning Safety (30/30 Rule)
-            </h3>
-            
-            <div class="flowchart-card action">
-              <strong>Lightning flash or audible thunder detected</strong>
-            </div>
-            
-            <div class="flowchart-arrow">↓</div>
-            
-            <div class="flowchart-card decision">
-              <strong>Time between flash & thunder &le; 30 seconds?</strong>
-              <div style="display: flex; justify-content: space-around; margin-top: 8px; font-weight: bold; font-size: 12px;">
-                <span style="color: hsl(var(--danger));">YES</span>
-                <span style="color: hsl(var(--muted-foreground));">NO</span>
+        <div class="protocol-accordion">
+          <!-- Missing Person (Code Blue) -->
+          <div class="protocol-item">
+            <button class="protocol-header" aria-expanded="false" data-protocol-idx="0">
+              <span class="protocol-title"><span>🚨</span> Code Blue — Missing Person / Lost Camper</span>
+              <span class="protocol-arrow-icon">▼</span>
+            </button>
+            <div class="protocol-body">
+              <div class="protocol-call-banner">
+                <span class="protocol-call-text">⚠️ IMMEDIATELY INITIATE RADIO ALARM</span>
+                <a href="tel:1-555-LAWTON-CD" class="protocol-call-btn">📞 Radio Camp Director</a>
               </div>
-            </div>
-            
-            <div style="display: flex; gap: 20px; width: 100%; justify-content: center;">
-              <div style="display: flex; flex-direction: column; align-items: center; width: 48%;">
-                <div class="flowchart-arrow">↓</div>
-                <div class="flowchart-card emergency" style="font-size: 12px; padding: 10px;">
-                  <strong>Evacuate to Dining Hall!</strong>
-                  <p style="font-size: 10px; margin-top: 4px; opacity: 0.85;">Tents offer zero protection.</p>
-                </div>
-                <div class="flowchart-arrow">↓</div>
-                <div class="flowchart-card action" style="font-size: 11px; padding: 8px;">
-                  Wait 30 minutes after last visible flash/thunder.
-                </div>
-              </div>
-              
-              <div style="display: flex; flex-direction: column; align-items: center; width: 48%;">
-                <div class="flowchart-arrow">↓</div>
-                <div class="flowchart-card action" style="font-size: 12px; padding: 10px; height: fit-content; margin-top: 10px;">
-                  <strong>Monitor weather</strong>
-                  <p style="font-size: 10px; margin-top: 4px; opacity: 0.85;">Stay alert for shifts.</p>
-                </div>
-              </div>
+              <ol class="protocol-steps">
+                <li><strong>Gather Critical Details:</strong> Immediately obtain the camper's Name, Troop Unit, Age/CIT status, description of clothing worn, and their Last Known Location.</li>
+                <li><strong>Initiate Code Blue:</strong> Alert the Camp Director or HQ over the radio immediately. State: <em>"Code Blue in progress. We have a missing person..."</em></li>
+                <li><strong>Stand By:</strong> Stop all area programs and await central coordinates or search grid commands from the Camp Director or Ranger. Do NOT start searching on your own.</li>
+              </ol>
             </div>
           </div>
 
-          <!-- Bear & Wildlife Flowchart -->
-          <div class="glass-panel flowchart-container">
-            <h3 style="color: hsl(var(--primary)); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-              <span>🐻</span> Bear Sighting (Code Brown)
-            </h3>
-            
-            <div class="flowchart-card action">
-              <strong>Bear spotted on camp grounds</strong>
+          <!-- Bear Sighting (Code Brown) -->
+          <div class="protocol-item">
+            <button class="protocol-header" aria-expanded="false" data-protocol-idx="1">
+              <span class="protocol-title"><span>🐻</span> Code Brown — Bear Sighting & Encounter</span>
+              <span class="protocol-arrow-icon">▼</span>
+            </button>
+            <div class="protocol-body">
+              <div class="protocol-call-banner">
+                <span class="protocol-call-text">⚠️ REPORT SIGHTING AND MAINTAIN SAFEST DISTANCE</span>
+                <a href="tel:1-555-LAWTON-CD" class="protocol-call-btn">📞 Radio Camp Ranger</a>
+              </div>
+              <ol class="protocol-steps">
+                <li><strong>Remain Calm:</strong> Do not approach or corner the bear. Retreat slowly and quietly, keeping your eyes on the bear (but avoid direct eye contact). Do NOT run.</li>
+                <li><strong>Report Code Brown:</strong> Alert the Ranger or Camp Director via radio immediately. Report the exact location and directions of travel.</li>
+                <li><strong>Establish Visual Check:</strong> Maintain a safe visual check from a distance (adult staff only). Escort all scouts and CITs to a secure, indoor area immediately.</li>
+                <li><strong>Defend Against Attack:</strong> If the bear charges or attacks: Stand your ground, make yourself look as large as possible, yell loudly, wave your arms, and throw rocks/sticks. If the Dining Hall bell is nearby, sound the emergency alarm immediately.</li>
+              </ol>
             </div>
-            
-            <div class="flowchart-arrow">↓</div>
-            
-            <div class="flowchart-card decision">
-              <strong>Remain Calm & Assess Threat</strong>
-              <p style="font-size: 10px; opacity: 0.85; margin-top: 2px;">Ensure no smellables/food in sight.</p>
+          </div>
+
+          <!-- Lightning Safety (30/30 Rule) -->
+          <div class="protocol-item">
+            <button class="protocol-header" aria-expanded="false" data-protocol-idx="2">
+              <span class="protocol-title"><span>⚡</span> Lightning Safety — Severe Weather</span>
+              <span class="protocol-arrow-icon">▼</span>
+            </button>
+            <div class="protocol-body">
+              <div class="protocol-call-banner">
+                <span class="protocol-call-text">⚠️ SUSPEND OUTDOOR ACTIVITIES IMMEDIATELY</span>
+                <button class="protocol-call-btn" onclick="alert('Broadcasting weather alert on radio channel 1...')">📻 Radio Weather Warning</button>
+              </div>
+              <ol class="protocol-steps">
+                <li><strong>Monitor Flash-to-Bang:</strong> If you see a lightning flash and hear thunder within 30 seconds (indicating lightning is within 6 miles), suspend all outdoor programs immediately.</li>
+                <li><strong>Seek Safe Shelter:</strong> Immediately escort all scouts, leaders, and staff to the Dining Hall. Open-sided pavilions, canvas dining flies, and canvas tents offer ZERO lightning protection.</li>
+                <li><strong>Wait It Out:</strong> Wait at least 30 minutes after the last visible lightning flash or sound of thunder before allowing anyone to leave the shelter or resuming programs.</li>
+              </ol>
             </div>
-            
-            <div class="flowchart-arrow">↓</div>
-            
-            <div class="flowchart-card action">
-              <strong>Radio "Code Brown" to Camp Director</strong>
-              <p style="font-size: 10px; opacity: 0.85; margin-top: 2px;">Keep distant visual (Adults only).</p>
+          </div>
+
+          <!-- Fire Evacuation -->
+          <div class="protocol-item">
+            <button class="protocol-header" aria-expanded="false" data-protocol-idx="3">
+              <span class="protocol-title"><span>🔥</span> Fire Evacuation Protocol</span>
+              <span class="protocol-arrow-icon">▼</span>
+            </button>
+            <div class="protocol-body">
+              <div class="protocol-call-banner">
+                <span class="protocol-call-text">⚠️ REPORT SMOKE/FIRE AND ALARM SITE</span>
+                <a href="tel:911" class="protocol-call-btn">📞 Dial 911 Immediately</a>
+              </div>
+              <ol class="protocol-steps">
+                <li><strong>Report Fire:</strong> Call 911 or radio the Camp Director/Camp Office the moment you spot an out-of-control fire or heavy smoke. State the exact location.</li>
+                <li><strong>Evacuate Safely:</strong> Drop all program operations. Assist all scouts, leaders, and visitors to evacuate the area immediately. Escort everyone to the Parade Grounds.</li>
+                <li><strong>Prioritize Youth:</strong> Leave all personal gear, luggage, and camp equipment behind. The safety of human lives is our absolute and first priority.</li>
+              </ol>
             </div>
-            
-            <div class="flowchart-arrow">↓</div>
-            
-            <div class="flowchart-card emergency">
-              <strong>If bear attacks / charges:</strong>
-              <p style="font-size: 12px; margin-top: 4px; font-weight: bold; color: hsl(var(--danger));">Yell loudly, throw objects. Do NOT run. Sound dining bell alarm.</p>
+          </div>
+
+          <!-- Bell Alarm (Emergency Evacuation Drill) -->
+          <div class="protocol-item">
+            <button class="protocol-header" aria-expanded="false" data-protocol-idx="4">
+              <span class="protocol-title"><span>🔔</span> Bell Alarm — Evacuation & Headcount</span>
+              <span class="protocol-arrow-icon">▼</span>
+            </button>
+            <div class="protocol-body">
+              <div class="protocol-call-banner">
+                <span class="protocol-call-text">⚠️ ESCORT ALL USERS TO PARADE GROUNDS ON CONTINUOUS BELL</span>
+                <button class="protocol-call-btn" onclick="alert('Drill coordinates sent to Staff Area.')">📻 Radio HQ Headcount</button>
+              </div>
+              <ol class="protocol-steps">
+                <li><strong>Secure Immediate Hazards:</strong> If the Dining Hall bell rings continuously, drop all activities. Quickly secure critical hazards in your area (e.g. put away archery bows, turn off fire pits).</li>
+                <li><strong>Escort Scouts:</strong> Immediately escort all scouts, leaders, and visitors with you to the Parade Grounds. Do NOT let scouts return to their campsites to fetch gear.</li>
+                <li><strong>Take Strict Headcount:</strong> Group scouts by troop unit. Take a strict headcount immediately and report the results to the Program Director or Camp Director at the center flagpole.</li>
+              </ol>
+            </div>
+          </div>
+
+          <!-- Active Shooter -->
+          <div class="protocol-item">
+            <button class="protocol-header" aria-expanded="false" data-protocol-idx="5">
+              <span class="protocol-title"><span>🔫</span> Armed Intruder / Active Shooter</span>
+              <span class="protocol-arrow-icon">▼</span>
+            </button>
+            <div class="protocol-body">
+              <div class="protocol-call-banner">
+                <span class="protocol-call-text">⚠️ DIAL 911 IMMEDIATELY — DO NOT CONFRONT INTRUDER</span>
+                <a href="tel:911" class="protocol-call-btn">📞 Dial 911 (Police)</a>
+              </div>
+              <ol class="protocol-steps">
+                <li><strong>Flee/Run:</strong> If a safe escape path is clear, immediately flee the area. Lead scouts into the surrounding woods, away from the sounds of gunfire, and seek safety off-property.</li>
+                <li><strong>Hide/Barricade:</strong> If escape is impossible, lock and barricade yourself and scouts inside the nearest cabin or solid building. Stay out of sight, silence all phones, turn off lights, and lie flat on the floor.</li>
+                <li><strong>Fight:</strong> As a last resort, and only when your life is in imminent danger, act with maximum physical aggression to disarm and disrupt the shooter. Use any heavy tool or object as a weapon.</li>
+              </ol>
             </div>
           </div>
 
           <!-- Mandatory Abuse Reporting (ARS 13-3620) -->
-          <div class="glass-panel flowchart-container" style="grid-column: 1 / -1; max-width: 100%;">
-            <h3 style="color: hsl(var(--primary)); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-              <span>🛡️</span> Mandatory Reporting Hotline (ARS 13-3620)
-            </h3>
-            
-            <div class="flowchart-card action" style="max-width: 500px;">
-              <strong>Good-faith suspicion of child abuse or neglect</strong>
-            </div>
-            
-            <div class="flowchart-arrow">↓</div>
-            
-            <div class="flowchart-card emergency" style="max-width: 500px;">
-              <strong>Your Legal Duty: Mandated Reporter</strong>
-              <p style="font-size: 12.5px; opacity: 0.9; margin-top: 4px;">You must report immediately. This duty cannot be delegated to supervisors.</p>
-            </div>
-            
-            <div class="flowchart-arrow">↓</div>
-            
-            <div style="display: flex; gap: 20px; width: 100%; max-width: 700px; justify-content: center; flex-wrap: wrap;">
-              <div class="flowchart-card action" style="flex: 1; min-width: 220px;">
-                <h4 style="color: hsl(var(--primary)); font-size: 15px; font-weight: 700;">DCS Hotline 📞</h4>
-                <p style="font-weight: 800; font-size: 17px; margin: 4px 0; color: hsl(var(--danger));">1-888-SOS-CHILD</p>
-                <span style="font-size: 11px; opacity: 0.85;">(1-888-767-2445) Arizona State Hotline</span>
+          <div class="protocol-item">
+            <button class="protocol-header" aria-expanded="false" data-protocol-idx="6">
+              <span class="protocol-title"><span>🛡️</span> Mandatory Abuse Reporting (ARS 13-3620)</span>
+              <span class="protocol-arrow-icon">▼</span>
+            </button>
+            <div class="protocol-body">
+              <div class="protocol-call-banner">
+                <span class="protocol-call-text">⚠️ MANDATED REPORTING LAWS REQUIRE IMMEDIATE REPORTING</span>
+                <a href="tel:1-888-767-2445" class="protocol-call-btn" style="background: var(--safety-red);">📞 Call Arizona DCS (1-888-SOS-CHILD)</a>
               </div>
-              
-              <div class="flowchart-card action" style="flex: 1; min-width: 220px;">
-                <h4 style="color: hsl(var(--primary)); font-size: 15px; font-weight: 700;">Scouts First Helpline 📞</h4>
-                <p style="font-weight: 800; font-size: 17px; margin: 4px 0;">1-844-SCOUTS1</p>
-                <span style="font-size: 11px; opacity: 0.85;">(1-844-726-8871) 24hr Youth Safety helpline</span>
-              </div>
+              <ol class="protocol-steps">
+                <li><strong>Identify Suspicion:</strong> If you have a good-faith suspicion of child abuse, sexual abuse, physical abuse, or neglect of a camper or CIT, you are legally required to report it.</li>
+                <li><strong>Personal Legal Duty:</strong> As a summer camp staff member in Arizona, you are a Mandated Reporter under ARS 13-3620. This is a personal legal obligation.</li>
+                <li><strong>No Delegation:</strong> You must report directly to the Arizona Department of Child Safety (1-888-SOS-CHILD) or local law enforcement (911). You CANNOT delegate this report to the Camp Director, Area Directors, or other staff.</li>
+                <li><strong>Report Internally:</strong> Once the legal report has been made to DCS/911, notify the Camp Director immediately so the Council Scout Executive can be alerted and Scouts First Helpline contacted (1-844-SCOUTS1).</li>
+              </ol>
             </div>
           </div>
         </div>
 
         <!-- Heat Stress Matrix -->
-        <div class="glass-panel" style="display: flex; flex-direction: column; gap: 16px;">
-          <h3 style="color: hsl(var(--primary));">☀️ Heat Stress Diagnostics</h3>
+        <div class="glass-panel" style="display: flex; flex-direction: column; gap: 16px; margin-top: 24px;">
+          <h3 style="color: hsl(var(--primary)); font-family: var(--font-heading); font-size: 22px;">☀️ Heat Stress Diagnostics</h3>
           <p style="font-size: 14.5px; color: hsl(var(--muted-foreground));">Review symptoms to identify heat illnesses on dry mountain trails.</p>
           
           <div class="heat-matrix">
             <div class="heat-card exhaustion">
-              <h4 style="color: hsl(var(--warning)); font-weight: 800; font-family: var(--font-heading); display: flex; align-items: center; gap: 8px;">
+              <h4 style="color: hsl(var(--warning)); font-weight: 800; font-family: var(--font-heading); display: flex; align-items: center; gap: 8px; font-size: 18px;">
                 <span>⚠️</span> Heat Exhaustion
               </h4>
               <div style="font-size: 13.5px; line-height: 1.5;">
@@ -244,7 +270,7 @@ export function initSafetyGuides() {
             </div>
             
             <div class="heat-card stroke">
-              <h4 style="color: hsl(var(--danger)); font-weight: 800; font-family: var(--font-heading); display: flex; align-items: center; gap: 8px;">
+              <h4 style="color: var(--safety-red); font-weight: 800; font-family: var(--font-heading); display: flex; align-items: center; gap: 8px; font-size: 18px;">
                 <span>🚨</span> Heatstroke (Emergency!)
               </h4>
               <div style="font-size: 13.5px; line-height: 1.5;">
@@ -257,6 +283,26 @@ export function initSafetyGuides() {
         </div>
       </div>
     `;
+
+    // Bind Accordion Click Handlers
+    const accordions = panelMount.querySelectorAll('.protocol-header');
+    accordions.forEach(header => {
+      header.addEventListener('click', () => {
+        const item = header.closest('.protocol-item');
+        const isActive = item.classList.contains('active');
+        
+        // Close all other items
+        panelMount.querySelectorAll('.protocol-item').forEach(i => {
+          i.classList.remove('active');
+          i.querySelector('.protocol-header').setAttribute('aria-expanded', 'false');
+        });
+
+        if (!isActive) {
+          item.classList.add('active');
+          header.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
   }
 
   function renderRadio() {

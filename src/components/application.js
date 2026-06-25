@@ -1,3 +1,5 @@
+import { state } from '../main.js';
+
 const applicationSchema = {
   steps: [
     { id: 'sec1', title: 'Demographics & Eligibility' },
@@ -205,10 +207,32 @@ function submitApplication() {
     return;
   }
 
+  // Save to the database
+  const applications = JSON.parse(localStorage.getItem('camp_lawton_applications') || '[]');
+  const newApp = {
+    id: 'app_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+    username: state.username || 'guest',
+    submittedAt: new Date().toISOString(),
+    status: 'Pending',
+    formData: { ...formData }
+  };
+  
+  const existingIdx = applications.findIndex(app => app.username.toLowerCase() === newApp.username.toLowerCase());
+  if (existingIdx > -1) {
+    applications[existingIdx] = newApp;
+  } else {
+    applications.push(newApp);
+  }
+  
+  localStorage.setItem('camp_lawton_applications', JSON.stringify(applications));
+
   // Clear draft
   localStorage.removeItem('camp_lawton_app_draft');
   formData = {};
   currentStep = 0;
+
+  // Dispatch custom event to notify other parts of the app
+  window.dispatchEvent(new CustomEvent('camp-application-submitted', { detail: newApp }));
 
   // Show Success Screen
   const mount = document.getElementById('view-mount-point');

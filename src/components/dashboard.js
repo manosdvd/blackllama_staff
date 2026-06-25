@@ -1,4 +1,5 @@
 import { state, navigateTo } from '../main.js';
+import { setPart4Tab } from './part4.js';
 
 const checklistTasks = [
   { id: 'checklist-1', text: 'Submit Medical Forms A, B, and C', category: 'HR' },
@@ -7,6 +8,56 @@ const checklistTasks = [
   { id: 'checklist-4', text: 'Sign the Code of Conduct commitment sheet', category: 'Code' },
   { id: 'checklist-5', text: 'Take the Camp Lawton Certification Quiz', category: 'Quiz' }
 ];
+
+function renderAppBanner() {
+  const applications = JSON.parse(localStorage.getItem('camp_lawton_applications') || '[]');
+  const myApp = state.username ? applications.find(app => app.username.toLowerCase() === state.username.toLowerCase()) : null;
+  
+  if (!myApp) {
+    return `
+      <div class="glass-panel app-banner-card" id="dashboard-app-banner">
+        <div class="app-banner-content">
+          <span class="app-banner-icon">📝</span>
+          <div class="app-banner-text">
+            <h3>Ready to join the 2026 staff?</h3>
+            <p>Fill out and submit your interactive Camp Lawton Staff Application today.</p>
+          </div>
+        </div>
+        <button class="welcome-banner-btn" style="pointer-events: none;">Apply Now</button>
+      </div>
+    `;
+  }
+
+  let statusClass = 'pending';
+  let statusText = 'Pending Review';
+  let statusIcon = '⏳';
+  
+  if (myApp.status === 'Approved') {
+    statusClass = 'approved';
+    statusText = 'Approved';
+    statusIcon = '✅';
+  } else if (myApp.status === 'Rejected') {
+    statusClass = 'rejected';
+    statusText = 'Rejected / Incomplete';
+    statusIcon = '❌';
+  }
+  
+  return `
+    <div class="glass-panel app-banner-card submitted" id="dashboard-app-banner">
+      <div class="app-banner-content">
+        <span class="app-banner-icon">📝</span>
+        <div class="app-banner-text">
+          <h3>Your 2026 Staff Application</h3>
+          <p>Submitted: ${new Date(myApp.submittedAt).toLocaleDateString()}</p>
+        </div>
+      </div>
+      <div class="app-status-badge ${statusClass}">
+        <span>${statusIcon}</span>
+        <span>${statusText}</span>
+      </div>
+    </div>
+  `;
+}
 
 export function renderDashboard() {
   const welcomeText = state.username 
@@ -23,6 +74,9 @@ export function renderDashboard() {
         </div>
         <button class="welcome-banner-btn" id="dashboard-explore-btn">Go to Camp Schedule</button>
       </div>
+
+      <!-- Application Banner -->
+      ${renderAppBanner()}
 
       <!-- WAM Hydration Alert Widget -->
       <div class="wam-alert-card" id="wam-card">
@@ -75,6 +129,15 @@ export function initDashboard() {
   const exploreBtn = document.getElementById('dashboard-explore-btn');
   if (exploreBtn) {
     exploreBtn.addEventListener('click', () => navigateTo('schedule'));
+  }
+
+  // Application banner click link
+  const appBanner = document.getElementById('dashboard-app-banner');
+  if (appBanner) {
+    appBanner.addEventListener('click', () => {
+      setPart4Tab('apply');
+      navigateTo('part4');
+    });
   }
 
   // WAM trigger

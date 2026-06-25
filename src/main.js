@@ -2,14 +2,12 @@ import './style.css';
 
 // Import View Components
 import { renderDashboard, initDashboard } from './components/dashboard.js';
-import { renderSchedule, initSchedule } from './components/schedule.js';
-import { renderOfficeMap, initOfficeMap } from './components/officeMap.js';
-import { renderSafetyGuides, initSafetyGuides } from './components/safetyGuides.js';
-import { renderPacking, initPacking } from './components/packing.js';
-import { renderSongs, initSongs } from './components/songs.js';
-import { renderQuiz, initQuiz } from './components/quiz.js';
-import { renderTraining, initTraining } from './components/training.js';
-import { render as renderApplication } from './components/application.js';
+import { renderPart1, initPart1, setPart1Tab } from './components/part1.js';
+import { renderPart2, initPart2, setPart2Tab } from './components/part2.js';
+import { renderPart3, initPart3 } from './components/part3.js';
+import { renderPart4, initPart4, setPart4Tab } from './components/part4.js';
+import { renderAdmin, initAdmin } from './components/admin.js';
+import { initAmbiance } from './components/ambiance.js';
 
 // Global State Manager
 export const state = {
@@ -121,53 +119,35 @@ const views = {
     render: renderDashboard,
     init: initDashboard
   },
-  training: {
-    title: 'Training & Culture',
-    subtitle: 'Camp Lawton pillars, scouting methods, Disney standards, and program controls.',
-    render: renderTraining,
-    init: initTraining
+  part1: {
+    title: 'Part 1: Culture & Training',
+    subtitle: 'Camp Lawton pillars, scouting methods, and program controls.',
+    render: renderPart1,
+    init: initPart1
   },
-  schedule: {
-    title: 'Camp Schedule',
-    subtitle: 'Sunday check-in protocols and daily life schedule.',
-    render: renderSchedule,
-    init: initSchedule
+  part2: {
+    title: 'Part 2: Policies & Safety',
+    subtitle: 'Emergency flowcharts, radio simulator, EAP drills, and legal guidelines.',
+    render: renderPart2,
+    init: initPart2
   },
-  officemap: {
-    title: 'Camp Map & EAP',
-    subtitle: 'Interactive map and emergency evacuation drill simulator.',
-    render: renderOfficeMap,
-    init: initOfficeMap
+  part3: {
+    title: 'Part 3: Songbook & Comedy',
+    subtitle: 'Rousing logs songs, action cued metronome lyrics, and comedy writing guides.',
+    render: renderPart3,
+    init: initPart3
   },
-  safetyguides: {
-    title: 'Policies & Procedures',
-    subtitle: 'Emergency flowcharts, radio simulator, and legal guidelines.',
-    render: renderSafetyGuides,
-    init: initSafetyGuides
+  part4: {
+    title: 'Part 4: Onboarding',
+    subtitle: 'Paperwork checklist, gear lists, and digital Code of Conduct signer.',
+    render: renderPart4,
+    init: initPart4
   },
-  packing: {
-    title: 'Onboarding',
-    subtitle: 'Paperwork checklist, gear lists, and Code of Conduct signer.',
-    render: renderPacking,
-    init: initPacking
-  },
-  songs: {
-    title: 'Songbook & Comedy Class',
-    subtitle: 'Rousing logs songs, action cued lyrics, and comedy writing guides.',
-    render: renderSongs,
-    init: initSongs
-  },
-  quiz: {
-    title: 'Staff Handbook Quiz',
-    subtitle: 'Complete the training review to get Camp Lawton certified.',
-    render: renderQuiz,
-    init: initQuiz
-  },
-  application: {
-    title: 'Staff Application 2026',
-    subtitle: 'Apply to join the Catalina Council at Camp Lawton.',
-    render: renderApplication,
-    init: () => {}
+  admin: {
+    title: 'Admin Portal',
+    subtitle: 'Review candidate applications and manage staff onboarding credentials.',
+    render: renderAdmin,
+    init: initAdmin
   }
 };
 
@@ -198,6 +178,19 @@ function updateUserUI() {
   if (userAvatar) {
     userAvatar.textContent = state.username ? state.username.charAt(0).toUpperCase() : '?';
   }
+
+  // Update admin tab visibility
+  const adminNav = document.getElementById('nav-item-admin');
+  if (adminNav) {
+    const isAdmin = state.role === 'Camp Director' || state.role === 'Program Director';
+    adminNav.style.display = isAdmin ? 'block' : 'none';
+    
+    // Redirect if they lose admin status while viewing the admin panel
+    if (state.activeView === 'admin' && !isAdmin) {
+      navigateTo('dashboard');
+      return;
+    }
+  }
   
   const currentView = views[state.activeView];
   if (currentView && currentView.init) {
@@ -227,6 +220,9 @@ export function navigateTo(viewId) {
   
   state.activeView = viewId;
   
+  // Clear theme override by default (Camp Mode)
+  document.documentElement.removeAttribute('data-theme-mode');
+
   navItems.forEach(item => {
     if (item.getAttribute('data-view') === viewId) {
       item.classList.add('active');
@@ -248,12 +244,193 @@ export function navigateTo(viewId) {
   if (!document.startViewTransition) {
     updateDOM();
     viewTitle.focus();
+    applyGlossaryTooltips(viewMountPoint);
   } else {
     const transition = document.startViewTransition(updateDOM);
     transition.finished.finally(() => {
       viewTitle.focus();
+      applyGlossaryTooltips(viewMountPoint);
     });
   }
+}
+
+// ========================================================
+// GLOBAL HANDBOOK SEARCH INDEX
+// ========================================================
+const searchIndex = [
+  // Part 1: Pillars & Culture
+  { title: 'Core Pillars of Summer Camp', snippet: '🏃 Physical, 🧠 Mental, 🤝 Social, 🌌 Spiritual development areas.', viewId: 'part1', tabId: 'training', isSafety: false },
+  { title: 'The Aims of Scouting', snippet: 'Character Development, Citizenship Training, Personal Fitness, and Leadership.', viewId: 'part1', tabId: 'training', isSafety: false },
+  { title: 'The Methods of Scouting', snippet: 'Ideals, Patrol Method, Outdoor Programs, Advancement, Association with Adults...', viewId: 'part1', tabId: 'training', isSafety: false },
+  { title: 'What Makes a Staff? (4 Pillars)', snippet: 'Appearance, Attitude, Personality, and Knowledge guidelines.', viewId: 'part1', tabId: 'training', isSafety: false },
+  { title: 'Stress Management & Self-Care', snippet: 'Work the problem, Use your Siesta, sensory overload management, Tag Out, and adult support.', viewId: 'part1', tabId: 'training', isSafety: false },
+  { title: 'Camp Schedule & Sunday Arrival', snippet: 'Sunday sign-in, Staff meetings, Camper check-in, KP rosters and quiet hours.', viewId: 'part1', tabId: 'schedule', isSafety: false },
+  { title: 'Chain of Command & Leadership', snippet: 'Camp Leadership directory: Council Executives, Ranger, Program Director, Area Directors.', viewId: 'part1', tabId: 'orgchart', isSafety: false },
+  
+  // Part 2: Policies & Safety (Safety priority!)
+  { title: 'Code Blue — Missing Person Protocol', snippet: 'Gather Details (Name, Troop, Clothing, Location) and initiate Radio Alarm immediately.', viewId: 'part2', tabId: 'safety', isSafety: true },
+  { title: 'Code Brown — Bear Sighting Protocol', snippet: 'Remain calm, report to Ranger, keep distant visual. If attacked, yell and stand ground.', viewId: 'part2', tabId: 'safety', isSafety: true },
+  { title: 'Lightning Safety (30/30 Rule)', snippet: 'Cease outdoor programs immediately when thunder is <30s of flash. Evacuate to Dining Hall.', viewId: 'part2', tabId: 'safety', isSafety: true },
+  { title: 'Fire Evacuation & Reporting', snippet: 'Call 911/Radio Camp Office. Evacuate to Parade Grounds. Personal gear is secondary.', viewId: 'part2', tabId: 'safety', isSafety: true },
+  { title: 'Bell Alarm (Continuous Bell)', snippet: 'Secure area hazards, escort scouts to Parade Grounds, take headcount by troop.', viewId: 'part2', tabId: 'safety', isSafety: true },
+  { title: 'Armed Intruder / Active Shooter', snippet: 'Run (flee to woods), Hide (lock & barricade cabin), Fight (act with physical aggression).', viewId: 'part2', tabId: 'safety', isSafety: true },
+  { title: 'Mandatory Abuse Reporting (ARS 13-3620)', snippet: 'Arizona mandated reporting laws require direct report to DCS Hotline (1-888-SOS-CHILD).', viewId: 'part2', tabId: 'safety', isSafety: true },
+  { title: 'Heat Stress Diagnostics', snippet: 'Heat Exhaustion vs. Heatstroke symptoms and emergency shade/ice pack treatments.', viewId: 'part2', tabId: 'safety', isSafety: true },
+  { title: 'Camp Map & EAP Evacuation Drill', snippet: 'Interactive map and emergency alarm drill simulator.', viewId: 'part2', tabId: 'map', isSafety: true },
+  { title: 'Camp Rules (Phones, Fraternization, Media)', snippet: 'Guidelines on mobile phone usage, cabin rules, and age/role labor limits.', viewId: 'part2', tabId: 'safety', isSafety: false },
+  
+  // Part 3: Songbook & Comedy
+  { title: 'Campfire Songbook', snippet: 'Metronome Action Cue trainer. Songs: Funky, Alfalfa, Bananas, Birdie, Crazy, Drunken Camper.', viewId: 'part3', tabId: null, isSafety: false },
+  { title: 'Campfire Comedy Master Class', snippet: 'Skit writing guidelines: Concept, Base reality, One unusual thing, Stake escalation, Button closer.', viewId: 'part3', tabId: null, isSafety: false },
+
+  // Part 4: Onboarding
+  { title: 'Required Onboarding Paperwork', snippet: 'Application, Letter of Agreement, Medical Forms A, B, C, Vehicle Permit, I-9 forms.', viewId: 'part4', tabId: 'checklists', isSafety: false },
+  { title: 'Camp Packing List Assistant', snippet: 'Clothing, Gear, Optional, Privileged, and Prohibited item categories.', viewId: 'part4', tabId: 'checklists', isSafety: false },
+  { title: 'Code of Conduct Commitment Signer', snippet: 'Digital agreement form. Zero-tolerance policy on YPT, alcohol, drugs, weapons.', viewId: 'part4', tabId: 'conduct', isSafety: true },
+  { title: 'Handbook Quiz & Certification', snippet: '10-question training certification quiz on weather, safety, and reporting policies.', viewId: 'part4', tabId: 'quiz', isSafety: false },
+  { title: 'Staff Application 2026', snippet: 'Apply to join the Camp Lawton staff.', viewId: 'part4', tabId: 'apply', isSafety: false }
+];
+
+function escapeHtml(str) {
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+
+// ========================================================
+// TRANSLATOR TOOLTIPS SYSTEM
+// ========================================================
+const glossaryTerms = {
+  'KYBO': 'Keep Your Bowels Operating. Summer camp slang for the latrines / restrooms. Go ahead, use it in a sentence.',
+  'WAM': 'Water Appreciation Moment. Drink water immediately. No, seriously, do it now. 8,000 feet of elevation does not mess around.',
+  'The Logs': 'The logs/benches in front of the Dining Hall. The center of all camp music, rowdiness, and announcements.',
+  'Staff Hill': 'The housing area where the staff sleep, talk, and try to get a bar of cell signal. Off-limits to scouts.',
+  'Smellables': 'Scented items (deodorant, snacks, toothpaste) that attract bears. Keep them out of cabins, lock them in the Smellables Shed.',
+  'Code Blue': 'Missing Person / Lost Camper alarm. Immediately stops all normal operations. No jokes, find the kid.',
+  'Code Brown': 'Bear sighting. Ranger MaryLou and the Camp Director are on their way. Keep distance, look big.',
+  'WFA': 'Wilderness First Aid. The specialized training that teaches you what to do when you are hours away from an ambulance.'
+};
+
+let tooltipElement = null;
+
+function initGlossaryTooltipDOM() {
+  if (document.getElementById('global-glossary-tooltip')) return;
+  tooltipElement = document.createElement('div');
+  tooltipElement.id = 'global-glossary-tooltip';
+  tooltipElement.className = 'glossary-tooltip-bubble';
+  document.body.appendChild(tooltipElement);
+}
+
+function showTooltip(text, targetEl) {
+  if (!tooltipElement) initGlossaryTooltipDOM();
+  tooltipElement.textContent = text;
+  tooltipElement.classList.add('visible');
+
+  const rect = targetEl.getBoundingClientRect();
+  const tooltipWidth = tooltipElement.offsetWidth || 260;
+  const tooltipHeight = tooltipElement.offsetHeight || 80;
+
+  let left = rect.left + rect.width / 2 - tooltipWidth / 2;
+  let top = rect.top - tooltipHeight - 12;
+
+  if (left < 10) left = 10;
+  if (left + tooltipWidth > window.innerWidth - 10) {
+    left = window.innerWidth - tooltipWidth - 10;
+  }
+  if (top < 10) {
+    top = rect.bottom + 12;
+  }
+
+  tooltipElement.style.left = `${left}px`;
+  tooltipElement.style.top = `${top}px`;
+}
+
+function hideTooltip() {
+  if (tooltipElement) {
+    tooltipElement.classList.remove('visible');
+  }
+}
+
+function setupTooltipEvents(container) {
+  const terms = container.querySelectorAll('.glossary-term');
+  terms.forEach(el => {
+    const termKey = el.getAttribute('data-term');
+    const definition = glossaryTerms[termKey];
+    
+    if (definition) {
+      el.addEventListener('mouseenter', () => showTooltip(definition, el));
+      el.addEventListener('mouseleave', hideTooltip);
+
+      el.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        showTooltip(definition, el);
+      });
+      el.addEventListener('touchend', () => {
+        setTimeout(hideTooltip, 3000);
+      });
+    }
+  });
+}
+
+let tooltipObserver;
+
+function startTooltipObserver() {
+  const target = document.getElementById('view-mount-point');
+  if (!target) return;
+
+  tooltipObserver = new MutationObserver((mutations) => {
+    tooltipObserver.disconnect();
+    applyGlossaryTooltips(target);
+    connectObserver();
+  });
+
+  function connectObserver() {
+    tooltipObserver.observe(target, { childList: true, subtree: true });
+  }
+
+  connectObserver();
+}
+
+function applyGlossaryTooltips(container) {
+  if (!container) return;
+  const terms = Object.keys(glossaryTerms);
+  const regex = new RegExp(`\\b(${terms.map(t => escapeRegExp(t)).join('|')})\\b`, 'gi');
+
+  function walk(node) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      const parent = node.parentNode;
+      if (!parent) return;
+      const tag = parent.tagName.toLowerCase();
+      if (['script', 'style', 'button', 'input', 'textarea', 'select', 'option', 'a', 'dialog', 'h1', 'h2', 'h3', 'h4'].includes(tag)) {
+        return;
+      }
+      if (parent.closest('.glossary-term') || parent.closest('#global-search-dropdown') || parent.closest('.theme-toggle-btn') || parent.closest('.quick-helpline-bar')) {
+        return;
+      }
+
+      const text = node.nodeValue;
+      if (regex.test(text)) {
+        const span = document.createElement('span');
+        regex.lastIndex = 0;
+        span.innerHTML = text.replace(regex, (match) => {
+          const key = terms.find(t => t.toLowerCase() === match.toLowerCase()) || match;
+          return `<span class="glossary-term" data-term="${key}">${match}</span>`;
+        });
+        parent.replaceChild(span, node);
+      }
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      const tag = node.tagName.toLowerCase();
+      if (!['script', 'style', 'button', 'input', 'textarea', 'select', 'a', 'dialog', 'h1', 'h2', 'h3', 'h4'].includes(tag)) {
+        const children = Array.from(node.childNodes);
+        children.forEach(walk);
+      }
+    }
+  }
+
+  function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  walk(container);
+  setupTooltipEvents(container);
 }
 
 // Dialog Backdrop light-dismiss helper
@@ -502,6 +679,7 @@ document.addEventListener('DOMContentLoaded', () => {
   appDialogClose = document.getElementById('dialog-close');
 
   initTheme();
+  initAmbiance();
   updateUserUI();
   
   navigateTo('dashboard');
@@ -526,4 +704,100 @@ document.addEventListener('DOMContentLoaded', () => {
   
   setupDialogDismissFallbacks(appDialog);
   setupDialogDismissFallbacks(profileDialog);
+
+  // 1. Initialize global tooltip DOM
+  initGlossaryTooltipDOM();
+
+  // 2. Start glossary terms observer
+  startTooltipObserver();
+
+  // 3. Bind Search input
+  const searchInput = document.getElementById('global-search-input');
+  const searchDropdown = document.getElementById('global-search-dropdown');
+
+  if (searchInput && searchDropdown) {
+    searchInput.addEventListener('input', () => {
+      const query = searchInput.value.trim().toLowerCase();
+      if (!query) {
+        searchDropdown.style.display = 'none';
+        searchDropdown.innerHTML = '';
+        return;
+      }
+
+      // Filter and score matches
+      const matches = searchIndex.filter(item => {
+        return item.title.toLowerCase().includes(query) || item.snippet.toLowerCase().includes(query);
+      });
+
+      // Sort by safety priority
+      matches.sort((a, b) => {
+        if (a.isSafety && !b.isSafety) return -1;
+        if (!a.isSafety && b.isSafety) return 1;
+        return 0;
+      });
+
+      if (matches.length === 0) {
+        searchDropdown.innerHTML = `<div style="font-size: 13px; color: hsl(var(--muted-foreground)); padding: 12px; text-align: center; font-weight: 500;">No results found for "${escapeHtml(query)}"</div>`;
+        searchDropdown.style.display = 'block';
+        return;
+      }
+
+      searchDropdown.innerHTML = matches.map(item => `
+        <div class="search-result-item" data-view-id="${item.viewId}" data-tab-id="${item.tabId || ''}">
+          <span class="search-result-title">${escapeHtml(item.title)}</span>
+          <span class="search-result-snippet">${escapeHtml(item.snippet)}</span>
+          <span class="search-result-badge ${item.isSafety ? 'safety' : ''}">${item.isSafety ? '🚨 SAFETY' : '📖 GENERAL'}</span>
+        </div>
+      `).join('');
+
+      searchDropdown.style.display = 'block';
+
+      // Bind click on items
+      searchDropdown.querySelectorAll('.search-result-item').forEach(el => {
+        el.addEventListener('click', () => {
+          const viewId = el.getAttribute('data-view-id');
+          const tabId = el.getAttribute('data-tab-id');
+
+          // Reset search
+          searchInput.value = '';
+          searchDropdown.style.display = 'none';
+
+          // Set active sub-tab if exists
+          if (viewId === 'part1' && tabId) {
+            setPart1Tab(tabId);
+          } else if (viewId === 'part2' && tabId) {
+            setPart2Tab(tabId);
+          } else if (viewId === 'part4' && tabId) {
+            setPart4Tab(tabId);
+          }
+
+          // Navigate
+          navigateTo(viewId);
+        });
+      });
+    });
+
+    // Close search dropdown on click outside
+    document.addEventListener('click', (e) => {
+      if (!searchInput.contains(e.target) && !searchDropdown.contains(e.target)) {
+        searchDropdown.style.display = 'none';
+      }
+    });
+  }
+
+  // 4. Bind bottom Quick Access Bar Emergency button
+  const quickEmergencyBtn = document.getElementById('quick-emergency-btn');
+  if (quickEmergencyBtn) {
+    quickEmergencyBtn.addEventListener('click', () => {
+      setPart2Tab('safety');
+      navigateTo('part2');
+    });
+  }
+
+  // 5. Register Service Worker for PWA
+  if ('serviceWorker' in navigator) {
+    window.navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('Service Worker registered successfully:', reg.scope))
+      .catch(err => console.log('Service Worker registration failed:', err));
+  }
 });
