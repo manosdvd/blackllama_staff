@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/camp-logo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Camp Lawton — Staff Portal</title>
+    <!-- Meta tags for SEO -->
+    <meta name="description" content="Camp Lawton staff handbook training, schedules, EAP alarm simulator, safety guides, packing list, campfire metronome songbook, and code of conduct portal." />
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <!-- Canvas for confetti celebrations -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="app-container">
+      <!-- Sidebar Navigation -->
+      <aside class="sidebar">
+        <div class="logo-container">
+          <div class="logo-icon">L</div>
+          <span class="logo-text">Camp Lawton</span>
+        </div>
+
+        <ul class="nav-links">
+          <li class="nav-item active" data-view="dashboard">
+            <button id="nav-btn-dashboard" aria-label="Go to Dashboard">
+              <span class="nav-icon">📊</span> Dashboard
+            </button>
+          </li>
+          <li class="nav-item" data-view="training">
+            <button id="nav-btn-training" aria-label="Go to Training & Culture">
+              <span class="nav-icon">🎓</span> Training & Culture
+            </button>
+          </li>
+          <li class="nav-item" data-view="schedule">
+            <button id="nav-btn-schedule" aria-label="Go to Camp Schedule">
+              <span class="nav-icon">📅</span> Camp Schedule
+            </button>
+          </li>
+          <li class="nav-item" data-view="officemap">
+            <button id="nav-btn-officemap" aria-label="Go to Camp Map & EAP">
+              <span class="nav-icon">🗺️</span> Camp Map & EAP
+            </button>
+          </li>
+          <li class="nav-item" data-view="safetyguides">
+            <button id="nav-btn-safetyguides" aria-label="Go to Policies & Procedures">
+              <span class="nav-icon">🛡️</span> Policies & Procedures
+            </button>
+          </li>
+          <li class="nav-item" data-view="packing">
+            <button id="nav-btn-packing" aria-label="Go to Onboarding">
+              <span class="nav-icon">🎒</span> Onboarding
+            </button>
+          </li>
+          <li class="nav-item" data-view="songs">
+            <button id="nav-btn-songs" aria-label="Go to Songbook & Comedy">
+              <span class="nav-icon">🎵</span> Songbook & Comedy
+            </button>
+          </li>
+          <li class="nav-item" data-view="quiz">
+            <button id="nav-btn-quiz" aria-label="Go to Welcome Quiz">
+              <span class="nav-icon">🏆</span> Staff Quiz
+            </button>
+          </li>
+          <li class="nav-item" data-view="application">
+            <button id="nav-btn-application" aria-label="Go to Staff Application" style="color: hsl(var(--accent)); font-weight: 700;">
+              <span class="nav-icon">📝</span> Apply Now
+            </button>
+          </li>
+        </ul>
+
+        <div class="sidebar-footer">
+          <!-- Theme toggle button -->
+          <button class="theme-toggle-btn" id="theme-toggle" aria-label="Toggle Theme">
+            <span class="moon-icon">🌙 Dark Mode</span>
+            <span class="sun-icon">☀️ Light Mode</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- Main Shell Area -->
+      <main class="main-content">
+        <header class="content-header">
+          <div class="header-title-section">
+            <h1 class="view-heading" id="view-title">Dashboard</h1>
+            <p id="view-subtitle">Welcome to your digital onboarding portal.</p>
+          </div>
+
+          <!-- User Profile Badge -->
+          <div class="user-profile-badge" id="user-badge" aria-label="Edit Profile">
+            <div class="user-avatar-placeholder" id="user-avatar">?</div>
+            <span class="user-name-text" id="user-name-display">Alex</span>
+          </div>
+        </header>
+
+        <!-- Dynamic Content Mount Area -->
+        <section id="view-mount-point" class="view-mount-point">
+          <!-- Injected views go here -->
+        </section>
+      </main>
+    </div>
+
+    <!-- Reusable Dialog modal for detail view cards -->
+    <dialog id="app-dialog" closedby="any" aria-labelledby="dialog-title">
+      <div class="dialog-content">
+        <button class="dialog-close-btn" id="dialog-close" aria-label="Close dialog">✕</button>
+        <div id="dialog-mount-point">
+          <!-- Dynamic details content goes here -->
+        </div>
+      </div>
+    </dialog>
+
+    <!-- Dialog for editing user profile -->
+    <dialog id="profile-dialog" closedby="any" aria-labelledby="profile-dialog-title">
+      <div class="dialog-content">
+        <button class="dialog-close-btn" id="profile-dialog-close" aria-label="Close profile dialog">✕</button>
+        <h3 id="profile-dialog-title">Customize Profile</h3>
+        <div style="display: flex; flex-direction: column; gap: 14px; margin-top: 10px;">
+          <label for="profile-name-input" style="font-weight: 500; font-size: 14px;">Your Name</label>
+          <input type="text" id="profile-name-input" placeholder="Enter name" style="padding: 10px 14px; border: 1px solid hsl(var(--border)); border-radius: var(--radius-sm); font-size: 15px; width: 100%; background: var(--glass-bg); color: inherit;" />
+          <button id="profile-save-btn" class="welcome-banner-btn" style="width: 100%; padding: 12px; margin-top: 6px;">Save Changes</button>
+        </div>
+      </div>
+    </dialog>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
