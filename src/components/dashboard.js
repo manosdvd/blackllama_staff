@@ -9,12 +9,16 @@ const checklistTasks = [
 ];
 
 export function renderDashboard() {
+  const welcomeText = state.username 
+    ? `Welcome to the Mountain, <span id="dashboard-username">${state.username}</span>! 🌲`
+    : `Welcome to the Mountain! 🌲`;
+
   return `
     <div class="dashboard-grid">
       <!-- Welcome Banner -->
       <div class="welcome-banner-card">
         <div class="welcome-banner-text">
-          <h2>Welcome to the Mountain, <span id="dashboard-username">${state.username}</span>! 🌲</h2>
+          <h2>${welcomeText}</h2>
           <p>Congratulations on joining the Camp Lawton team! As Camp Staff, you are now part of a century-old legacy of shaping lives through the outdoor experience. Complete your readiness checks below to get set up for the summer.</p>
         </div>
         <button class="welcome-banner-btn" id="dashboard-explore-btn">Go to Camp Schedule</button>

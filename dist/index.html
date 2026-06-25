@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <script type="module" crossorigin src="/assets/index-D0-a7Ro4.js"></script>
+    <script type="module" crossorigin src="/assets/index-CzQV9FMI.js"></script>
     <link rel="stylesheet" crossorigin href="/assets/index-Hqzsyq0D.css">
   </head>
   <body>
@@ -94,7 +94,7 @@
           <!-- User Profile Badge -->
           <div class="user-profile-badge" id="user-badge" aria-label="Edit Profile">
             <div class="user-avatar-placeholder" id="user-avatar">?</div>
-            <span class="user-name-text" id="user-name-display">Alex</span>
+            <span class="user-name-text" id="user-name-display">Guest</span>
           </div>
         </header>
 
@@ -115,16 +115,10 @@
       </div>
     </dialog>
 
-    <!-- Dialog for editing user profile -->
-    <dialog id="profile-dialog" closedby="any" aria-labelledby="profile-dialog-title">
-      <div class="dialog-content">
-        <button class="dialog-close-btn" id="profile-dialog-close" aria-label="Close profile dialog">✕</button>
-        <h3 id="profile-dialog-title">Customize Profile</h3>
-        <div style="display: flex; flex-direction: column; gap: 14px; margin-top: 10px;">
-          <label for="profile-name-input" style="font-weight: 500; font-size: 14px;">Your Name</label>
-          <input type="text" id="profile-name-input" placeholder="Enter name" style="padding: 10px 14px; border: 1px solid hsl(var(--border)); border-radius: var(--radius-sm); font-size: 15px; width: 100%; background: var(--glass-bg); color: inherit;" />
-          <button id="profile-save-btn" class="welcome-banner-btn" style="width: 100%; padding: 12px; margin-top: 6px;">Save Changes</button>
-        </div>
+    <!-- Dialog for editing user profile / login / signup -->
+    <dialog id="profile-dialog" closedby="any">
+      <div class="dialog-content" id="profile-dialog-content">
+        <!-- Injected dynamically by main.js -->
       </div>
     </dialog>
 

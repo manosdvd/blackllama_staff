@@ -196,7 +196,7 @@ export function initQuiz() {
 
         <p class="quiz-complete-desc" style="max-width: 550px; font-size: 14.5px; color: hsl(var(--muted-foreground)); line-height: 1.5; margin-bottom: 20px;">
           ${isCertified 
-            ? `Excellent job, ${state.username}! You have proven a strong command of Camp Lawton safety rules, emergency alarm protocols, hydration, and mandatory Arizona state reporting laws. You are officially certified for summer staff!`
+            ? `Excellent job${state.username ? ', ' + state.username : ''}! You have proven a strong command of Camp Lawton safety rules, emergency alarm protocols, hydration, and mandatory Arizona state reporting laws. You are officially certified for summer staff!`
             : `You need at least 80% (8 out of 10 correct) to earn your Camp Lawton certification badge. Review the safety guides, schedule details, and the study review board below, then try again!`
           }
         </p>

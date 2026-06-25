@@ -239,11 +239,45 @@ export function initPacking() {
 
   // Code signer sync
   function syncSignerStatus() {
+    if (!state.username) {
+      if (inputsPanel) inputsPanel.style.display = 'none';
+      if (successPanel) {
+        successPanel.style.display = 'flex';
+        successPanel.style.borderColor = 'hsl(var(--warning))';
+        successPanel.style.background = 'hsl(var(--warning) / 0.1)';
+        successPanel.innerHTML = `
+          <h4 style="color: hsl(var(--warning)); font-weight: 800; font-family: var(--font-heading); margin-bottom: 6px;">🔒 Log In Required</h4>
+          <p style="font-size: 13px; line-height: 1.4; margin-bottom: 10px;">
+            Please log in or create a staff account to digitally sign the Code of Conduct commitment sheet.
+          </p>
+          <button class="welcome-banner-btn" style="align-self: center; padding: 6px 14px; font-size: 12.5px;" id="conduct-login-prompt-btn">Log In / Sign Up</button>
+        `;
+        document.getElementById('conduct-login-prompt-btn').addEventListener('click', () => {
+          document.getElementById('user-badge').click();
+        });
+      }
+      return;
+    }
+
     if (state.signedConduct) {
       if (inputsPanel) inputsPanel.style.display = 'none';
       if (successPanel) {
         successPanel.style.display = 'flex';
-        signedNameVal.textContent = state.username;
+        successPanel.style.borderColor = 'hsl(var(--success))';
+        successPanel.style.background = 'hsl(var(--success-light) / 0.15)';
+        successPanel.innerHTML = `
+          <h4 style="color: hsl(var(--success)); font-weight: 800; font-family: var(--font-heading); margin-bottom: 6px;">✓ Digital Commitment Signed</h4>
+          <p style="font-size: 13px; line-height: 1.4; margin-bottom: 10px;">
+            Thank you, <strong id="signed-name-val">${state.username}</strong>! Your signed Code of Conduct is on file. This task has been marked complete on your readiness checklist.
+          </p>
+          <button class="quiz-restart-btn" style="align-self: center; padding: 6px 14px; font-size: 12.5px;" id="conduct-unsign-btn">Unsign / Reset Form</button>
+        `;
+        document.getElementById('conduct-unsign-btn').addEventListener('click', () => {
+          state.setSignedConduct(false);
+          if (conductSig) conductSig.value = '';
+          if (conductAgree) conductAgree.checked = false;
+          syncSignerStatus();
+        });
       }
     } else {
       if (inputsPanel) inputsPanel.style.display = 'flex';
@@ -274,15 +308,6 @@ export function initPacking() {
       }
 
       state.setSignedConduct(true);
-      syncSignerStatus();
-    });
-  }
-
-  if (conductUnsignBtn) {
-    conductUnsignBtn.addEventListener('click', () => {
-      state.setSignedConduct(false);
-      if (conductSig) conductSig.value = '';
-      if (conductAgree) conductAgree.checked = false;
       syncSignerStatus();
     });
   }
