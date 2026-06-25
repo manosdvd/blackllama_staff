@@ -12,6 +12,7 @@
     "vite": "latest"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.108.2",
     "canvas-confetti": "^1.9.4"
   }
 }

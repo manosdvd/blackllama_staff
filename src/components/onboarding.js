@@ -1,8 +1,9 @@
 import { renderPacking, initPacking } from './packing.js';
 import { renderQuiz, initQuiz } from './quiz.js';
 import { render as renderApplication } from './application.js';
+import { renderReadiness, initReadiness } from './readiness.js';
 
-export let activeOnboardingTab = 'checklists'; // 'checklists', 'conduct', 'quiz', 'apply'
+export let activeOnboardingTab = 'readiness'; // 'readiness', 'checklists', 'conduct', 'quiz', 'apply'
 export function setOnboardingTab(tab) {
   activeOnboardingTab = tab;
 }
@@ -12,7 +13,8 @@ export function renderOnboarding() {
     <div style="display: flex; flex-direction: column; gap: 24px; width: 100%;">
       <!-- Tab Selector -->
       <div class="schedule-tabs-container">
-        <button class="schedule-tab-btn ${activeOnboardingTab === 'checklists' ? 'active' : ''}" data-tab="checklists">🎒 Checklists & Gear</button>
+        <button class="schedule-tab-btn ${activeOnboardingTab === 'readiness' ? 'active' : ''}" data-tab="readiness">✅ Readiness</button>
+        <button class="schedule-tab-btn ${activeOnboardingTab === 'checklists' ? 'active' : ''}" data-tab="checklists">🎒 Gear & Docs</button>
         <button class="schedule-tab-btn ${activeOnboardingTab === 'conduct' ? 'active' : ''}" data-tab="conduct">✍️ Code of Conduct</button>
         <button class="schedule-tab-btn ${activeOnboardingTab === 'quiz' ? 'active' : ''}" data-tab="quiz">🏆 Handbook Quiz</button>
         <button class="schedule-tab-btn ${activeOnboardingTab === 'apply' ? 'active' : ''}" data-tab="apply">📝 Apply Now</button>
@@ -56,7 +58,10 @@ export function initOnboarding() {
   window.dispatchEvent(new CustomEvent('before-view-change'));
 
   // Render and Init subtab
-  if (activeOnboardingTab === 'checklists') {
+  if (activeOnboardingTab === 'readiness') {
+    subtabMount.innerHTML = renderReadiness();
+    initReadiness();
+  } else if (activeOnboardingTab === 'checklists') {
     subtabMount.innerHTML = renderPacking();
     initPacking();
     // Hide conduct signer

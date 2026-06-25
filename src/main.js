@@ -74,7 +74,9 @@ export const state = {
     }
     this.completedTasks = JSON.parse(localStorage.getItem(`lawton_tasks_${username}`)) || [];
     this.signedConduct = localStorage.getItem(`lawton_conduct_${username}`) === 'true';
-    this.role = localStorage.getItem(`lawton_role_${username}`) || 'Staff';
+    // Role now comes from AuthService cache, not a separate localStorage key
+    const currentUser = AuthService.getCurrentUser();
+    this.role = currentUser?.role || 'Staff';
   },
 
   logout() {
@@ -174,6 +176,19 @@ function updateUserUI() {
     
     // Redirect if they lose admin status while viewing the admin panel
     if (state.activeView === 'admin' && !isAdmin) {
+      navigateTo('dashboard');
+      return;
+    }
+  }
+
+  // Update onboarding tab visibility
+  const onboardingNav = document.getElementById('nav-item-onboarding');
+  if (onboardingNav) {
+    const isLoggedIn = !!state.username;
+    onboardingNav.style.display = isLoggedIn ? 'block' : 'none';
+    
+    // Redirect if they log out while viewing the onboarding panel
+    if (state.activeView === 'onboarding' && !isLoggedIn) {
       navigateTo('dashboard');
       return;
     }
@@ -486,6 +501,7 @@ function renderProfileModalContent(errorMsg = '') {
           <div style="display: flex; flex-direction: column; gap: 6px;">
             <label for="signup-role" style="font-size: 14px; font-weight: 500;">Camp Program Area / Role</label>
             <select id="signup-role" style="padding: 10px 14px; border: 1px solid hsl(var(--border)); border-radius: var(--radius-sm); font-size: 15px; background: var(--glass-bg); color: hsl(var(--foreground)); width: 100%;">
+              <option value="Candidate">Candidate (Applicant)</option>
               <option value="Staff">General Staff</option>
               <option value="Scoutcraft">Scoutcraft Instructor</option>
               <option value="Nature">Nature / Ecology Instructor</option>
@@ -612,7 +628,7 @@ async function handleSignupSubmit() {
 
   try {
     await AuthService.register(username, password, role);
-    await AuthService.login(username, password);
+    // register() now also signs in, so just sync state
     state.syncUser();
     profileDialog.close();
   } catch (err) {
@@ -641,6 +657,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   initTheme();
   initAmbiance();
+
+  // Validate session server-side on load (async — updates cache silently)
+  AuthService.validateSession().then(user => {
+    if (user) {
+      state.syncUser();
+    }
+  }).catch(() => {
+    // Session invalid — already cleared by validateSession
+  });
+
   updateUserUI();
   
   navigateTo('dashboard');

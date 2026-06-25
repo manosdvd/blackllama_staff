@@ -1,114 +1,111 @@
-import { usersDB } from './db.js';
+/**
+ * AuthService — Camp Lawton Staff Portal
+ *
+ * Replaces the previous localStorage-only implementation with
+ * calls to the Netlify Functions backend backed by Supabase Auth.
+ *
+ * Session storage strategy:
+ *   - Access token  → localStorage('lawton_access_token')    [short-lived JWT]
+ *   - Refresh token → localStorage('lawton_refresh_token')   [long-lived]
+ *   - User profile  → localStorage('lawton_user_cache')      [cached for instant UI]
+ *
+ * The cache is validated against the server on every page load via auth-me.
+ */
+import { api } from './apiClient.js';
 
-function str2ab(str) {
-  return new TextEncoder().encode(str);
-}
-
-function ab2hex(buffer) {
-  return Array.from(new Uint8Array(buffer))
-    .map(b => b.toString(16).padStart(2, '0'))
-    .join('');
-}
-
-async function hashPassword(password, salt) {
-  const keyMaterial = await window.crypto.subtle.importKey(
-    'raw', str2ab(password), { name: 'PBKDF2' }, false, ['deriveBits', 'deriveKey']
-  );
-  
-  const derivedBits = await window.crypto.subtle.deriveBits(
-    {
-      name: 'PBKDF2',
-      salt: str2ab(salt),
-      iterations: 100000,
-      hash: 'SHA-256'
-    },
-    keyMaterial,
-    256
-  );
-  
-  return ab2hex(derivedBits);
-}
-
-function generateSalt() {
-  return crypto.randomUUID();
-}
+const TOKEN_KEY = 'lawton_access_token';
+const REFRESH_KEY = 'lawton_refresh_token';
+const USER_CACHE_KEY = 'lawton_user_cache';
+const EXPIRES_KEY = 'lawton_token_expires';
 
 export class AuthService {
-  static async register(username, plainPassword, role = 'Staff') {
-    const normalizedUsername = username.trim().toLowerCase();
-    
-    if (usersDB.findOne(u => u.normalizedUsername === normalizedUsername)) {
-      throw new Error('Username already exists');
-    }
-
-    const salt = generateSalt();
-    const hashedPassword = await hashPassword(plainPassword, salt);
-
-    const newUser = usersDB.create({
-      username: username.trim(),
-      normalizedUsername,
-      passwordHash: hashedPassword,
-      salt: salt,
-      role: role,
-      status: 'active'
-    });
-
-    return { id: newUser.id, username: newUser.username, role: newUser.role };
+  /** Register a new user account */
+  static async register(username, plainPassword, role = 'Candidate') {
+    const data = await api.register(username, plainPassword, role);
+    AuthService._saveSession(data.session, data.user);
+    return data.user;
   }
 
+  /** Log in with username + password */
   static async login(username, plainPassword) {
-    const normalizedUsername = username.trim().toLowerCase();
-    const user = usersDB.findOne(u => u.normalizedUsername === normalizedUsername);
+    const data = await api.login(username, plainPassword);
+    AuthService._saveSession(data.session, data.user);
+    return data.user;
+  }
 
-    if (!user) throw new Error('Invalid username or password');
-    if (user.status === 'inactive') throw new Error('Account deactivated by admin');
+  /** Log out — clears all session data */
+  static logout() {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(REFRESH_KEY);
+    localStorage.removeItem(USER_CACHE_KEY);
+    localStorage.removeItem(EXPIRES_KEY);
+  }
 
-    const testHash = await hashPassword(plainPassword, user.salt);
-    if (testHash !== user.passwordHash) {
-      throw new Error('Invalid username or password');
+  /**
+   * Returns the currently cached user profile synchronously.
+   * Returns null if not logged in or session has expired.
+   * For a guaranteed-fresh result, use validateSession() instead.
+   */
+  static getCurrentUser() {
+    const token = localStorage.getItem(TOKEN_KEY);
+    if (!token) return null;
+
+    const expiresAt = parseInt(localStorage.getItem(EXPIRES_KEY) || '0');
+    if (Date.now() / 1000 > expiresAt) {
+      AuthService.logout();
+      return null;
     }
 
-    const sessionToken = btoa(JSON.stringify({ id: user.id, username: user.username, role: user.role, exp: Date.now() + 86400000 }));
-    localStorage.setItem('lawton_session', sessionToken);
-    
-    return this.getCurrentUser();
-  }
+    const cached = localStorage.getItem(USER_CACHE_KEY);
+    if (!cached) return null;
 
-  static logout() {
-    localStorage.removeItem('lawton_session');
-  }
-
-  static getCurrentUser() {
-    const token = localStorage.getItem('lawton_session');
-    if (!token) return null;
     try {
-      const payload = JSON.parse(atob(token));
-      if (payload.exp < Date.now()) {
-        this.logout();
-        return null;
-      }
-      const dbUser = usersDB.findOne(u => u.id === payload.id);
-      if (!dbUser || dbUser.status === 'inactive') {
-        this.logout();
-        return null;
-      }
-      return { id: dbUser.id, username: dbUser.username, role: dbUser.role };
-    } catch (e) {
-      this.logout();
+      return JSON.parse(cached);
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Validates the session against the server and refreshes the cached profile.
+   * Call this on page load. Returns user or null.
+   */
+  static async validateSession() {
+    const token = localStorage.getItem(TOKEN_KEY);
+    if (!token) return null;
+
+    try {
+      const data = await api.me();
+      // Update cache with fresh profile data
+      localStorage.setItem(USER_CACHE_KEY, JSON.stringify(data.user));
+      return data.user;
+    } catch {
+      // Token invalid/expired — clear session
+      AuthService.logout();
       return null;
     }
   }
 
   static isAdmin() {
-    const user = this.getCurrentUser();
-    if (!user) return false;
-    // Map legacy roles to admin
-    return ['Admin', 'Camp Director', 'Program Director'].includes(user.role);
+    const user = AuthService.getCurrentUser();
+    return ['Admin', 'Camp Director', 'Program Director'].includes(user?.role);
+  }
+
+  static isLoggedIn() {
+    return AuthService.getCurrentUser() !== null;
   }
 
   static requireAdmin() {
-    if (!this.isAdmin()) {
+    if (!AuthService.isAdmin()) {
       throw new Error('Insufficient permissions');
     }
+  }
+
+  /** Internal: persist session tokens and user cache */
+  static _saveSession(session, user) {
+    localStorage.setItem(TOKEN_KEY, session.access_token);
+    localStorage.setItem(REFRESH_KEY, session.refresh_token);
+    localStorage.setItem(EXPIRES_KEY, String(session.expires_at));
+    localStorage.setItem(USER_CACHE_KEY, JSON.stringify(user));
   }
 }
