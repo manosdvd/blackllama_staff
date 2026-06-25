@@ -89,11 +89,11 @@ function renderStep(container) {
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
           <select id="shirtSize" style="padding: 10px; border-radius: var(--radius-sm); border: 1px solid hsl(var(--border)); background: var(--glass-bg); color: hsl(var(--foreground));">
             <option value="">T-Shirt Size...</option>
-            ${['S','M','L','XL','2XL','3XL'].map(s => \`<option value="\${s}" \${formData.shirtSize === s ? 'selected' : ''}>\${s}</option>\`).join('')}
+            ${['S','M','L','XL','2XL','3XL'].map(s => `<option value="${s}" ${formData.shirtSize === s ? 'selected' : ''}>${s}</option>`).join('')}
           </select>
           <select id="jacketSize" style="padding: 10px; border-radius: var(--radius-sm); border: 1px solid hsl(var(--border)); background: var(--glass-bg); color: hsl(var(--foreground));">
             <option value="">Jacket Size...</option>
-            ${['S','M','L','XL','2XL','3XL'].map(s => \`<option value="\${s}" \${formData.jacketSize === s ? 'selected' : ''}>\${s}</option>\`).join('')}
+            ${['S','M','L','XL','2XL','3XL'].map(s => `<option value="${s}" ${formData.jacketSize === s ? 'selected' : ''}>${s}</option>`).join('')}
           </select>
         </div>
       `;
