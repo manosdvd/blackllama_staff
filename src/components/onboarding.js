@@ -1,70 +1,79 @@
-import { onboardingRoadmap } from '../data/handbookData.js';
+import { renderPacking, initPacking } from './packing.js';
+import { renderQuiz, initQuiz } from './quiz.js';
+import { render as renderApplication } from './application.js';
+
+export let activeOnboardingTab = 'checklists'; // 'checklists', 'conduct', 'quiz', 'apply'
+export function setOnboardingTab(tab) {
+  activeOnboardingTab = tab;
+}
 
 export function renderOnboarding() {
-  const nodesHtml = onboardingRoadmap.map((milestone, idx) => {
-    const tasksHtml = milestone.tasks.map(task => {
-      return `
-        <div class="timeline-task-item">
-          <span class="timeline-task-bullet">•</span>
-          <div style="display: flex; flex-direction: column; gap: 2px;">
-            <span>${task.text}</span>
-            <div>
-              <span class="timeline-task-badge ${task.required ? 'required' : 'recommended'}">
-                ${task.required ? 'Required' : 'Recommended'}
-              </span>
-            </div>
-          </div>
-        </div>
-      `;
-    }).join('');
-
-    return `
-      <div class="timeline-node" style="animation: timelineCardFadeIn 0.5s ease-out both; animation-delay: ${idx * 0.1}s;">
-        <!-- Timeline Dot Marker -->
-        <div class="timeline-node-marker"></div>
-
-        <!-- Content Card -->
-        <div class="glass-panel timeline-card">
-          <div class="timeline-card-header">
-            <div class="timeline-icon">${milestone.icon}</div>
-            <div class="timeline-header-text">
-              <h3>${milestone.title}</h3>
-              <p>${milestone.description}</p>
-            </div>
-          </div>
-
-          <div class="timeline-tasks-list">
-            ${tasksHtml}
-          </div>
-        </div>
-      </div>
-    `;
-  }).join('');
-
   return `
-    <div style="display: flex; flex-direction: column; gap: 20px;">
-      <p style="color: hsl(var(--muted-foreground)); font-size: 15px; max-width: 700px; line-height: 1.5;">
-        Your onboarding milestones are designed to support your growth, system access, and project delivery targets. Explore the checkpoints below to understand what to focus on during your first months.
-      </p>
-      
-      <div class="timeline-container">
-        <!-- Vertical connector line -->
-        <div class="timeline-line"></div>
-        ${nodesHtml}
+    <div style="display: flex; flex-direction: column; gap: 24px; width: 100%;">
+      <!-- Tab Selector -->
+      <div class="schedule-tabs-container">
+        <button class="schedule-tab-btn ${activeOnboardingTab === 'checklists' ? 'active' : ''}" data-tab="checklists">🎒 Checklists & Gear</button>
+        <button class="schedule-tab-btn ${activeOnboardingTab === 'conduct' ? 'active' : ''}" data-tab="conduct">✍️ Code of Conduct</button>
+        <button class="schedule-tab-btn ${activeOnboardingTab === 'quiz' ? 'active' : ''}" data-tab="quiz">🏆 Handbook Quiz</button>
+        <button class="schedule-tab-btn ${activeOnboardingTab === 'apply' ? 'active' : ''}" data-tab="apply">📝 Apply Now</button>
+      </div>
+
+      <!-- Mount point for sub tabs -->
+      <div id="onboarding-subtab-mount">
+        <!-- Rendered dynamically -->
       </div>
     </div>
+  `;
+}
 
-    <style>
-      @keyframes timelineCardFadeIn {
-        from {
-          opacity: 0;
-          transform: translateX(12px);
-        }
-        to {
-          opacity: 1;
-          transform: translateX(0);
+export function initOnboarding() {
+  // Toggle Code Red Mode if Code of Conduct tab is active
+  if (activeOnboardingTab === 'conduct') {
+    document.documentElement.setAttribute('data-theme-mode', 'code-red');
+  } else {
+    document.documentElement.removeAttribute('data-theme-mode');
+  }
+
+  const tabs = document.querySelectorAll('[data-tab]');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const tabName = tab.getAttribute('data-tab');
+      if (tabName) {
+        activeOnboardingTab = tabName;
+        const mount = document.getElementById('view-mount-point');
+        if (mount) {
+          mount.innerHTML = renderOnboarding();
+          initOnboarding();
         }
       }
-    </style>
-  `;
+    });
+  });
+
+  const subtabMount = document.getElementById('onboarding-subtab-mount');
+  if (!subtabMount) return;
+
+  // Clean up previous listeners
+  window.dispatchEvent(new CustomEvent('before-view-change'));
+
+  // Render and Init subtab
+  if (activeOnboardingTab === 'checklists') {
+    subtabMount.innerHTML = renderPacking();
+    initPacking();
+    // Hide conduct signer
+    const conductPanel = document.querySelector('.conduct-panel');
+    if (conductPanel) conductPanel.style.display = 'none';
+  } else if (activeOnboardingTab === 'conduct') {
+    subtabMount.innerHTML = renderPacking();
+    initPacking();
+    // Hide checklists & gear
+    const paperworkPanel = document.querySelector('.paperwork-panel');
+    const packingPanel = document.querySelector('.packing-panel');
+    if (paperworkPanel) paperworkPanel.style.display = 'none';
+    if (packingPanel) packingPanel.style.display = 'none';
+  } else if (activeOnboardingTab === 'quiz') {
+    subtabMount.innerHTML = renderQuiz();
+    initQuiz();
+  } else if (activeOnboardingTab === 'apply') {
+    renderApplication(subtabMount);
+  }
 }

@@ -2,10 +2,11 @@ import './style.css';
 
 // Import View Components
 import { renderDashboard, initDashboard } from './components/dashboard.js';
-import { renderPart1, initPart1, setPart1Tab } from './components/part1.js';
-import { renderPart2, initPart2, setPart2Tab } from './components/part2.js';
-import { renderPart3, initPart3 } from './components/part3.js';
-import { renderPart4, initPart4, setPart4Tab } from './components/part4.js';
+import { renderCampLawton, initCampLawton, setCampLawtonTab } from './components/camplawton.js';
+import { renderTraining, initTraining } from './components/training.js';
+import { renderPolicies, initPolicies, setPoliciesTab } from './components/policies.js';
+import { renderSongbook, initSongbook } from './components/songbook.js';
+import { renderOnboarding, initOnboarding, setOnboardingTab } from './components/onboarding.js';
 import { renderAdmin, initAdmin } from './components/admin.js';
 import { initAmbiance } from './components/ambiance.js';
 import { AuthService } from './services/auth.js';
@@ -99,29 +100,35 @@ const views = {
     render: renderDashboard,
     init: initDashboard
   },
-  part1: {
-    title: 'Part 1: Culture & Training',
-    subtitle: 'Camp Lawton pillars, scouting methods, and program controls.',
-    render: renderPart1,
-    init: initPart1
+  camplawton: {
+    title: 'Camp Lawton',
+    subtitle: 'History, pillars, schedule, and values.',
+    render: renderCampLawton,
+    init: initCampLawton
   },
-  part2: {
-    title: 'Part 2: Policies & Safety',
+  training: {
+    title: 'Training',
+    subtitle: 'Training modules and EDGE method.',
+    render: renderTraining,
+    init: initTraining
+  },
+  policies: {
+    title: 'Policies & Safety',
     subtitle: 'Emergency flowcharts, radio simulator, EAP drills, and legal guidelines.',
-    render: renderPart2,
-    init: initPart2
+    render: renderPolicies,
+    init: initPolicies
   },
-  part3: {
-    title: 'Part 3: Songbook & Comedy',
+  songbook: {
+    title: 'Songbook & Comedy',
     subtitle: 'Rousing logs songs, action cued metronome lyrics, and comedy writing guides.',
-    render: renderPart3,
-    init: initPart3
+    render: renderSongbook,
+    init: initSongbook
   },
-  part4: {
-    title: 'Part 4: Onboarding',
+  onboarding: {
+    title: 'Onboarding',
     subtitle: 'Paperwork checklist, gear lists, and digital Code of Conduct signer.',
-    render: renderPart4,
-    init: initPart4
+    render: renderOnboarding,
+    init: initOnboarding
   },
   admin: {
     title: 'Admin Portal',
@@ -239,36 +246,36 @@ export function navigateTo(viewId) {
 // ========================================================
 const searchIndex = [
   // Part 1: Pillars & Culture
-  { title: 'Core Pillars of Summer Camp', snippet: '🏃 Physical, 🧠 Mental, 🤝 Social, 🌌 Spiritual development areas.', viewId: 'part1', tabId: 'training', isSafety: false },
-  { title: 'The Aims of Scouting', snippet: 'Character Development, Citizenship Training, Personal Fitness, and Leadership.', viewId: 'part1', tabId: 'training', isSafety: false },
-  { title: 'The Methods of Scouting', snippet: 'Ideals, Patrol Method, Outdoor Programs, Advancement, Association with Adults...', viewId: 'part1', tabId: 'training', isSafety: false },
-  { title: 'What Makes a Staff? (4 Pillars)', snippet: 'Appearance, Attitude, Personality, and Knowledge guidelines.', viewId: 'part1', tabId: 'training', isSafety: false },
-  { title: 'Stress Management & Self-Care', snippet: 'Work the problem, Use your Siesta, sensory overload management, Tag Out, and adult support.', viewId: 'part1', tabId: 'training', isSafety: false },
-  { title: 'Camp Schedule & Sunday Arrival', snippet: 'Sunday sign-in, Staff meetings, Camper check-in, KP rosters and quiet hours.', viewId: 'part1', tabId: 'schedule', isSafety: false },
-  { title: 'Chain of Command & Leadership', snippet: 'Camp Leadership directory: Council Executives, Ranger, Program Director, Area Directors.', viewId: 'part1', tabId: 'orgchart', isSafety: false },
+  { title: 'Core Pillars of Summer Camp', snippet: '🏃 Physical, 🧠 Mental, 🤝 Social, 🌌 Spiritual development areas.', viewId: 'training', tabId: null, isSafety: false },
+  { title: 'The Aims of Scouting', snippet: 'Character Development, Citizenship Training, Personal Fitness, and Leadership.', viewId: 'training', tabId: null, isSafety: false },
+  { title: 'The Methods of Scouting', snippet: 'Ideals, Patrol Method, Outdoor Programs, Advancement, Association with Adults...', viewId: 'training', tabId: null, isSafety: false },
+  { title: 'What Makes a Staff? (4 Pillars)', snippet: 'Appearance, Attitude, Personality, and Knowledge guidelines.', viewId: 'training', tabId: null, isSafety: false },
+  { title: 'Stress Management & Self-Care', snippet: 'Work the problem, Use your Siesta, sensory overload management, Tag Out, and adult support.', viewId: 'training', tabId: null, isSafety: false },
+  { title: 'Camp Schedule & Sunday Arrival', snippet: 'Sunday sign-in, Staff meetings, Camper check-in, KP rosters and quiet hours.', viewId: 'camplawton', tabId: 'schedule', isSafety: false },
+  { title: 'Chain of Command & Leadership', snippet: 'Camp Leadership directory: Council Executives, Ranger, Program Director, Area Directors.', viewId: 'camplawton', tabId: 'orgchart', isSafety: false },
   
   // Part 2: Policies & Safety (Safety priority!)
-  { title: 'Code Blue — Missing Person Protocol', snippet: 'Gather Details (Name, Troop, Clothing, Location) and initiate Radio Alarm immediately.', viewId: 'part2', tabId: 'safety', isSafety: true },
-  { title: 'Code Brown — Bear Sighting Protocol', snippet: 'Remain calm, report to Ranger, keep distant visual. If attacked, yell and stand ground.', viewId: 'part2', tabId: 'safety', isSafety: true },
-  { title: 'Lightning Safety (30/30 Rule)', snippet: 'Cease outdoor programs immediately when thunder is <30s of flash. Evacuate to Dining Hall.', viewId: 'part2', tabId: 'safety', isSafety: true },
-  { title: 'Fire Evacuation & Reporting', snippet: 'Call 911/Radio Camp Office. Evacuate to Parade Grounds. Personal gear is secondary.', viewId: 'part2', tabId: 'safety', isSafety: true },
-  { title: 'Bell Alarm (Continuous Bell)', snippet: 'Secure area hazards, escort scouts to Parade Grounds, take headcount by troop.', viewId: 'part2', tabId: 'safety', isSafety: true },
-  { title: 'Armed Intruder / Active Shooter', snippet: 'Run (flee to woods), Hide (lock & barricade cabin), Fight (act with physical aggression).', viewId: 'part2', tabId: 'safety', isSafety: true },
-  { title: 'Mandatory Abuse Reporting (ARS 13-3620)', snippet: 'Arizona mandated reporting laws require direct report to DCS Hotline (1-888-SOS-CHILD).', viewId: 'part2', tabId: 'safety', isSafety: true },
-  { title: 'Heat Stress Diagnostics', snippet: 'Heat Exhaustion vs. Heatstroke symptoms and emergency shade/ice pack treatments.', viewId: 'part2', tabId: 'safety', isSafety: true },
-  { title: 'Camp Map & EAP Evacuation Drill', snippet: 'Interactive map and emergency alarm drill simulator.', viewId: 'part2', tabId: 'map', isSafety: true },
-  { title: 'Camp Rules (Phones, Fraternization, Media)', snippet: 'Guidelines on mobile phone usage, cabin rules, and age/role labor limits.', viewId: 'part2', tabId: 'safety', isSafety: false },
+  { title: 'Code Blue — Missing Person Protocol', snippet: 'Gather Details (Name, Troop, Clothing, Location) and initiate Radio Alarm immediately.', viewId: 'policies', tabId: 'safety', isSafety: true },
+  { title: 'Code Brown — Bear Sighting Protocol', snippet: 'Remain calm, report to Ranger, keep distant visual. If attacked, yell and stand ground.', viewId: 'policies', tabId: 'safety', isSafety: true },
+  { title: 'Lightning Safety (30/30 Rule)', snippet: 'Cease outdoor programs immediately when thunder is <30s of flash. Evacuate to Dining Hall.', viewId: 'policies', tabId: 'safety', isSafety: true },
+  { title: 'Fire Evacuation & Reporting', snippet: 'Call 911/Radio Camp Office. Evacuate to Parade Grounds. Personal gear is secondary.', viewId: 'policies', tabId: 'safety', isSafety: true },
+  { title: 'Bell Alarm (Continuous Bell)', snippet: 'Secure area hazards, escort scouts to Parade Grounds, take headcount by troop.', viewId: 'policies', tabId: 'safety', isSafety: true },
+  { title: 'Armed Intruder / Active Shooter', snippet: 'Run (flee to woods), Hide (lock & barricade cabin), Fight (act with physical aggression).', viewId: 'policies', tabId: 'safety', isSafety: true },
+  { title: 'Mandatory Abuse Reporting (ARS 13-3620)', snippet: 'Arizona mandated reporting laws require direct report to DCS Hotline (1-888-SOS-CHILD).', viewId: 'policies', tabId: 'safety', isSafety: true },
+  { title: 'Heat Stress Diagnostics', snippet: 'Heat Exhaustion vs. Heatstroke symptoms and emergency shade/ice pack treatments.', viewId: 'policies', tabId: 'safety', isSafety: true },
+  { title: 'Camp Map & EAP Evacuation Drill', snippet: 'Interactive map and emergency alarm drill simulator.', viewId: 'policies', tabId: 'map', isSafety: true },
+  { title: 'Camp Rules (Phones, Fraternization, Media)', snippet: 'Guidelines on mobile phone usage, cabin rules, and age/role labor limits.', viewId: 'policies', tabId: 'safety', isSafety: false },
   
   // Part 3: Songbook & Comedy
-  { title: 'Campfire Songbook', snippet: 'Metronome Action Cue trainer. Songs: Funky, Alfalfa, Bananas, Birdie, Crazy, Drunken Camper.', viewId: 'part3', tabId: null, isSafety: false },
-  { title: 'Campfire Comedy Master Class', snippet: 'Skit writing guidelines: Concept, Base reality, One unusual thing, Stake escalation, Button closer.', viewId: 'part3', tabId: null, isSafety: false },
+  { title: 'Campfire Songbook', snippet: 'Metronome Action Cue trainer. Songs: Funky, Alfalfa, Bananas, Birdie, Crazy, Drunken Camper.', viewId: 'songbook', tabId: null, isSafety: false },
+  { title: 'Campfire Comedy Master Class', snippet: 'Skit writing guidelines: Concept, Base reality, One unusual thing, Stake escalation, Button closer.', viewId: 'songbook', tabId: null, isSafety: false },
 
   // Part 4: Onboarding
-  { title: 'Required Onboarding Paperwork', snippet: 'Application, Letter of Agreement, Medical Forms A, B, C, Vehicle Permit, I-9 forms.', viewId: 'part4', tabId: 'checklists', isSafety: false },
-  { title: 'Camp Packing List Assistant', snippet: 'Clothing, Gear, Optional, Privileged, and Prohibited item categories.', viewId: 'part4', tabId: 'checklists', isSafety: false },
-  { title: 'Code of Conduct Commitment Signer', snippet: 'Digital agreement form. Zero-tolerance policy on YPT, alcohol, drugs, weapons.', viewId: 'part4', tabId: 'conduct', isSafety: true },
-  { title: 'Handbook Quiz & Certification', snippet: '10-question training certification quiz on weather, safety, and reporting policies.', viewId: 'part4', tabId: 'quiz', isSafety: false },
-  { title: 'Staff Application 2026', snippet: 'Apply to join the Camp Lawton staff.', viewId: 'part4', tabId: 'apply', isSafety: false }
+  { title: 'Required Onboarding Paperwork', snippet: 'Application, Letter of Agreement, Medical Forms A, B, C, Vehicle Permit, I-9 forms.', viewId: 'onboarding', tabId: 'checklists', isSafety: false },
+  { title: 'Camp Packing List Assistant', snippet: 'Clothing, Gear, Optional, Privileged, and Prohibited item categories.', viewId: 'onboarding', tabId: 'checklists', isSafety: false },
+  { title: 'Code of Conduct Commitment Signer', snippet: 'Digital agreement form. Zero-tolerance policy on YPT, alcohol, drugs, weapons.', viewId: 'onboarding', tabId: 'conduct', isSafety: true },
+  { title: 'Handbook Quiz & Certification', snippet: '10-question training certification quiz on weather, safety, and reporting policies.', viewId: 'onboarding', tabId: 'quiz', isSafety: false },
+  { title: 'Staff Application 2026', snippet: 'Apply to join the Camp Lawton staff.', viewId: 'onboarding', tabId: 'apply', isSafety: false }
 ];
 
 function escapeHtml(str) {
@@ -717,12 +724,12 @@ document.addEventListener('DOMContentLoaded', () => {
           searchDropdown.style.display = 'none';
 
           // Set active sub-tab if exists
-          if (viewId === 'part1' && tabId) {
-            setPart1Tab(tabId);
-          } else if (viewId === 'part2' && tabId) {
-            setPart2Tab(tabId);
-          } else if (viewId === 'part4' && tabId) {
-            setPart4Tab(tabId);
+          if (viewId === 'camplawton' && tabId) {
+            setCampLawtonTab(tabId);
+          } else if (viewId === 'policies' && tabId) {
+            setPoliciesTab(tabId);
+          } else if (viewId === 'onboarding' && tabId) {
+            setOnboardingTab(tabId);
           }
 
           // Navigate
@@ -743,8 +750,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const quickEmergencyBtn = document.getElementById('quick-emergency-btn');
   if (quickEmergencyBtn) {
     quickEmergencyBtn.addEventListener('click', () => {
-      setPart2Tab('safety');
-      navigateTo('part2');
+      setPoliciesTab('safety');
+      navigateTo('policies');
     });
   }
 

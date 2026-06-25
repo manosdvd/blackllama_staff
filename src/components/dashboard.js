@@ -1,5 +1,5 @@
 import { state, navigateTo } from '../main.js';
-import { setPart4Tab } from './part4.js';
+import { setOnboardingTab } from './onboarding.js';
 
 const checklistTasks = [
   { id: 'checklist-1', text: 'Submit Medical Forms A, B, and C', category: 'HR' },
@@ -10,11 +10,11 @@ const checklistTasks = [
 ];
 
 const highlights = [
-  { icon: '🐻', title: 'Code Brown Review', text: 'Brush up on the bear encounter protocol before your next hike.', linkView: 'part2', linkTab: 'safety', color: 'var(--safety-red)', bg: 'rgba(200, 35, 44, 0.1)' },
-  { icon: '🔥', title: 'Campfire Builder', text: 'Did you know you can build and submit campfire programs digitally?', linkView: 'part3', linkTab: 'builder', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.1)' },
-  { icon: '⛺', title: 'Packing Checklist', text: 'Check your gear! Review what is privileged and what is prohibited.', linkView: 'part4', linkTab: 'checklists', color: '#10b981', bg: 'rgba(16, 185, 129, 0.1)' },
-  { icon: '⚡', title: 'Severe Weather', text: 'Practice the 30/30 Lightning rule before monsoon season hits.', linkView: 'part2', linkTab: 'safety', color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.1)' },
-  { icon: '📻', title: 'Radio Protocol', text: 'Practice your radio transmission scripts in the training sandbox.', linkView: 'part2', linkTab: 'radio', color: '#8b5cf6', bg: 'rgba(139, 92, 246, 0.1)' }
+  { icon: '🐻', title: 'Code Brown Review', text: 'Brush up on the bear encounter protocol before your next hike.', linkView: 'policies', linkTab: 'safety', color: 'var(--safety-red)', bg: 'rgba(200, 35, 44, 0.1)' },
+  { icon: '🔥', title: 'Campfire Builder', text: 'Did you know you can build and submit campfire programs digitally?', linkView: 'songbook', linkTab: 'builder', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.1)' },
+  { icon: '⛺', title: 'Packing Checklist', text: 'Check your gear! Review what is privileged and what is prohibited.', linkView: 'onboarding', linkTab: 'checklists', color: '#10b981', bg: 'rgba(16, 185, 129, 0.1)' },
+  { icon: '⚡', title: 'Severe Weather', text: 'Practice the 30/30 Lightning rule before monsoon season hits.', linkView: 'policies', linkTab: 'safety', color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.1)' },
+  { icon: '📻', title: 'Radio Protocol', text: 'Practice your radio transmission scripts in the training sandbox.', linkView: 'policies', linkTab: 'radio', color: '#8b5cf6', bg: 'rgba(139, 92, 246, 0.1)' }
 ];
 
 // Global ref so we can bind click handler to the rendered random highlight
@@ -93,15 +93,15 @@ export function renderDashboard() {
       ${(() => {
         currentHighlight = highlights[Math.floor(Math.random() * highlights.length)];
         return `
-          <div class="glass-panel" id="dashboard-highlight-box" style="grid-column: 1 / -1; background: ${currentHighlight.bg}; border: 1px solid ${currentHighlight.color}; padding: 20px; display: flex; align-items: center; justify-content: space-between; gap: 20px; cursor: pointer; transition: transform 0.2s ease;">
-            <div style="display: flex; align-items: center; gap: 16px;">
+          <div class="glass-panel dashboard-flex-panel highlight-box-hover" id="dashboard-highlight-box" style="grid-column: 1 / -1; background: ${currentHighlight.bg}; border: 1px solid ${currentHighlight.color}; cursor: pointer;">
+            <div class="dashboard-flex-panel-content">
               <span style="font-size: 32px;">${currentHighlight.icon}</span>
               <div>
                 <h3 style="margin: 0 0 4px 0; color: ${currentHighlight.color}; font-size: 18px;">Training Spotlight: ${currentHighlight.title}</h3>
                 <p style="margin: 0; font-size: 14.5px; color: hsl(var(--foreground)); opacity: 0.9;">${currentHighlight.text}</p>
               </div>
             </div>
-            <span style="color: ${currentHighlight.color}; font-weight: 800;">Review ➔</span>
+            <span class="dashboard-flex-panel-action" style="color: ${currentHighlight.color}; font-weight: 800;">Review ➔</span>
           </div>
         `;
       })()}
@@ -117,14 +117,14 @@ export function renderDashboard() {
       </div>
 
       <!-- Tag Out Protocol Widget -->
-      <div class="glass-panel" style="grid-column: 1 / -1; background: rgba(139, 92, 246, 0.1); border: 1px solid #8b5cf6; padding: 20px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;">
-        <div style="flex: 1; min-width: 250px;">
+      <div class="glass-panel dashboard-flex-panel" style="grid-column: 1 / -1; background: rgba(139, 92, 246, 0.1); border: 1px solid #8b5cf6;">
+        <div class="dashboard-flex-panel-content">
           <h3 style="margin: 0 0 8px 0; color: #8b5cf6; font-size: 18px;">🧘 The "Tag Out" Protocol</h3>
           <p style="margin: 0; font-size: 14px; color: hsl(var(--foreground)); line-height: 1.5;">
             Feeling overwhelmed? It is completely valid. If a camper is escalating, or you just hit a wall, you have the right to request a <strong>Strategic Retreat</strong>. Ask your Area Director to tag in while you take 5 minutes to reset.
           </p>
         </div>
-        <button id="tag-out-btn" style="background: #8b5cf6; color: white; border: none; padding: 12px 24px; border-radius: var(--radius-sm); font-weight: 700; font-family: var(--font-heading); font-size: 16px; cursor: pointer; transition: all 0.2s ease;">
+        <button id="tag-out-btn" class="dashboard-flex-panel-action" style="background: #8b5cf6; color: white; border: none; padding: 12px 24px; border-radius: var(--radius-sm); font-weight: 700; font-family: var(--font-heading); font-size: 16px; cursor: pointer; transition: all 0.2s ease;">
           Acknowledge Tag Out Right
         </button>
       </div>
@@ -169,7 +169,7 @@ export function initDashboard() {
   // Explore button link
   const exploreBtn = document.getElementById('dashboard-explore-btn');
   if (exploreBtn) {
-    exploreBtn.addEventListener('click', () => navigateTo('schedule'));
+    exploreBtn.addEventListener('click', () => { import('./camplawton.js').then(m => m.setCampLawtonTab('schedule')); navigateTo('camplawton'); });
   }
   
   // Highlight box link
@@ -177,12 +177,12 @@ export function initDashboard() {
   if (highlightBox && currentHighlight) {
     highlightBox.addEventListener('click', () => {
       // Need to import specific tab setters if using them, but we can dynamically import or dispatch
-      if (currentHighlight.linkView === 'part2') {
-        import('./part2.js').then(m => m.setPart2Tab(currentHighlight.linkTab));
-      } else if (currentHighlight.linkView === 'part3') {
-        import('./part3.js').then(m => m.activePart3Tab = currentHighlight.linkTab);
-      } else if (currentHighlight.linkView === 'part4') {
-        import('./part4.js').then(m => m.setPart4Tab(currentHighlight.linkTab));
+      if (currentHighlight.linkView === 'policies') {
+        import('./policies.js').then(m => m.setPoliciesTab(currentHighlight.linkTab));
+      } else if (currentHighlight.linkView === 'songbook') {
+        import('./songbook.js').then(m => m.activeSongbookTab = currentHighlight.linkTab);
+      } else if (currentHighlight.linkView === 'onboarding') {
+        import('./onboarding.js').then(m => m.setOnboardingTab(currentHighlight.linkTab));
       }
       navigateTo(currentHighlight.linkView);
     });
@@ -197,7 +197,7 @@ export function initDashboard() {
   if (appBanner) {
     appBanner.addEventListener('click', () => {
       setPart4Tab('apply');
-      navigateTo('part4');
+      navigateTo('onboarding');
     });
   }
 
