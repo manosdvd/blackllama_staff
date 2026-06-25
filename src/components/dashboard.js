@@ -9,6 +9,17 @@ const checklistTasks = [
   { id: 'checklist-5', text: 'Take the Camp Lawton Certification Quiz', category: 'Quiz' }
 ];
 
+const highlights = [
+  { icon: '🐻', title: 'Code Brown Review', text: 'Brush up on the bear encounter protocol before your next hike.', linkView: 'part2', linkTab: 'safety', color: 'var(--safety-red)', bg: 'rgba(200, 35, 44, 0.1)' },
+  { icon: '🔥', title: 'Campfire Builder', text: 'Did you know you can build and submit campfire programs digitally?', linkView: 'part3', linkTab: 'builder', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.1)' },
+  { icon: '⛺', title: 'Packing Checklist', text: 'Check your gear! Review what is privileged and what is prohibited.', linkView: 'part4', linkTab: 'checklists', color: '#10b981', bg: 'rgba(16, 185, 129, 0.1)' },
+  { icon: '⚡', title: 'Severe Weather', text: 'Practice the 30/30 Lightning rule before monsoon season hits.', linkView: 'part2', linkTab: 'safety', color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.1)' },
+  { icon: '📻', title: 'Radio Protocol', text: 'Practice your radio transmission scripts in the training sandbox.', linkView: 'part2', linkTab: 'radio', color: '#8b5cf6', bg: 'rgba(139, 92, 246, 0.1)' }
+];
+
+// Global ref so we can bind click handler to the rendered random highlight
+let currentHighlight = null;
+
 function renderAppBanner() {
   const applications = JSON.parse(localStorage.getItem('camp_lawton_applications') || '[]');
   const myApp = state.username ? applications.find(app => app.username.toLowerCase() === state.username.toLowerCase()) : null;
@@ -78,6 +89,23 @@ export function renderDashboard() {
       <!-- Application Banner -->
       ${renderAppBanner()}
 
+      <!-- Semi-Random Highlight Box -->
+      ${(() => {
+        currentHighlight = highlights[Math.floor(Math.random() * highlights.length)];
+        return `
+          <div class="glass-panel" id="dashboard-highlight-box" style="grid-column: 1 / -1; background: ${currentHighlight.bg}; border: 1px solid ${currentHighlight.color}; padding: 20px; display: flex; align-items: center; justify-content: space-between; gap: 20px; cursor: pointer; transition: transform 0.2s ease;">
+            <div style="display: flex; align-items: center; gap: 16px;">
+              <span style="font-size: 32px;">${currentHighlight.icon}</span>
+              <div>
+                <h3 style="margin: 0 0 4px 0; color: ${currentHighlight.color}; font-size: 18px;">Training Spotlight: ${currentHighlight.title}</h3>
+                <p style="margin: 0; font-size: 14.5px; color: hsl(var(--foreground)); opacity: 0.9;">${currentHighlight.text}</p>
+              </div>
+            </div>
+            <span style="color: ${currentHighlight.color}; font-weight: 800;">Review ➔</span>
+          </div>
+        `;
+      })()}
+
       <!-- WAM Hydration Alert Widget -->
       <div class="wam-alert-card" id="wam-card">
         <div style="display: flex; flex-direction: column; gap: 6px;">
@@ -86,6 +114,19 @@ export function renderDashboard() {
           <span style="font-size: 13px; font-weight: 700; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 4px; align-self: flex-start; margin-top: 6px;" id="wam-counter-display">Drinks Logged: ${state.wamCount}</span>
         </div>
         <button class="wam-button" id="wam-btn">Take a Drink! 🥤</button>
+      </div>
+
+      <!-- Tag Out Protocol Widget -->
+      <div class="glass-panel" style="grid-column: 1 / -1; background: rgba(139, 92, 246, 0.1); border: 1px solid #8b5cf6; padding: 20px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 250px;">
+          <h3 style="margin: 0 0 8px 0; color: #8b5cf6; font-size: 18px;">🧘 The "Tag Out" Protocol</h3>
+          <p style="margin: 0; font-size: 14px; color: hsl(var(--foreground)); line-height: 1.5;">
+            Feeling overwhelmed? It is completely valid. If a camper is escalating, or you just hit a wall, you have the right to request a <strong>Strategic Retreat</strong>. Ask your Area Director to tag in while you take 5 minutes to reset.
+          </p>
+        </div>
+        <button id="tag-out-btn" style="background: #8b5cf6; color: white; border: none; padding: 12px 24px; border-radius: var(--radius-sm); font-weight: 700; font-family: var(--font-heading); font-size: 16px; cursor: pointer; transition: all 0.2s ease;">
+          Acknowledge Tag Out Right
+        </button>
       </div>
 
       <!-- Checklist Section -->
@@ -130,6 +171,26 @@ export function initDashboard() {
   if (exploreBtn) {
     exploreBtn.addEventListener('click', () => navigateTo('schedule'));
   }
+  
+  // Highlight box link
+  const highlightBox = document.getElementById('dashboard-highlight-box');
+  if (highlightBox && currentHighlight) {
+    highlightBox.addEventListener('click', () => {
+      // Need to import specific tab setters if using them, but we can dynamically import or dispatch
+      if (currentHighlight.linkView === 'part2') {
+        import('./part2.js').then(m => m.setPart2Tab(currentHighlight.linkTab));
+      } else if (currentHighlight.linkView === 'part3') {
+        import('./part3.js').then(m => m.activePart3Tab = currentHighlight.linkTab);
+      } else if (currentHighlight.linkView === 'part4') {
+        import('./part4.js').then(m => m.setPart4Tab(currentHighlight.linkTab));
+      }
+      navigateTo(currentHighlight.linkView);
+    });
+    
+    // Add simple hover effect in JS
+    highlightBox.addEventListener('mouseenter', () => highlightBox.style.transform = 'translateY(-2px)');
+    highlightBox.addEventListener('mouseleave', () => highlightBox.style.transform = 'translateY(0)');
+  }
 
   // Application banner click link
   const appBanner = document.getElementById('dashboard-app-banner');
@@ -162,6 +223,18 @@ export function initDashboard() {
       
       wamCard.appendChild(ripple);
       setTimeout(() => ripple.remove(), 1200);
+    });
+  }
+
+  // Tag Out trigger
+  const tagOutBtn = document.getElementById('tag-out-btn');
+  if (tagOutBtn) {
+    tagOutBtn.addEventListener('click', () => {
+      tagOutBtn.innerHTML = '✅ Retreat Acknowledged';
+      tagOutBtn.style.background = 'rgba(139, 92, 246, 0.2)';
+      tagOutBtn.style.color = '#8b5cf6';
+      tagOutBtn.style.pointerEvents = 'none';
+      alert('Your Area Director has been notified via the simulation network. Retreat and reset.');
     });
   }
 

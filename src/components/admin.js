@@ -1,4 +1,7 @@
 import { state, navigateTo, openAppDialog, closeAppDialog } from '../main.js';
+import { renderAdminUsers, initAdminUsers } from './adminUsers.js';
+
+let activeAdminTab = 'applications';
 
 // Initial Mock applications for testing if local database is empty
 const mockApps = [
@@ -93,6 +96,17 @@ function ensureDB() {
 }
 
 export function renderAdmin() {
+  const tabsHtml = `
+    <div style="display: flex; border-bottom: 1px solid hsl(var(--border)); padding-bottom: 0; margin-bottom: 20px;">
+      <button id="admin-tab-apps" class="schedule-tab-btn ${activeAdminTab === 'applications' ? 'active' : ''}" style="margin-right: 16px;">Applicant Registry</button>
+      <button id="admin-tab-users" class="schedule-tab-btn ${activeAdminTab === 'users' ? 'active' : ''}">User Management</button>
+    </div>
+  `;
+
+  if (activeAdminTab === 'users') {
+    return tabsHtml + renderAdminUsers();
+  }
+
   ensureDB();
   const apps = JSON.parse(localStorage.getItem('camp_lawton_applications') || '[]');
   
@@ -101,7 +115,7 @@ export function renderAdmin() {
   const approved = apps.filter(a => a.status === 'Approved').length;
   const rejected = apps.filter(a => a.status === 'Rejected').length;
 
-  return `
+  return tabsHtml + `
     <div style="display: flex; flex-direction: column; gap: 28px;">
       
       <!-- Stats Summary -->
@@ -185,6 +199,40 @@ export function renderAdmin() {
 }
 
 export function initAdmin() {
+  const tabApps = document.getElementById('admin-tab-apps');
+  const tabUsers = document.getElementById('admin-tab-users');
+
+  if (tabApps) {
+    tabApps.addEventListener('click', () => {
+      activeAdminTab = 'applications';
+      window.dispatchEvent(new CustomEvent('camp-admin-refresh'));
+    });
+  }
+
+  if (tabUsers) {
+    tabUsers.addEventListener('click', () => {
+      activeAdminTab = 'users';
+      window.dispatchEvent(new CustomEvent('camp-admin-refresh'));
+    });
+  }
+
+  // Handle global refresh event for re-rendering the admin panel inline
+  if (!window.adminRefreshBound) {
+    window.addEventListener('camp-admin-refresh', () => {
+      const mount = document.getElementById('view-mount-point');
+      if (mount && state.activeView === 'admin') {
+        mount.innerHTML = renderAdmin();
+        initAdmin();
+      }
+    });
+    window.adminRefreshBound = true;
+  }
+
+  if (activeAdminTab === 'users') {
+    initAdminUsers();
+    return;
+  }
+
   const searchInput = document.getElementById('admin-search-input');
   const statusFilter = document.getElementById('admin-filter-status');
   const roleFilter = document.getElementById('admin-filter-role');

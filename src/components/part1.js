@@ -2,8 +2,9 @@ import { renderTraining, initTraining } from './training.js';
 import { renderSchedule, initSchedule } from './schedule.js';
 import { renderOrgChart, initOrgChart } from './orgChart.js';
 import { renderValues, initValues } from './values.js';
+import { renderTimeline, initTimeline } from './timeline.js';
 
-export let activePart1Tab = 'training'; // 'training', 'schedule', 'orgchart', 'values'
+export let activePart1Tab = 'training'; // 'training', 'schedule', 'orgchart', 'values', 'history'
 export function setPart1Tab(tab) {
   activePart1Tab = tab;
 }
@@ -17,6 +18,7 @@ export function renderPart1() {
         <button class="schedule-tab-btn ${activePart1Tab === 'schedule' ? 'active' : ''}" data-tab="schedule">📅 Daily Schedule</button>
         <button class="schedule-tab-btn ${activePart1Tab === 'orgchart' ? 'active' : ''}" data-tab="orgchart">🗺️ Chain of Command</button>
         <button class="schedule-tab-btn ${activePart1Tab === 'values' ? 'active' : ''}" data-tab="values">🌲 Core Values</button>
+        <button class="schedule-tab-btn ${activePart1Tab === 'history' ? 'active' : ''}" data-tab="history">📜 History & Timeline</button>
       </div>
 
       <!-- Mount point for sub tabs -->
@@ -63,5 +65,8 @@ export function initPart1() {
   } else if (activePart1Tab === 'values') {
     subtabMount.innerHTML = renderValues();
     initValues();
+  } else if (activePart1Tab === 'history') {
+    subtabMount.innerHTML = renderTimeline();
+    initTimeline();
   }
 }

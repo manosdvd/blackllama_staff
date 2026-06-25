@@ -124,14 +124,38 @@ export function initSafetyGuides() {
             </button>
             <div class="protocol-body">
               <div class="protocol-call-banner">
-                <span class="protocol-call-text">⚠️ IMMEDIATELY INITIATE RADIO ALARM</span>
-                <a href="tel:1-555-LAWTON-CD" class="protocol-call-btn">📞 Radio Camp Director</a>
+                <span class="protocol-call-text">⚠️ MISSING PERSON: INPUT DETAILS BELOW</span>
+                <span style="font-size: 13px; opacity: 0.9;">Do NOT self-assign a search. Submit details to generate radio script.</span>
               </div>
-              <ol class="protocol-steps">
-                <li><strong>Gather Critical Details:</strong> Immediately obtain the camper's Name, Troop Unit, Age/CIT status, description of clothing worn, and their Last Known Location.</li>
-                <li><strong>Initiate Code Blue:</strong> Alert the Camp Director or HQ over the radio immediately. State: <em>"Code Blue in progress. We have a missing person..."</em></li>
-                <li><strong>Stand By:</strong> Stop all area programs and await central coordinates or search grid commands from the Camp Director or Ranger. Do NOT start searching on your own.</li>
-              </ol>
+              <div style="background: hsl(var(--card)); padding: 16px; border-radius: var(--radius-sm); border: 1px solid hsl(var(--border)); margin-bottom: 16px;">
+                <form id="code-blue-form" style="display: flex; flex-direction: column; gap: 12px;">
+                  <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label style="font-size: 12px; font-weight: 700; color: hsl(var(--muted-foreground));">First Name</label>
+                    <input type="text" id="cb-name" required placeholder="e.g. John" style="padding: 8px; border: 1px solid hsl(var(--border)); border-radius: 4px; background: var(--glass-bg); color: hsl(var(--foreground));" />
+                  </div>
+                  <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label style="font-size: 12px; font-weight: 700; color: hsl(var(--muted-foreground));">Troop/Unit Number</label>
+                    <input type="text" id="cb-unit" required placeholder="e.g. Troop 404" style="padding: 8px; border: 1px solid hsl(var(--border)); border-radius: 4px; background: var(--glass-bg); color: hsl(var(--foreground));" />
+                  </div>
+                  <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label style="font-size: 12px; font-weight: 700; color: hsl(var(--muted-foreground));">Physical Description (Clothing, Hat, etc.)</label>
+                    <input type="text" id="cb-desc" required placeholder="e.g. Red class B shirt, blue shorts, BSA hat" style="padding: 8px; border: 1px solid hsl(var(--border)); border-radius: 4px; background: var(--glass-bg); color: hsl(var(--foreground));" />
+                  </div>
+                  <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label style="font-size: 12px; font-weight: 700; color: hsl(var(--muted-foreground));">Last Known Location & Time</label>
+                    <input type="text" id="cb-loc" required placeholder="e.g. Archery range, 10 minutes ago" style="padding: 8px; border: 1px solid hsl(var(--border)); border-radius: 4px; background: var(--glass-bg); color: hsl(var(--foreground));" />
+                  </div>
+                  <button type="submit" class="primary-btn" style="background: var(--safety-red); color: white; border: none; padding: 12px; border-radius: 6px; font-weight: 700; cursor: pointer; margin-top: 8px;">
+                    GENERATE RADIO PROTOCOL
+                  </button>
+                </form>
+                <div id="code-blue-result" style="display: none; margin-top: 16px; padding: 16px; border-left: 4px solid var(--safety-red); background: rgba(200, 35, 44, 0.1);">
+                  <h4 style="margin: 0 0 8px 0; color: var(--safety-red); font-size: 16px;">🚨 RADIO SCRIPT GENERATED</h4>
+                  <p style="margin: 0 0 12px 0; font-family: monospace; font-size: 14px; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 4px;" id="cb-script-text"></p>
+                  <p style="margin: 0; font-size: 13px; font-weight: 700; color: var(--safety-red);">⚠️ DO NOT LEAVE YOUR CURRENT AREA TO SEARCH. STAND BY FOR CAMP DIRECTOR ORDERS.</p>
+                  <button id="cb-reset-btn" style="margin-top: 12px; background: transparent; border: 1px solid hsl(var(--border)); color: hsl(var(--foreground)); padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">Reset</button>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -146,11 +170,13 @@ export function initSafetyGuides() {
                 <span class="protocol-call-text">⚠️ REPORT SIGHTING AND MAINTAIN SAFEST DISTANCE</span>
                 <a href="tel:1-555-LAWTON-CD" class="protocol-call-btn">📞 Radio Camp Ranger</a>
               </div>
+              <div style="background: rgba(200, 35, 44, 0.1); border: 2px solid var(--safety-red); padding: 16px; border-radius: var(--radius-sm); margin-bottom: 16px;">
+                <h4 style="margin: 0 0 8px 0; color: var(--safety-red); font-size: 16px; font-weight: 800;">CRITICAL INSTRUCTION:</h4>
+                <p style="margin: 0; font-size: 14px; font-weight: 700; color: hsl(var(--foreground));">DO NOT APPROACH. Scare the bear away by yelling loudly and throwing rocks/sticks. Immediately report a CODE BROWN to the Camp Director via radio.</p>
+              </div>
               <ol class="protocol-steps">
-                <li><strong>Remain Calm:</strong> Do not approach or corner the bear. Retreat slowly and quietly, keeping your eyes on the bear (but avoid direct eye contact). Do NOT run.</li>
-                <li><strong>Report Code Brown:</strong> Alert the Ranger or Camp Director via radio immediately. Report the exact location and directions of travel.</li>
+                <li><strong>Remain Calm:</strong> Retreat slowly and quietly, keeping your eyes on the bear (but avoid direct eye contact). Do NOT run.</li>
                 <li><strong>Establish Visual Check:</strong> Maintain a safe visual check from a distance (adult staff only). Escort all scouts and CITs to a secure, indoor area immediately.</li>
-                <li><strong>Defend Against Attack:</strong> If the bear charges or attacks: Stand your ground, make yourself look as large as possible, yell loudly, wave your arms, and throw rocks/sticks. If the Dining Hall bell is nearby, sound the emergency alarm immediately.</li>
               </ol>
             </div>
           </div>
@@ -166,6 +192,21 @@ export function initSafetyGuides() {
                 <span class="protocol-call-text">⚠️ SUSPEND OUTDOOR ACTIVITIES IMMEDIATELY</span>
                 <button class="protocol-call-btn" onclick="alert('Broadcasting weather alert on radio channel 1...')">📻 Radio Weather Warning</button>
               </div>
+              
+              <div style="background: hsl(var(--card)); padding: 16px; border-radius: var(--radius-sm); border: 1px solid hsl(var(--border)); margin-bottom: 16px; text-align: center;">
+                <h4 style="margin: 0 0 12px 0; font-size: 16px;">30/30 Rule Lightning Calculator</h4>
+                <div style="display: flex; gap: 12px; justify-content: center; margin-bottom: 16px;">
+                  <button id="btn-flash" style="flex: 1; padding: 16px; font-size: 18px; font-weight: 800; border-radius: 8px; border: none; background: #eab308; color: #000; cursor: pointer; box-shadow: 0 4px 0 #ca8a04;">
+                    ⚡ SAW FLASH
+                  </button>
+                  <button id="btn-thunder" disabled style="flex: 1; padding: 16px; font-size: 18px; font-weight: 800; border-radius: 8px; border: none; background: hsl(var(--muted)); color: hsl(var(--muted-foreground)); cursor: not-allowed; box-shadow: 0 4px 0 hsl(var(--border));">
+                    🔊 HEARD THUNDER
+                  </button>
+                </div>
+                <div id="lightning-result" style="padding: 12px; border-radius: 8px; font-weight: 700; font-size: 15px; display: none;"></div>
+                <div id="lightning-timer" style="font-family: monospace; font-size: 24px; font-weight: 800; color: hsl(var(--muted-foreground)); display: none;">0.0s</div>
+              </div>
+
               <ol class="protocol-steps">
                 <li><strong>Monitor Flash-to-Bang:</strong> If you see a lightning flash and hear thunder within 30 seconds (indicating lightning is within 6 miles), suspend all outdoor programs immediately.</li>
                 <li><strong>Seek Safe Shelter:</strong> Immediately escort all scouts, leaders, and staff to the Dining Hall. Open-sided pavilions, canvas dining flies, and canvas tents offer ZERO lightning protection.</li>
@@ -303,6 +344,82 @@ export function initSafetyGuides() {
         }
       });
     });
+
+    // Bind Code Blue Form
+    const cbForm = document.getElementById('code-blue-form');
+    if (cbForm) {
+      cbForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = document.getElementById('cb-name').value;
+        const unit = document.getElementById('cb-unit').value;
+        const desc = document.getElementById('cb-desc').value;
+        const loc = document.getElementById('cb-loc').value;
+        
+        document.getElementById('code-blue-result').style.display = 'block';
+        document.getElementById('cb-script-text').innerText = 
+          `"Camp Director, this is [Your Area]. Code Blue. ${name} from ${unit}, last seen at ${loc}. Wearing ${desc}. Standing by for instructions."`;
+        cbForm.style.display = 'none';
+      });
+      
+      document.getElementById('cb-reset-btn')?.addEventListener('click', () => {
+        cbForm.reset();
+        cbForm.style.display = 'flex';
+        document.getElementById('code-blue-result').style.display = 'none';
+      });
+    }
+
+    // Bind Lightning Calculator
+    const btnFlash = document.getElementById('btn-flash');
+    const btnThunder = document.getElementById('btn-thunder');
+    const lightningTimer = document.getElementById('lightning-timer');
+    const lightningResult = document.getElementById('lightning-result');
+    let flashTime = 0;
+    let timerInterval = null;
+
+    if (btnFlash && btnThunder) {
+      btnFlash.addEventListener('click', () => {
+        flashTime = Date.now();
+        btnFlash.disabled = true;
+        btnFlash.style.opacity = '0.5';
+        btnThunder.disabled = false;
+        btnThunder.style.background = '#3b82f6';
+        btnThunder.style.color = '#fff';
+        
+        lightningResult.style.display = 'none';
+        lightningTimer.style.display = 'block';
+        
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+          const diff = (Date.now() - flashTime) / 1000;
+          lightningTimer.innerText = diff.toFixed(1) + 's';
+        }, 100);
+      });
+
+      btnThunder.addEventListener('click', () => {
+        clearInterval(timerInterval);
+        const diff = (Date.now() - flashTime) / 1000;
+        lightningTimer.innerText = diff.toFixed(1) + 's';
+        
+        btnThunder.disabled = true;
+        btnThunder.style.background = 'hsl(var(--muted))';
+        btnThunder.style.color = 'hsl(var(--muted-foreground))';
+        btnFlash.disabled = false;
+        btnFlash.style.opacity = '1';
+        
+        lightningResult.style.display = 'block';
+        if (diff <= 30) {
+          lightningResult.style.background = 'rgba(200, 35, 44, 0.1)';
+          lightningResult.style.border = '2px solid var(--safety-red)';
+          lightningResult.style.color = 'var(--safety-red)';
+          lightningResult.innerHTML = `⚠️ DANGER: Storm is ~${(diff/5).toFixed(1)} miles away.<br>SUSPEND ACTIVITIES AND EVACUATE TO DINING HALL IMMEDIATELY!`;
+        } else {
+          lightningResult.style.background = 'rgba(16, 185, 129, 0.1)';
+          lightningResult.style.border = '2px solid #10b981';
+          lightningResult.style.color = '#10b981';
+          lightningResult.innerHTML = `✅ SAFE: Storm is ~${(diff/5).toFixed(1)} miles away.<br>Continue to monitor.`;
+        }
+      });
+    }
   }
 
   function renderRadio() {

@@ -17,20 +17,19 @@ class AmbianceParticle {
       this.speedY = -(Math.random() * 1.5 + 0.5);
       this.speedX = (Math.random() - 0.5) * 0.8;
       
-      const hue = Math.floor(Math.random() * 40 + 10); // red-orange-yellow (10 to 50)
+      const hue = Math.floor(Math.random() * 40 + 10); // red-orange-yellow
       this.color = `hsl(${hue}, 100%, 60%)`;
       this.opacity = Math.random() * 0.6 + 0.3;
       this.decay = Math.random() * 0.004 + 0.002;
       this.wiggleFactor = Math.random() * 0.04;
       this.angle = Math.random() * Math.PI * 2;
     } else {
-      // Pollen/motes drift all over, slowly
+      // Pollen drift all over, slowly
       this.y = Math.random() * this.canvas.height;
       this.size = Math.random() * 2.5 + 1.2;
       this.speedY = (Math.random() - 0.5) * 0.25;
       this.speedX = -(Math.random() * 0.4 + 0.15); // gentle drift to the left
       
-      // Warm yellow/gold or pine green-yellow
       const hue = Math.random() > 0.3 ? Math.floor(Math.random() * 15 + 40) : Math.floor(Math.random() * 15 + 75);
       this.color = `hsl(${hue}, 85%, 65%)`;
       this.opacity = Math.random() * 0.35 + 0.15;
@@ -99,10 +98,10 @@ class Sunbeam {
     this.x = Math.random() * this.canvas.width;
     this.widthTop = Math.random() * 60 + 30;
     this.widthBottom = this.widthTop * (Math.random() * 2 + 1.5);
-    this.angle = (Math.random() * 12 + 12) * (Math.PI / 180); // 12 to 24 degrees
+    this.angle = (Math.random() * 12 + 12) * (Math.PI / 180);
     if (Math.random() > 0.5) this.angle = -this.angle;
     
-    this.maxOpacity = Math.random() * 0.04 + 0.015; // very faint
+    this.maxOpacity = Math.random() * 0.04 + 0.015;
     this.opacity = 0;
     this.speed = Math.random() * 0.003 + 0.001;
     this.state = 'fadein';
@@ -149,13 +148,48 @@ class Sunbeam {
     ctx.closePath();
     
     const grad = ctx.createLinearGradient(xTopLeft, 0, xTopRight, 0);
-    grad.addColorStop(0, 'rgba(255, 235, 170, 0)');
-    grad.addColorStop(0.3, 'rgba(255, 240, 180, 0.4)');
-    grad.addColorStop(0.5, 'rgba(255, 245, 200, 0.5)');
-    grad.addColorStop(0.7, 'rgba(255, 240, 180, 0.4)');
-    grad.addColorStop(1, 'rgba(255, 235, 170, 0)');
+    grad.addColorStop(0, 'rgba(255, 255, 255, 0)');
+    grad.addColorStop(0.3, 'rgba(255, 250, 220, 0.4)');
+    grad.addColorStop(0.5, 'rgba(255, 255, 240, 0.5)');
+    grad.addColorStop(0.7, 'rgba(255, 250, 220, 0.4)');
+    grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
     
     ctx.fillStyle = grad;
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+class Star {
+  constructor(canvas) {
+    this.canvas = canvas;
+    this.x = Math.random() * this.canvas.width;
+    this.y = Math.random() * this.canvas.height;
+    this.size = Math.random() * 1.5 + 0.3;
+    this.opacity = Math.random();
+    this.twinkleSpeed = Math.random() * 0.02 + 0.005;
+    this.twinkleDir = Math.random() > 0.5 ? 1 : -1;
+  }
+  
+  update() {
+    this.opacity += this.twinkleSpeed * this.twinkleDir;
+    if (this.opacity >= 1) {
+      this.opacity = 1;
+      this.twinkleDir = -1;
+    } else if (this.opacity <= 0.1) {
+      this.opacity = 0.1;
+      this.twinkleDir = 1;
+      this.x = Math.random() * this.canvas.width;
+      this.y = Math.random() * this.canvas.height;
+    }
+  }
+  
+  draw(ctx) {
+    ctx.save();
+    ctx.globalAlpha = this.opacity;
+    ctx.fillStyle = '#FFFFFF';
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
   }
@@ -168,7 +202,8 @@ export function initAmbiance() {
   const ctx = canvas.getContext('2d');
   let particles = [];
   let sunbeams = [];
-  let currentAmbianceMode = ''; // 'pollen' or 'ember'
+  let stars = [];
+  let currentAmbianceMode = ''; // 'day' or 'night'
   let animationId;
   
   const resize = () => {
@@ -180,50 +215,48 @@ export function initAmbiance() {
   resize();
   
   const loop = () => {
-    // Check current theme mode
-    const actualMode = document.documentElement.getAttribute('data-theme-mode') === 'code-red' ? 'ember' : 'pollen';
+    const isDarkTheme = document.documentElement.getAttribute('data-theme') === 'dark';
+    const isCodeRed = document.documentElement.getAttribute('data-theme-mode') === 'code-red';
+    const actualMode = (isDarkTheme || isCodeRed) ? 'night' : 'day';
     
     if (currentAmbianceMode !== actualMode) {
       currentAmbianceMode = actualMode;
       particles = [];
+      sunbeams = [];
+      stars = [];
       
-      const count = actualMode === 'ember' ? 45 : 35;
-      for (let i = 0; i < count; i++) {
-        const p = new AmbianceParticle(canvas, actualMode);
-        // Distribute them vertically initially
-        p.y = Math.random() * canvas.height;
-        particles.push(p);
-      }
-      
-      if (actualMode === 'pollen') {
-        sunbeams = [new Sunbeam(canvas), new Sunbeam(canvas), new Sunbeam(canvas)];
+      if (actualMode === 'night') {
+        // Night mode: embers
+        for (let i = 0; i < 45; i++) {
+          const p = new AmbianceParticle(canvas, 'ember');
+          p.y = Math.random() * canvas.height;
+          particles.push(p);
+        }
       } else {
-        sunbeams = [];
+        // Day mode: pollen + sunbeams
+        for (let i = 0; i < 35; i++) {
+          const p = new AmbianceParticle(canvas, 'pollen');
+          p.y = Math.random() * canvas.height;
+          particles.push(p);
+        }
+        sunbeams = [new Sunbeam(canvas), new Sunbeam(canvas), new Sunbeam(canvas), new Sunbeam(canvas)];
       }
     }
     
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    // Draw sunbeams
-    if (currentAmbianceMode === 'pollen') {
-      sunbeams.forEach(s => {
-        s.update();
-        s.draw(ctx);
-      });
+    if (currentAmbianceMode === 'day') {
+      sunbeams.forEach(s => { s.update(); s.draw(ctx); });
+      particles.forEach(p => { p.update(); p.draw(ctx); });
+    } else {
+      particles.forEach(p => { p.update(); p.draw(ctx); });
     }
-    
-    // Draw particles
-    particles.forEach(p => {
-      p.update();
-      p.draw(ctx);
-    });
     
     animationId = requestAnimationFrame(loop);
   };
   
   loop();
   
-  // Cleanup callback attached to window for lifecycle tracking if needed
   return () => {
     window.removeEventListener('resize', resize);
     cancelAnimationFrame(animationId);

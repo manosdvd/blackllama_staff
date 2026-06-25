@@ -23,7 +23,7 @@
       <!-- Sidebar Navigation -->
       <aside class="sidebar">
         <div class="logo-container">
-          <div class="logo-icon">L</div>
+          <img src="/camp-logo.png" alt="Camp Lawton" style="width: 42px; height: 42px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));" />
           <span class="logo-text">Camp Lawton</span>
         </div>
 
@@ -60,13 +60,6 @@
           </li>
         </ul>
 
-        <div class="sidebar-footer">
-          <!-- Theme toggle button -->
-          <button class="theme-toggle-btn" id="theme-toggle" aria-label="Toggle Theme">
-            <span class="moon-icon">🌙 Dark Mode</span>
-            <span class="sun-icon">☀️ Light Mode</span>
-          </button>
-        </div>
       </aside>
 
       <!-- Main Shell Area -->
@@ -88,6 +81,12 @@
             <div id="global-search-dropdown" class="search-results-dropdown hidden" style="position: absolute; top: 100%; right: 0; width: 320px; background: hsl(var(--card)); border: 1px solid hsl(var(--border)); border-radius: var(--radius-sm); box-shadow: var(--shadow-lg); z-index: 1000; max-height: 400px; overflow-y: auto; margin-top: 6px; display: none;"></div>
           </div>
 
+          <!-- Theme toggle button -->
+          <button class="theme-toggle-btn" id="theme-toggle" aria-label="Toggle Theme" title="Toggle Theme" style="margin-right: 16px;">
+            <span class="moon-icon" style="font-size: 20px;">🌙</span>
+            <span class="sun-icon" style="font-size: 20px;">☀️</span>
+          </button>
+
           <!-- User Profile Badge -->
           <div class="user-profile-badge" id="user-badge" aria-label="Edit Profile">
             <div class="user-avatar-placeholder" id="user-avatar">?</div>
@@ -102,15 +101,10 @@
       </main>
     </div>
 
-    <!-- Pinned bottom quick access helpline bar -->
-    <div class="quick-helpline-bar" id="quick-helpline-bar">
-      <span class="helpline-title">🛟 NEED THIS NOW:</span>
-      <div class="helpline-buttons">
-        <a href="tel:1-844-726-8871" class="helpline-btn emergency" title="Scouts First Helpline">🚨 Scouts First (1-844-726-8871)</a>
-        <a href="tel:1-888-767-2445" class="helpline-btn" title="Arizona Department of Child Safety">📞 Arizona DCS (1-888-SOS-CHILD)</a>
-        <button class="helpline-btn" id="quick-emergency-btn">⚡ Emergency Protocols</button>
-      </div>
-    </div>
+    <!-- Persistent floating emergency button -->
+    <button class="floating-emergency-btn" id="quick-emergency-btn" title="Emergency Procedures">
+      🚨 EMERGENCY
+    </button>
 
     <!-- Reusable Dialog modal for detail view cards -->
     <dialog id="app-dialog" closedby="any" aria-labelledby="dialog-title">

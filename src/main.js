@@ -8,42 +8,25 @@ import { renderPart3, initPart3 } from './components/part3.js';
 import { renderPart4, initPart4, setPart4Tab } from './components/part4.js';
 import { renderAdmin, initAdmin } from './components/admin.js';
 import { initAmbiance } from './components/ambiance.js';
+import { AuthService } from './services/auth.js';
 
 // Global State Manager
 export const state = {
-  username: localStorage.getItem('lawton_username') || '',
-  role: localStorage.getItem('lawton_role') || '',
+  username: AuthService.getCurrentUser()?.username || '',
+  role: AuthService.getCurrentUser()?.role || '',
   completedTasks: [],
   wamCount: parseInt(localStorage.getItem('lawton_wam_count') || '0'),
   signedConduct: false,
   activeView: 'dashboard',
   
-  // Setters
-  setUsername(name) {
-    this.username = name;
-    if (name) {
-      localStorage.setItem('lawton_username', name);
-    } else {
-      localStorage.removeItem('lawton_username');
-    }
-    this.loadUserData(name);
+  syncUser() {
+    const user = AuthService.getCurrentUser();
+    this.username = user?.username || '';
+    this.role = user?.role || '';
+    this.loadUserData(this.username);
     updateUserUI();
-    // Dispatch events to refresh views
     window.dispatchEvent(new CustomEvent('state-tasks-updated'));
     window.dispatchEvent(new CustomEvent('state-conduct-updated'));
-  },
-
-  setRole(role) {
-    this.role = role;
-    if (role) {
-      localStorage.setItem('lawton_role', role);
-      if (this.username) {
-        localStorage.setItem(`lawton_role_${this.username}`, role);
-      }
-    } else {
-      localStorage.removeItem('lawton_role');
-    }
-    updateUserUI();
   },
   
   toggleTask(taskId) {
@@ -94,13 +77,10 @@ export const state = {
   },
 
   logout() {
-    this.username = '';
-    this.role = '';
+    AuthService.logout();
+    this.syncUser();
     this.completedTasks = [];
     this.signedConduct = false;
-    localStorage.removeItem('lawton_username');
-    localStorage.removeItem('lawton_role');
-    updateUserUI();
     // Dispatch events to refresh views
     window.dispatchEvent(new CustomEvent('state-tasks-updated'));
     window.dispatchEvent(new CustomEvent('state-wam-updated'));
@@ -182,7 +162,7 @@ function updateUserUI() {
   // Update admin tab visibility
   const adminNav = document.getElementById('nav-item-admin');
   if (adminNav) {
-    const isAdmin = state.role === 'Camp Director' || state.role === 'Program Director';
+    const isAdmin = AuthService.isAdmin();
     adminNav.style.display = isAdmin ? 'block' : 'none';
     
     // Redirect if they lose admin status while viewing the admin panel
@@ -456,17 +436,6 @@ function setupDialogDismissFallbacks(dialogElement) {
   }
 }
 
-// User Management Helpers
-function getUsers() {
-  return JSON.parse(localStorage.getItem('lawton_users') || '[]');
-}
-
-function saveUser(user) {
-  const users = getUsers();
-  users.push(user);
-  localStorage.setItem('lawton_users', JSON.stringify(users));
-}
-
 let currentAuthTab = 'login'; // 'login' or 'signup'
 
 function renderProfileModalContent(errorMsg = '') {
@@ -592,7 +561,7 @@ function renderProfileModalContent(errorMsg = '') {
   }
 }
 
-function handleLoginSubmit() {
+async function handleLoginSubmit() {
   const usernameInput = document.getElementById('login-username');
   const passwordInput = document.getElementById('login-password');
   if (!usernameInput || !passwordInput) return;
@@ -605,25 +574,16 @@ function handleLoginSubmit() {
     return;
   }
 
-  const users = getUsers();
-  const matchedUser = users.find(u => u.username.toLowerCase() === username.toLowerCase());
-
-  if (!matchedUser) {
-    renderProfileModalContent("Username not found. Please sign up!");
-    return;
+  try {
+    await AuthService.login(username, password);
+    state.syncUser();
+    profileDialog.close();
+  } catch (err) {
+    renderProfileModalContent(err.message || "Invalid username or password.");
   }
-
-  if (matchedUser.password !== password) {
-    renderProfileModalContent("Incorrect password. Try again.");
-    return;
-  }
-
-  state.setRole(matchedUser.role);
-  state.setUsername(matchedUser.username);
-  profileDialog.close();
 }
 
-function handleSignupSubmit() {
+async function handleSignupSubmit() {
   const usernameInput = document.getElementById('signup-username');
   const passwordInput = document.getElementById('signup-password');
   const roleSelect = document.getElementById('signup-role');
@@ -643,20 +603,14 @@ function handleSignupSubmit() {
     return;
   }
 
-  const users = getUsers();
-  const exists = users.some(u => u.username.toLowerCase() === username.toLowerCase());
-
-  if (exists) {
-    renderProfileModalContent("Username already taken.");
-    return;
+  try {
+    await AuthService.register(username, password, role);
+    await AuthService.login(username, password);
+    state.syncUser();
+    profileDialog.close();
+  } catch (err) {
+    renderProfileModalContent(err.message || "Error creating account.");
   }
-
-  const newUser = { username, password, role };
-  saveUser(newUser);
-
-  state.setRole(role);
-  state.setUsername(username);
-  profileDialog.close();
 }
 
 // On DOM load init
@@ -794,7 +748,42 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 5. Register Service Worker for PWA
+  // 5. Siesta Reboot (12:00 PM - 2:00 PM) Low-stim mode
+  function checkSiestaMode() {
+    const now = new Date();
+    const hours = now.getHours();
+    
+    // 12 PM (12:00) to 2 PM (13:59)
+    if (hours >= 12 && hours < 14) {
+      if (!document.documentElement.classList.contains('siesta-mode')) {
+        document.documentElement.classList.add('siesta-mode');
+        document.documentElement.setAttribute('data-theme', 'dark');
+        
+        // Show banner if not already present
+        if (!document.getElementById('siesta-banner')) {
+          const banner = document.createElement('div');
+          banner.id = 'siesta-banner';
+          banner.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; background: #8b5cf6; color: white; text-align: center; padding: 8px; z-index: 10000; font-family: var(--font-heading); font-weight: 800; font-size: 14px;';
+          banner.innerText = '🧘 SIESTA REBOOT ACTIVE: Low-stimulus mode engaged. Please rest quietly in your quarters until 2:00 PM.';
+          document.body.prepend(banner);
+        }
+      }
+    } else {
+      if (document.documentElement.classList.contains('siesta-mode')) {
+        document.documentElement.classList.remove('siesta-mode');
+        const theme = localStorage.getItem('lawton_theme') || 'light';
+        document.documentElement.setAttribute('data-theme', theme);
+        const banner = document.getElementById('siesta-banner');
+        if (banner) banner.remove();
+      }
+    }
+  }
+
+  // Check immediately and then every minute
+  checkSiestaMode();
+  setInterval(checkSiestaMode, 60000);
+
+  // 6. Register Service Worker for PWA
   if ('serviceWorker' in navigator) {
     window.navigator.serviceWorker.register('/sw.js')
       .then(reg => console.log('Service Worker registered successfully:', reg.scope))
