@@ -1,4 +1,29 @@
 import { songbookSongs } from '../data/handbookData.js';
+import { rawHandbook } from '../data/rawHandbook.js';
+
+function escapeHtml(str) {
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+
+function renderHandbookSection(h3Title, icon = '📖') {
+  const section = rawHandbook.find(s => s.h3 === h3Title || s.h2 === h3Title || s.h1 === h3Title);
+  if (!section) return '';
+  return `
+    <details class="glass-panel comedy-card" style="border-left: 4px solid hsl(var(--primary));">
+      <summary class="comedy-card-summary" style="padding: 14px 18px;">
+        <div class="comedy-card-header">
+          <h4 style="font-weight: 700; margin: 0; font-size: 15px;">${icon} ${section.h3 || section.h2 || section.h1}</h4>
+        </div>
+        <span class="comedy-card-toggle">▼</span>
+      </summary>
+      <div class="comedy-card-details" style="padding: 0 18px 14px 18px;">
+        <div style="font-size: 13px; color: hsl(var(--muted-foreground)); line-height: 1.5; white-space: pre-wrap;">
+          ${escapeHtml(section.content)}
+        </div>
+      </div>
+    </details>
+  `;
+}
 
 function formatMarkdownToHtml(md) {
   if (!md) return '';
@@ -157,45 +182,131 @@ export function initSongs() {
           <span>🎭</span> Campfire Comedy Master Class
         </h2>
         <p style="font-size: 14.5px; color: hsl(var(--muted-foreground)); line-height: 1.5;">
-          Don't fall back on the same old 50-year-old skits. You can write fresh, appropriate, and genuinely funny sketches yourself by using the following core improvisation guidelines.
+          Don't fall back on the same old 50-year-old skits. You can write fresh, appropriate, and genuinely funny sketches yourself by using the following core improvisation guidelines. Click on any module below to expand and view the full handbook training details.
         </p>
 
-        <div class="comedy-matrix">
-          <div class="glass-panel comedy-card">
-            <span class="comedy-card-num">1</span>
-            <h4>Find a Concept</h4>
-            <p>Establish a winning core concept. Test it: if the basic premise doesn't get a "first laugh" from friends, it won't hold as a full skit.</p>
-          </div>
-          
-          <div class="glass-panel comedy-card">
-            <span class="comedy-card-num">2</span>
-            <h4>Base Reality</h4>
-            <p>Establish the "Who, What, Where" clearly up front. Ground the scene in normal context so the jokes have something solid to contrast against.</p>
-          </div>
+        <div class="comedy-matrix" style="grid-template-columns: 1fr; gap: 16px;">
+          <details class="glass-panel comedy-card">
+            <summary class="comedy-card-summary">
+              <div class="comedy-card-header">
+                <span class="comedy-card-num">1</span>
+                <h4 style="margin: 0; font-weight: 700;">Module 1: Finding Your Core Concept</h4>
+              </div>
+              <span class="comedy-card-toggle">▼</span>
+            </summary>
+            <div class="comedy-card-details">
+              <p style="margin: 0 0 10px 0;">Establish a winning core concept. Test it: if the basic premise doesn't get a "first laugh" from friends, it won't hold as a full skit. Establish a unique world with only one element askew from reality.</p>
+              <hr class="comedy-card-divider" />
+              <ul class="comedy-card-bullets">
+                <li><strong>Generate Ideas Constantly:</strong> Make a daily habit of brainstorming at least 10 funny ideas or short jokes to build a stockpile of raw material.</li>
+                <li><strong>The "First Laugh" Test:</strong> A good skit starts with a winning concept that can be expressed as a simple 5–10 word title. Test your ideas on a feedback group; if the premise doesn’t get an immediate "First Laugh," it won't work as a full skit.</li>
+                <li><strong>Establish One Impossible Thing:</strong> Your skit should introduce a unique comedy world containing only <em>one</em> element that is askew from reality. If you introduce too many crazy elements, the audience will get confused.</li>
+                <li><strong>Include Hidden Subtext:</strong> Ensure your concept is grounded in an astute observation or opinion about human nature or society (Subtext), but never explicitly state this message to the audience.</li>
+              </ul>
+            </div>
+          </details>
 
-          <div class="glass-panel comedy-card">
-            <span class="comedy-card-num">3</span>
-            <h4>The "One" Unusual Thing</h4>
-            <p>Introduce only ONE impossible element into the comedy world. Riff: "If this unusual thing is true, then what else is true?"</p>
-          </div>
+          <details class="glass-panel comedy-card">
+            <summary class="comedy-card-summary">
+              <div class="comedy-card-header">
+                <span class="comedy-card-num">2</span>
+                <h4 style="margin: 0; font-weight: 700;">Module 2: Establishing the Scene and the "Take"</h4>
+              </div>
+              <span class="comedy-card-toggle">▼</span>
+            </summary>
+            <div class="comedy-card-details">
+              <p style="margin: 0 0 10px 0;">Ground the scene in a relatable context so the absurd elements have something solid to contrast against, and identify the first unusual thing that breaks the normal pattern.</p>
+              <hr class="comedy-card-divider" />
+              <ul class="comedy-card-bullets">
+                <li><strong>Build the Base Reality:</strong> Before any comedy happens, establish the "Who, What, and Where" of the scene. Ground the scene in a relatable, normal context so the absurd elements have something to contrast against.</li>
+                <li><strong>Find the Game of the Scene (The Take):</strong> Identify the "first unusual thing" that breaks the normal pattern of your base reality. This unusual behavior or absurd situation becomes your "take" or the "game"—the single specific idea that makes the skit funny.</li>
+              </ul>
+            </div>
+          </details>
 
-          <div class="glass-panel comedy-card">
-            <span class="comedy-card-num">4</span>
-            <h4>Character Archetypes</h4>
-            <p>Keep characters two-dimensional representations of human flaws (e.g. Bumbling Authority, Trickster). Let their traits drive their dialogue naturally.</p>
-          </div>
+          <details class="glass-panel comedy-card">
+            <summary class="comedy-card-summary">
+              <div class="comedy-card-header">
+                <span class="comedy-card-num">3</span>
+                <h4 style="margin: 0; font-weight: 700;">Module 3: Brainstorming and Joke Discipline</h4>
+              </div>
+              <span class="comedy-card-toggle">▼</span>
+            </summary>
+            <div class="comedy-card-details">
+              <p style="margin: 0 0 10px 0;">Ask "If/Then" to discover what else is true, riff joke beats to construct the scene skeleton, and ruthlessly cut any jokes that stray off course.</p>
+              <hr class="comedy-card-divider" />
+              <ul class="comedy-card-bullets">
+                <li><strong>Ask "If/Then":</strong> To generate the comedy for your skit, ask yourself: <em>"If this unusual thing is true, then what else is true?"</em>.</li>
+                <li><strong>Riff "Joke Beats":</strong> Brainstorm a list of 20 or more joke beats that spool out from your core concept. These beats will form the skeleton of your skit, occurring every few lines.</li>
+                <li><strong>Maintain Joke Discipline:</strong> You must ruthlessly cut any jokes that veer away from your core premise, no matter how funny they are on their own. Derailing from the established "track" is a common beginner mistake that confuses audiences.</li>
+              </ul>
+            </div>
+          </details>
 
-          <div class="glass-panel comedy-card">
-            <span class="comedy-card-num">5</span>
-            <h4>Escalate the Stakes</h4>
-            <p>Skits must build momentum. Every joke beat should escalate the stakes, making the situation bigger, crazier, and more absurd.</p>
-          </div>
+          <details class="glass-panel comedy-card">
+            <summary class="comedy-card-summary">
+              <div class="comedy-card-header">
+                <span class="comedy-card-num">4</span>
+                <h4 style="margin: 0; font-weight: 700;">Module 4: Crafting Comedic Characters</h4>
+              </div>
+              <span class="comedy-card-toggle">▼</span>
+            </summary>
+            <div class="comedy-card-details">
+              <p style="margin: 0 0 10px 0;">Develop simple, two-dimensional character archetypes with distinct flaws, and have them fully commit and react truthfully to their absurd reality.</p>
+              <hr class="comedy-card-divider" />
+              <ul class="comedy-card-bullets">
+                <li><strong>Use Simple Archetypes:</strong> Comedic characters are not meant to be deep or realistic; they are two-dimensional representations of human flaws. Rely on proven Character Archetypes (like the Trickster, the Bumbling Authority, or the Dummy) and give them just 1–3 clear traits.</li>
+                <li><strong>Let Traits Drive the Dialogue:</strong> Don't write random, clever "gags" for your characters to say. Humor naturally arises simply by having the characters act and speak in strict accordance with their Archetypal traits.</li>
+                <li><strong>Play it Straight:</strong> Characters must fully commit to their absurd reality and react truthfully (playing at the "top of their intelligence"). Avoid winking at the audience, acting "wacky," or using silly, cliché character names just for a cheap laugh.</li>
+              </ul>
+            </div>
+          </details>
 
-          <div class="glass-panel comedy-card">
-            <span class="comedy-card-num">6</span>
-            <h4>Button Closer</h4>
-            <p>End the skit with a "button" - a final, definitive punchline. This is the only place you can break internal logic for a final surprise.</p>
-          </div>
+          <details class="glass-panel comedy-card">
+            <summary class="comedy-card-summary">
+              <div class="comedy-card-header">
+                <span class="comedy-card-num">5</span>
+                <h4 style="margin: 0; font-weight: 700;">Module 5: Escalation and Drafting</h4>
+              </div>
+              <span class="comedy-card-toggle">▼</span>
+            </summary>
+            <div class="comedy-card-details">
+              <p style="margin: 0 0 10px 0;">Build momentum by raising the stakes with every beat, weave exposition seamlessly, and write your first draft quickly without editing yourself.</p>
+              <hr class="comedy-card-divider" />
+              <ul class="comedy-card-bullets">
+                <li><strong>Escalate the Humor:</strong> Your skit must build momentum. Every new joke beat should escalate the stakes, heightening the scene to be bigger, crazier, and more absurd than the last.</li>
+                <li><strong>Fold in the Exposition:</strong> Do not write long, humorless setups to explain the logic of your scene. Integrate necessary exposition seamlessly into your joke beats.</li>
+                <li><strong>Enter "Clown Mode":</strong> When writing your first draft, turn off your inner critic. String your joke beats together quickly and finish the draft without second-guessing or editing yourself.</li>
+              </ul>
+            </div>
+          </details>
+
+          <details class="glass-panel comedy-card">
+            <summary class="comedy-card-summary">
+              <div class="comedy-card-header">
+                <span class="comedy-card-num">6</span>
+                <h4 style="margin: 0; font-weight: 700;">Module 6: The Closer and the Edit</h4>
+              </div>
+              <span class="comedy-card-toggle">▼</span>
+            </summary>
+            <div class="comedy-card-details">
+              <p style="margin: 0 0 10px 0;">Conclude with a high-impact punchline button, refine the pacing by editing tightly, and test/rewrite according to audience responses.</p>
+              <hr class="comedy-card-divider" />
+              <ul class="comedy-card-bullets">
+                <li><strong>Cap it with a Button:</strong> End the skit with a "closer" or a "button"—a final, definitive joke that wraps up the scene. This is the only place in the skit where you are allowed to slightly break the internal logic or flip the premise upside down for a final surprise.</li>
+                <li><strong>Enter "Editor Mode":</strong> Put the draft away for a few days, then return with an objective eye. Cut any needless words to keep the pacing tight.</li>
+                <li><strong>Test and Rewrite:</strong> Show the completed draft to your feedback group or test it on a real audience. If the joke beats don't land or the audience gets confused, be prepared to scrap parts of it and rewrite until it works.</li>
+              </ul>
+            </div>
+          </details>
+        </div>
+        <!-- Appended Handbook Protocols -->
+        <div style="display: flex; flex-direction: column; gap: 16px; margin-top: 24px;">
+          ${renderHandbookSection('Campfires', '🔥')}
+          ${renderHandbookSection('Isn’t calling this a Master Class a bit arrogant?', '🤔')}
+          ${renderHandbookSection('How To Write Funny', '🎭')}
+          ${renderHandbookSection('Writing Songs', '🎸')}
+          ${renderHandbookSection('Here’s one last lesson on the law making things inconvenient', '⚖️')}
         </div>
       </div>
     `;

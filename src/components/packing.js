@@ -1,5 +1,30 @@
 import { packingList, onboardingData } from '../data/handbookData.js';
 import { state } from '../main.js';
+import { rawHandbook } from '../data/rawHandbook.js';
+
+function escapeHtml(str) {
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+
+function renderHandbookSection(h3Title, icon = '📖') {
+  const section = rawHandbook.find(s => s.h3 === h3Title || s.h2 === h3Title || s.h1 === h3Title);
+  if (!section) return '';
+  return `
+    <details class="glass-panel training-accordion-card" style="border-left: 4px solid hsl(var(--primary)); margin-top: 16px;">
+      <summary class="training-accordion-summary" style="padding: 14px 18px;">
+        <div class="training-accordion-header">
+          <h4 style="font-weight: 700; margin: 0; font-size: 15px;">${icon} ${section.h3 || section.h2 || section.h1}</h4>
+        </div>
+        <span class="training-accordion-toggle">▼</span>
+      </summary>
+      <div class="training-accordion-details" style="padding: 0 18px 14px 18px;">
+        <div style="font-size: 13px; color: hsl(var(--muted-foreground)); line-height: 1.5; white-space: pre-wrap;">
+          ${escapeHtml(section.content)}
+        </div>
+      </div>
+    </details>
+  `;
+}
 
 export function renderPacking() {
   return `
@@ -39,6 +64,14 @@ export function renderPacking() {
         <div class="packing-items-grid" id="packing-mount">
           <!-- Injected dynamically -->
         </div>
+        <!-- Appended Packing Protocols -->
+        <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;">
+          ${renderHandbookSection('Necessary Clothing (Pack for 6 days)', '👕')}
+          ${renderHandbookSection('Necessary Gear', '🎒')}
+          ${renderHandbookSection('Optional Gear', '🔦')}
+          ${renderHandbookSection('Privileged Gear (Entertainment items that cannot leave the cabin and may be prohibited if they become an issue)', '🎮')}
+          ${renderHandbookSection('Strictly Prohibited (Leave at Home)', '❌')}
+        </div>
       </div>
 
       <!-- Code of Conduct Commitment Signer -->
@@ -66,6 +99,12 @@ export function renderPacking() {
           Involvement in YPT violations, possession of alcohol/drugs/marijuana, theft or vandalism, possession of prohibited weapons, or transport of minors without parental forms leads to immediate dismissal and legal reporting.
         </div>
 
+        <!-- Appended Conduct Protocols -->
+        <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;">
+          ${renderHandbookSection('Our Support & Accountability Framework', '🤝')}
+          ${renderHandbookSection('Daily Behavioral Expectations', '📋')}
+          ${renderHandbookSection('Zero-Tolerance: Immediate Discharge', '🚫')}
+        </div>
         <div class="signer-panel" id="signer-inputs-panel">
           <!-- Form -->
           <div class="signer-inputs-row">

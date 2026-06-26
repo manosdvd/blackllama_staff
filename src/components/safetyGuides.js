@@ -1,6 +1,31 @@
 // Camp Lawton Safety & Policies Guide Module
 import { openAppDialog } from '../main.js';
 import { policiesProceduresData } from '../data/handbookData.js';
+import { rawHandbook } from '../data/rawHandbook.js';
+
+function escapeHtml(str) {
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+
+function renderHandbookSection(h3Title, icon = '📖') {
+  const section = rawHandbook.find(s => s.h3 === h3Title);
+  if (!section) return '';
+  return `
+    <details class="glass-panel training-accordion-card" style="border-left: 4px solid hsl(var(--primary)); margin-top: 16px;">
+      <summary class="training-accordion-summary" style="padding: 14px 18px;">
+        <div class="training-accordion-header">
+          <h4 style="font-weight: 700; margin: 0; font-size: 15px;">${icon} ${section.h3}</h4>
+        </div>
+        <span class="training-accordion-toggle">▼</span>
+      </summary>
+      <div class="training-accordion-details" style="padding: 0 18px 14px 18px;">
+        <div style="font-size: 13px; color: hsl(var(--muted-foreground)); line-height: 1.5; white-space: pre-wrap;">
+          ${escapeHtml(section.content)}
+        </div>
+      </div>
+    </details>
+  `;
+}
 
 // Sound generators using Web Audio API
 function playRadioBeep(freq = 880, duration = 0.15) {
@@ -293,7 +318,18 @@ export function initSafetyGuides() {
           </div>
         </div>
 
+        
+        <!-- Appended Handbook Protocols -->
+        <div style="margin-top: 24px;">
+          ${renderHandbookSection('Severe Weather Preparedness', '🌪️')}
+          ${renderHandbookSection('Safeguarding Youth', '🛡️')}
+          ${renderHandbookSection('Bear and Wildlife Safety', '🐻')}
+          ${renderHandbookSection('Fire Safety and Evacuation Procedures', '🔥')}
+          ${renderHandbookSection('Lightning and Severe Thunderstorms', '⚡')}
+          ${renderHandbookSection('Fatality Protocol', '🚨')}
+        </div>
         <!-- Heat Stress Matrix -->
+        
         <div class="glass-panel" style="display: flex; flex-direction: column; gap: 16px; margin-top: 24px;">
           <h3 style="color: hsl(var(--primary)); font-family: var(--font-heading); font-size: 22px;">☀️ Heat Stress Diagnostics</h3>
           <p style="font-size: 14.5px; color: hsl(var(--muted-foreground));">Review symptoms to identify heat illnesses on dry mountain trails.</p>
@@ -777,6 +813,13 @@ export function initSafetyGuides() {
           </div>
 
         </div>
+        <div style="margin-top: 24px;">
+          ${renderHandbookSection('The Camp Lawton Guidelines (What we expect from everyone in camp)', '📋')}
+          ${renderHandbookSection('HEALTH AND SAFETY', '⚕️')}
+        </div>
+        <div style="margin-top: 24px;">
+          ${renderHandbookSection('LEGAL POLICIES AND INFORMATION', '⚖️')}
+        </div>
       </div>
     `;
   }
@@ -801,6 +844,13 @@ export function initSafetyGuides() {
         </h3>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 16px;">
           ${legalCards}
+        </div>
+        <div style="margin-top: 24px;">
+          ${renderHandbookSection('The Camp Lawton Guidelines (What we expect from everyone in camp)', '📋')}
+          ${renderHandbookSection('HEALTH AND SAFETY', '⚕️')}
+        </div>
+        <div style="margin-top: 24px;">
+          ${renderHandbookSection('LEGAL POLICIES AND INFORMATION', '⚖️')}
         </div>
       </div>
     `;

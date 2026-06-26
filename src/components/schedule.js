@@ -1,5 +1,30 @@
 import { sundayArrivalSteps, dailySchedule } from '../data/handbookData.js';
 import { getContent, wrapEditable, initEditable } from './wysiwygEditor.js';
+import { rawHandbook } from '../data/rawHandbook.js';
+
+function escapeHtml(str) {
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+
+function renderHandbookSection(h3Title, icon = '📖') {
+  const section = rawHandbook.find(s => s.h3 === h3Title);
+  if (!section) return '';
+  return `
+    <details class="glass-panel training-accordion-card" style="border-left: 4px solid hsl(var(--primary)); margin-top: 16px;">
+      <summary class="training-accordion-summary" style="padding: 14px 18px;">
+        <div class="training-accordion-header">
+          <h4 style="font-weight: 700; margin: 0; font-size: 15px;">${icon} ${section.h3}</h4>
+        </div>
+        <span class="training-accordion-toggle">▼</span>
+      </summary>
+      <div class="training-accordion-details" style="padding: 0 18px 14px 18px;">
+        <div style="font-size: 13px; color: hsl(var(--muted-foreground)); line-height: 1.5; white-space: pre-wrap;">
+          ${escapeHtml(section.content)}
+        </div>
+      </div>
+    </details>
+  `;
+}
 
 const DEFAULT_SUNDAY_INSTRUCTIONS = `
   <h4 style="font-weight: 700; color: hsl(var(--primary)); margin-bottom: 6px;">Sunday Check-In Instructions:</h4>

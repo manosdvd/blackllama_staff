@@ -1,3 +1,4 @@
+import { renderHandbookCourse, initHandbookCourse } from './components/handbookCourse.js';
 import './style.css';
 
 // Import View Components
@@ -100,6 +101,13 @@ state.loadUserData(state.username);
 
 // Route View Map
 const views = {
+  course: {
+    title: 'Staff Handbook Course',
+    subtitle: 'Read the full staff handbook with full context.',
+    render: renderHandbookCourse,
+    init: initHandbookCourse
+  },
+
   dashboard: {
     title: 'Dashboard',
     subtitle: 'Welcome to the Camp Lawton digital staff portal.',
@@ -107,7 +115,7 @@ const views = {
     init: initDashboard
   },
   camplawton: {
-    title: 'Camp Lawton',
+    title: 'About Camp Lawton',
     subtitle: 'History, pillars, schedule, and values.',
     render: renderCampLawton,
     init: initCampLawton
