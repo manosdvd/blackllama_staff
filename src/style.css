@@ -410,6 +410,8 @@ a {
   display: flex;
   flex-direction: column;
   gap: 32px;
+  min-width: 0;        /* Prevent flex blowout */
+  overflow-x: hidden;  /* Clip any child that tries to escape */
 }
 
 @media (max-width: 768px) {
@@ -417,6 +419,12 @@ a {
     padding: 24px 20px;
     gap: 24px;
   }
+}
+
+/* View mount — must not widen its parent */
+.view-mount-point {
+  min-width: 0;
+  overflow-x: hidden;
 }
 
 /* Header inside Main Content */
@@ -842,7 +850,33 @@ dialog::backdrop {
   border-bottom: 2px solid hsl(var(--border));
   padding-bottom: 12px;
   overflow-x: auto;
-  scrollbar-width: none;
+  overflow-y: visible;
+  scrollbar-width: none;        /* Firefox */
+  -webkit-overflow-scrolling: touch; /* iOS momentum scroll */
+  min-width: 0;                 /* Prevent flex blowout past parent */
+  max-width: 100%;
+  /* Default: fade right edge to hint at more tabs */
+  -webkit-mask-image: linear-gradient(to right, black 80%, transparent 100%);
+  mask-image:         linear-gradient(to right, black 80%, transparent 100%);
+  transition: mask-image 0.2s ease, -webkit-mask-image 0.2s ease;
+}
+
+/* Scrolled past start — fade both edges */
+.schedule-tabs-container.tabs-fade-both {
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+  mask-image:         linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+}
+
+/* Scrolled to end — fade left edge only */
+.schedule-tabs-container.tabs-fade-left {
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 20%);
+  mask-image:         linear-gradient(to right, transparent 0%, black 20%);
+}
+
+/* Not scrollable at all — no fade */
+.schedule-tabs-container.tabs-no-fade {
+  -webkit-mask-image: none;
+  mask-image: none;
 }
 
 .schedule-tabs-container::-webkit-scrollbar {

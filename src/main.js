@@ -289,11 +289,13 @@ export function navigateTo(viewId) {
     updateDOM();
     viewTitle.focus();
     applyGlossaryTooltips(viewMountPoint);
+    applyTabScrollFades(viewMountPoint);
   } else {
     const transition = document.startViewTransition(updateDOM);
     transition.finished.finally(() => {
       viewTitle.focus();
       applyGlossaryTooltips(viewMountPoint);
+      applyTabScrollFades(viewMountPoint);
     });
   }
 }
@@ -423,6 +425,7 @@ function startTooltipObserver() {
   tooltipObserver = new MutationObserver((mutations) => {
     tooltipObserver.disconnect();
     applyGlossaryTooltips(target);
+    applyTabScrollFades(target);
     connectObserver();
   });
 
@@ -475,6 +478,40 @@ function applyGlossaryTooltips(container) {
 
   walk(container);
   setupTooltipEvents(container);
+}
+
+// ========================================================
+// TAB SCROLL FADE INDICATORS
+// Reads each .schedule-tabs-container and sets a CSS class
+// that drives the mask-image fade direction.
+// ========================================================
+function updateTabFade(el) {
+  const atStart = el.scrollLeft <= 2;
+  const atEnd   = el.scrollLeft + el.clientWidth >= el.scrollWidth - 2;
+  const scrollable = el.scrollWidth > el.clientWidth + 4;
+
+  el.classList.remove('tabs-no-fade', 'tabs-fade-left', 'tabs-fade-both');
+
+  if (!scrollable) {
+    el.classList.add('tabs-no-fade');
+  } else if (atStart) {
+    // default CSS already handles right-fade — no extra class needed
+  } else if (atEnd) {
+    el.classList.add('tabs-fade-left');
+  } else {
+    el.classList.add('tabs-fade-both');
+  }
+}
+
+function applyTabScrollFades(container) {
+  if (!container) return;
+  const tabRows = container.querySelectorAll('.schedule-tabs-container');
+  tabRows.forEach(el => {
+    // Initial state
+    updateTabFade(el);
+    // Live updates as the user scrolls
+    el.addEventListener('scroll', () => updateTabFade(el), { passive: true });
+  });
 }
 
 // Dialog Backdrop light-dismiss helper

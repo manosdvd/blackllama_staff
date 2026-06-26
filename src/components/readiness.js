@@ -83,7 +83,15 @@ function renderChecklist() {
       const taskId = item.getAttribute('data-task-id');
       
       // Route if clicked specific category links
-      if (taskId === 'checklist-4') {
+      if (taskId === 'checklist-1' || taskId === 'checklist-2') {
+        import('./onboarding.js').then(m => m.setOnboardingTab('checklists'));
+        navigateTo('onboarding');
+      } else if (taskId === 'checklist-3') {
+        // Navigate first — then update state so the state event fires in the correct view context
+        navigateTo('training');
+        // Small delay lets the view transition start before marking task complete
+        setTimeout(() => state.toggleTask(taskId), 50);
+      } else if (taskId === 'checklist-4') {
         import('./onboarding.js').then(m => m.setOnboardingTab('conduct'));
         navigateTo('onboarding'); // Code signer view
       } else if (taskId === 'checklist-5') {

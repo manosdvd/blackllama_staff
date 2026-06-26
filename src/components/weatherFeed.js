@@ -200,15 +200,15 @@ export async function initWeatherBanner() {
         const isSevere = primary.severity.toLowerCase() === 'extreme' || primary.severity.toLowerCase() === 'severe';
         
         if (usfsSection) {
-          usfsSection.className = `agency-alert-box usfs-box alert-active ${isSevere ? 'alert-danger' : 'alert-warning'}`;
+          usfsSection.className = `agency-alert-box usfs-box alert-active ${isSevere ? 'alert-danger' : 'alert-warning'} banner-link`;
           usfsSection.href = 'https://forecast.weather.gov/MapClick.php?lat=32.3981&lon=-110.725';
         }
         if (usfsStatusEl) {
-          usfsStatusEl.innerHTML = `<span style="font-weight: 700; color: ${isSevere ? 'var(--safety-red)' : 'var(--camp-gold)'};">${primary.event}:</span> ${primary.headline}`;
+          usfsStatusEl.innerHTML = `<span style="font-weight: 700; color: ${isSevere ? 'var(--safety-red)' : 'var(--camp-gold)'}">${primary.event}:</span> ${primary.headline}`;
         }
       } else {
         if (usfsSection) {
-          usfsSection.className = 'agency-alert-box usfs-box';
+          usfsSection.className = 'agency-alert-box usfs-box banner-link';
           usfsSection.href = 'https://www.fs.usda.gov/alerts/coronado/alerts-notices';
         }
         if (usfsStatusEl) {
@@ -220,7 +220,7 @@ export async function initWeatherBanner() {
       if (fireAlerts.length > 0) {
         const primary = fireAlerts[0];
         if (mlfdSection) {
-          mlfdSection.className = 'agency-alert-box mlfd-box alert-active alert-danger';
+          mlfdSection.className = 'agency-alert-box mlfd-box alert-active alert-danger banner-link';
           mlfdSection.href = 'https://forecast.weather.gov/MapClick.php?lat=32.3981&lon=-110.725';
         }
         if (mlfdStatusEl) {
@@ -252,13 +252,13 @@ export async function initWeatherBanner() {
         
         if (mlfdSection) {
           if (riskClass === 'danger') {
-            mlfdSection.className = 'agency-alert-box mlfd-box alert-active alert-danger';
+            mlfdSection.className = 'agency-alert-box mlfd-box alert-active alert-danger banner-link';
             mlfdSection.href = 'https://forecast.weather.gov/MapClick.php?lat=32.3981&lon=-110.725';
           } else if (riskClass === 'warning') {
-            mlfdSection.className = 'agency-alert-box mlfd-box alert-active alert-warning';
+            mlfdSection.className = 'agency-alert-box mlfd-box alert-active alert-warning banner-link';
             mlfdSection.href = 'https://forecast.weather.gov/MapClick.php?lat=32.3981&lon=-110.725';
           } else {
-            mlfdSection.className = 'agency-alert-box mlfd-box';
+            mlfdSection.className = 'agency-alert-box mlfd-box banner-link';
             mlfdSection.href = 'https://www.mtlemmonfire.org/';
           }
         }
@@ -301,7 +301,7 @@ export async function initWeatherBanner() {
           const primary = generalAlerts[0];
           const isSevere = primary.severity.toLowerCase() === 'extreme' || primary.severity.toLowerCase() === 'severe';
           if (usfsSection) {
-            usfsSection.className = `agency-alert-box usfs-box alert-active ${isSevere ? 'alert-danger' : 'alert-warning'}`;
+            usfsSection.className = `agency-alert-box usfs-box alert-active ${isSevere ? 'alert-danger' : 'alert-warning'} banner-link`;
             usfsSection.href = 'https://forecast.weather.gov/MapClick.php?lat=32.3981&lon=-110.725';
           }
           if (usfsStatusEl) {
@@ -309,7 +309,7 @@ export async function initWeatherBanner() {
           }
         } else {
           if (usfsSection) {
-            usfsSection.className = 'agency-alert-box usfs-box';
+            usfsSection.className = 'agency-alert-box usfs-box banner-link';
             usfsSection.href = 'https://www.fs.usda.gov/alerts/coronado/alerts-notices';
           }
           if (usfsStatusEl) {
@@ -320,7 +320,7 @@ export async function initWeatherBanner() {
         if (fireAlerts.length > 0) {
           const primary = fireAlerts[0];
           if (mlfdSection) {
-            mlfdSection.className = 'agency-alert-box mlfd-box alert-active alert-danger';
+            mlfdSection.className = 'agency-alert-box mlfd-box alert-active alert-danger banner-link';
             mlfdSection.href = 'https://forecast.weather.gov/MapClick.php?lat=32.3981&lon=-110.725';
           }
           if (mlfdStatusEl) {
@@ -328,7 +328,7 @@ export async function initWeatherBanner() {
           }
         } else {
           if (mlfdSection) {
-            mlfdSection.className = 'agency-alert-box mlfd-box';
+            mlfdSection.className = 'agency-alert-box mlfd-box banner-link';
             mlfdSection.href = 'https://www.mtlemmonfire.org/';
           }
           if (mlfdStatusEl) {
