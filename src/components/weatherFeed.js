@@ -346,54 +346,48 @@ export async function initWeatherBanner() {
     }
   }
 
-  // 3. Geolocation Geotagging
+  // 3. QSLA3 Station Refresh — always fixed to Scout Camp, never device GPS
   if (syncBtn) {
-    syncBtn.addEventListener('click', () => {
-      if (!navigator.geolocation) {
-        alert('Geolocation is not supported by your browser.');
-        return;
-      }
-      
+    syncBtn.title = 'Refresh QSLA3 Scout Camp data';
+    syncBtn.addEventListener('click', async () => {
       syncBtn.textContent = '⏳';
       syncBtn.style.animation = 'spin 1s linear infinite';
 
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          const lat = position.coords.latitude;
-          const lon = position.coords.longitude;
-          const accuracy = position.coords.accuracy;
+      try {
+        const res = await fetch('https://api.weather.gov/stations/QSLA3/observations/latest', {
+          headers: { 'User-Agent': 'CampLawtonStaffPortal/1.0 (manosdvd@gmail.com)' }
+        });
 
-          gpsEl.textContent = `${lat.toFixed(4)}° N, ${Math.abs(lon).toFixed(4)}° W`;
-          
-          // Try to lookup elevation via Open-Meteo elevation API
-          try {
-            const res = await fetch(`https://api.open-meteo.com/v1/elevation?latitude=${lat}&longitude=${lon}`);
-            if (res.ok) {
-              const data = await res.json();
-              const elevMeters = data.elevation[0] || 0;
-              const elevFeet = Math.round(elevMeters * 3.28084);
-              
-              elevEl.textContent = `Elev: ${elevFeet.toLocaleString()} ft (Live Geotag)`;
-            } else {
-              elevEl.textContent = `Elev: N/A (Live Geotag)`;
-            }
-          } catch {
-            elevEl.textContent = `Elev: N/A (Live Geotag)`;
+        if (res.ok) {
+          const data = await res.json();
+          const props = data.properties || {};
+          const ts = props.timestamp
+            ? new Date(props.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            : '--:--';
+
+          // Snap coordinates back to QSLA3 station values
+          gpsEl.textContent = `32.3981° N, 110.7250° W`;
+          elevEl.textContent = `Elev: 7,554 ft — QSLA3 Scout Camp · Updated ${ts}`;
+
+          // Refresh temp display if elements still exist
+          if (tempEl && props.temperature?.value !== null && props.temperature?.value !== undefined) {
+            tempEl.textContent = `${Math.round((props.temperature.value * 9 / 5) + 32)}°F`;
           }
 
-          // Reset button
-          syncBtn.textContent = '📍';
-          syncBtn.style.animation = 'none';
-          showToast('Location synced successfully! 📍');
-        },
-        (error) => {
-          console.error('GPS error:', error);
-          syncBtn.textContent = '🔄';
-          syncBtn.style.animation = 'none';
-          alert('Could not retrieve live GPS coordinates. Please ensure location services are enabled.');
-        },
-        { enableHighAccuracy: true, timeout: 8000 }
-      );
+          showToast('⛰️ QSLA3 Scout Camp data refreshed!');
+        } else {
+          throw new Error('NWS station unavailable');
+        }
+      } catch (err) {
+        console.error('QSLA3 refresh failed:', err);
+        // Still snap coords even on failure
+        gpsEl.textContent = `32.3981° N, 110.7250° W`;
+        elevEl.textContent = `Elev: 7,554 ft — QSLA3 Scout Camp`;
+        showToast('⛰️ Showing fixed Scout Camp location.');
+      } finally {
+        syncBtn.textContent = '🔄';
+        syncBtn.style.animation = 'none';
+      }
     });
   }
 }
