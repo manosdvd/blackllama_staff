@@ -1,5 +1,27 @@
 import { songbookSongs } from '../data/handbookData.js';
 
+function formatMarkdownToHtml(md) {
+  if (!md) return '';
+  let html = md;
+  
+  // Remove backslash escapes like \! or \? or \- or \_ or \*
+  html = html.replace(/\\(!|\?|-|_|\*)/g, '$1');
+  
+  // Replace bold-italic ***text***
+  html = html.replace(/\*\*\*([^*]+)\*\*\*/g, '<strong><em>$1</em></strong>');
+  
+  // Replace bold **text**
+  html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  
+  // Replace italic *text*
+  html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+  
+  // Replace bullet points starting with dash
+  html = html.replace(/^(\s*)[-\u2013\u2014]\s*(.*?)$/gm, '$1• $2');
+  
+  return html;
+}
+
 export function renderSongs() {
   return `
     <div class="songbook-layout">
@@ -225,7 +247,7 @@ export function initSongs() {
         ${metronomeHtml}
 
         <div class="lyrics-pre">
-          ${song.lyrics}
+          ${formatMarkdownToHtml(song.lyrics)}
         </div>
       </div>
     `;
@@ -272,7 +294,7 @@ export function initSongs() {
         <div style="margin-bottom: 20px;">
           <h4 style="font-family: var(--font-heading); color: hsl(var(--primary)); margin-bottom: 8px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Staff Notes & Commentary</h4>
           <div style="font-style: italic; font-size: 14.5px; color: hsl(var(--muted-foreground)); border-left: 3px solid hsl(var(--primary) / 0.4); padding-left: 12px; line-height: 1.5;">
-            "${song.notes}"
+            "${formatMarkdownToHtml(song.notes)}"
           </div>
         </div>
       `;
@@ -282,7 +304,7 @@ export function initSongs() {
     if (song.background) {
       const formattedText = song.background.text
         .split('\n\n')
-        .map(p => `<p style="margin-bottom: 14px; line-height: 1.6; font-size: 14.5px; color: hsl(var(--muted-foreground));">${p.replace(/\n/g, '<br>')}</p>`)
+        .map(p => `<p style="margin-bottom: 14px; line-height: 1.6; font-size: 14.5px; color: hsl(var(--muted-foreground));">${formatMarkdownToHtml(p.replace(/\n/g, '<br>'))}</p>`)
         .join('');
       
       modalBodyHtml += `
