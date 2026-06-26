@@ -204,9 +204,10 @@ export function initSongs() {
       </div>
     ` : '';
 
-    const moreInfoHtml = song.background ? `
+    const hasMoreInfo = (song.notes && song.notes.trim()) || song.background;
+    const moreInfoHtml = hasMoreInfo ? `
       <button class="glass-panel-interactive" id="btn-song-more-info" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; font-size: 12.5px; border-radius: var(--radius-sm); border: 1px solid var(--glass-border); background: var(--glass-bg); color: hsl(var(--primary)); cursor: pointer; font-weight: 600; margin-bottom: 18px; transition: all 0.2s;">
-        📖 Background & Copyright
+        📖 Background & Research
       </button>
     ` : '';
 
@@ -219,8 +220,6 @@ export function initSongs() {
           <span>🎵</span> Tune: <strong>${song.tune}</strong>
         </div>
 
-        <p style="font-size: 14px; color: hsl(var(--muted-foreground)); margin-bottom: 16px; line-height: 1.4;">${song.description}</p>
-        
         ${moreInfoHtml}
         
         ${metronomeHtml}
@@ -246,17 +245,17 @@ export function initSongs() {
     }
 
     // More Information click binding
-    if (song.background) {
+    if (hasMoreInfo) {
       const moreInfoBtn = document.getElementById('btn-song-more-info');
       if (moreInfoBtn) {
         moreInfoBtn.addEventListener('click', () => {
-          openBackgroundModal(song.background);
+          openBackgroundModal(song);
         });
       }
     }
   }
 
-  function openBackgroundModal(bg) {
+  function openBackgroundModal(song) {
     let modal = document.getElementById('song-background-modal');
     if (!modal) {
       modal = document.createElement('div');
@@ -265,19 +264,45 @@ export function initSongs() {
       document.body.appendChild(modal);
     }
     
-    const formattedText = bg.text
-      .split('\n\n')
-      .map(p => `<p style="margin-bottom: 14px; line-height: 1.6; font-size: 14.5px; color: hsl(var(--muted-foreground));">${p.replace(/\n/g, '<br>')}</p>`)
-      .join('');
+    let modalBodyHtml = '';
+    
+    // Notes / Commentary
+    if (song.notes && song.notes.trim()) {
+      modalBodyHtml += `
+        <div style="margin-bottom: 20px;">
+          <h4 style="font-family: var(--font-heading); color: hsl(var(--primary)); margin-bottom: 8px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Staff Notes & Commentary</h4>
+          <div style="font-style: italic; font-size: 14.5px; color: hsl(var(--muted-foreground)); border-left: 3px solid hsl(var(--primary) / 0.4); padding-left: 12px; line-height: 1.5;">
+            "${song.notes}"
+          </div>
+        </div>
+      `;
+    }
+    
+    // Background Research Analysis
+    if (song.background) {
+      const formattedText = song.background.text
+        .split('\n\n')
+        .map(p => `<p style="margin-bottom: 14px; line-height: 1.6; font-size: 14.5px; color: hsl(var(--muted-foreground));">${p.replace(/\n/g, '<br>')}</p>`)
+        .join('');
+      
+      modalBodyHtml += `
+        <div style="${(song.notes && song.notes.trim()) ? 'border-top: 1px solid hsl(var(--border) / 0.4); padding-top: 16px; margin-top: 16px;' : ''}">
+          <h4 style="font-family: var(--font-heading); color: hsl(var(--primary)); margin-bottom: 12px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Historical & Copyright Analysis</h4>
+          ${formattedText}
+        </div>
+      `;
+    }
+
+    const titleText = song.background ? song.background.heading : `Background: ${song.title}`;
 
     modal.innerHTML = `
       <div class="song-modal-content glass-panel">
         <div class="song-modal-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid hsl(var(--border) / 0.5); padding-bottom: 12px; margin-bottom: 16px;">
-          <h3 style="font-family: var(--font-heading); color: hsl(var(--primary)); margin: 0; font-size: 18px;">${bg.heading}</h3>
+          <h3 style="font-family: var(--font-heading); color: hsl(var(--primary)); margin: 0; font-size: 17px;">${titleText}</h3>
           <button class="song-modal-close-btn" id="close-song-modal" style="background: none; border: none; font-size: 24px; cursor: pointer; color: hsl(var(--muted-foreground)); transition: color 0.2s; line-height: 1;">&times;</button>
         </div>
         <div class="song-modal-body" style="max-height: 60vh; overflow-y: auto; padding-right: 8px;">
-          ${formattedText}
+          ${modalBodyHtml}
         </div>
       </div>
     `;

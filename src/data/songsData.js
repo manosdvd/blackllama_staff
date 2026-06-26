@@ -6,7 +6,7 @@ export const songbookSongs = [
     "tune": "Traditional",
     "setting": "Campfire",
     "energy": "calm",
-    "description": "Camp classic sung to the tune of \"Traditional\".",
+    "notes": "",
     "actions": [],
     "lyrics": "Patriotic Round  \nTune: “Rose Red”   \n*Good done in a round with old English folk songs, “Rose Red” and “Heigh Ho, Nobody Home”, or alone. Also good in a montage of patriotic songs.*\n\nAmerica, America  \nHow can I tell you how I feel  \nYou have given me many treasures  \nI love you so",
     "background": {
@@ -20,7 +20,7 @@ export const songbookSongs = [
     "tune": "Standard",
     "setting": "Logs",
     "energy": "rowdy",
-    "description": "This song I used to sing as a little kid but forgot about it for years till I heard it again at Mataguay. I learned it differently though. I don’t remember anything about the monkey getting drunk… Still, this is a Mataguay song after all. California songs all seem a little racier than anywhere else. Here’s both versions.",
+    "notes": "This song I used to sing as a little kid but forgot about it for years till I heard it again at Mataguay. I learned it differently though. I don’t remember anything about the monkey getting drunk… Still, this is a Mataguay song after all. California songs all seem a little racier than anywhere else. Here’s both versions.",
     "actions": [],
     "lyrics": "I went to the animal fair  \nThe birds and the beasts were there  \nThe old baboon by the light of the mood  \nWas combing his auburn hair  \nThe monkey he got drunk\t\t*or*\t\tThe monkey bumped the skunk  \nAnd sat on the elephants trunk  \nThe elephant sneezed and fell to his knees  \nAnd what become of the monk, the monk, the monk, the monk…….",
     "background": null
@@ -31,7 +31,7 @@ export const songbookSongs = [
     "tune": "Unknown",
     "setting": "Campfire",
     "energy": "rowdy",
-    "description": "This is an old camp song, underdone these days. It’s a great one though, that the kids will really get behind once they learn it.",
+    "notes": "This is an old camp song, underdone these days. It’s a great one though, that the kids will really get behind once they learn it.",
     "actions": [],
     "lyrics": "Mary had a little lamb  \nIts fleece was white as snow. Hey\\!   \n*All:* Shouting out the battle cry of freedom  \nAnd everywhere that Mary went  \nThe lamb was sure to go. Hey\\!  \n*All:* Shouting out the battle cry of freedom\n\n*Chorus (All)*  \nHurrah\\! For the Mary\\! Hurrah\\! For the lamb\\!  \nHurrah\\! For the teacher who never gave a particle  \nIf all the lambs in \\[*camp or city name*\\] went marching into school.  \nShouting out the battle cry of freedom\\!\n\nMary had a little lamb  \nShe fed it Caster Oil. Hey\\!  \nShouting out the battle cry of freedom  \nAnd every time it jumped the fence  \nIt fertilized the soil. Hey\\!  \nShouting out the battle cry of freedom  \n*chorus*\n\nMary had a sports car  \nAnd it was painted red. Hey\\!  \nShouting out the battle cry of freedom  \nAnd everywhere that Mary went  \nThe cops picked up the dead. Hey\\!  \nShouting out the battle cry of freedom  \n*chorus*\n\nMary had a little lamb  \nShe kept it in the closet. Hey\\!  \nShouting out the battle cry of freedom  \nBut every time she let it out  \nIt left a little deposit. Hey\\!  \nShouting out the battle cry of freedom  \n*chorus*\n\nMary had a little lamb   \nShe put it by the heater. Hey\\!  \nShouting out the battle cry of freedom  \nBut every time it turned around  \nIt burnt its little seater. Hey\\!  \nShouting out the battle cry of freedom  \n*chorus*\n\nMary had a little lamb  \nIt’s foot was black as soot. Hey\\!  \nShouting out the battle cry of freedom  \nAnd everywhere that Mary went  \nIts sooty foot it put. Hey\\!  \nShouting out the battle cry of freedom  \n*chorus*\n\nMary had a little lamb  \nShe fed it very well. Hey\\!  \nShouting out the battle cry of freedom  \nOne day she fed it dynamite  \nAnd blew it all to pieces. Hey\\!  \nShouting out the battle cry of freedom  \n*chorus*\n\nMary had a little lamb  \nShe put it on the shelf. Hey\\!  \nShouting out the battle cry of freedom  \nAnd every time it wagged its tail  \nIt spanked its little self. Hey\\!  \nShouting out the battle cry of freedom  \n*chorus*\n\nMary had a little lamb  \nHer father shot it dead. Hey\\!  \nShouting out the battle cry of freedom  \nAnd now she takes the lamb to school  \nBetween two hunks of bread. Hey\\!  \nShouting out the battle cry of freedom  \n*chorus*\n\nI eat my peas with honey  \nI’ve done it all my life. Hey\\!  \nShouting out the battle cry of freedom  \nIt makes the peas taste funny  \nBut it helps them stick to the knife. Hey\\!  \nShouting out the battle cry of freedom  \n*chorus*\n\nMary had a little lamb  \nYou’ve heard this tale before. Hey\\!  \nShouting out the battle cry of freedom  \nBut have you heard she passed the plate  \nAnd had a little more. Hey\\!  \nShouting out the battle cry of freedom  \n*chorus*",
     "background": null
@@ -42,7 +42,7 @@ export const songbookSongs = [
     "tune": "Traditional",
     "setting": "Campfire",
     "energy": "calm",
-    "description": "Camp classic sung to the tune of \"Traditional\".",
+    "notes": "",
     "actions": [],
     "lyrics": "Marching Tune  \nTune: John Brown’s Body   \nBy Julia Ward Howe   \n*Written in 1862, the song was written in support of abolition and the Union army during the Civil War. That’s right, it’s woke. Here it is in its entirety, but PLEASE don’t try to sing the whole thing at once.* \n\nMine eyes have seen the glory of the coming of the Lord:  \nHe is trampling out the vintage where the grapes of wrath are stored;  \nHe hath loosed the fateful lightning of His terrible swift sword:  \nHis truth is marching on.\n\n***Chorus:***  \n**Glory, glory, hallelujah\\!**  \n**Glory, glory, hallelujah\\!**  \n**Glory, glory, hallelujah\\!**  \n**His truth is marching on.**\n\nI have seen Him in the watch-fires of a hundred circling camps,  \nThey have builded Him an altar in the evening dews and damps;  \nI can read His righteous sentence by the dim and flaring lamps:  \nHis day is marching on.\n\n*Chorus*\n\nI have read a fiery gospel writ in burnished rows of steel:  \n“As ye deal with my contemners, so with you my grace shall deal;  \nLet the Hero, born of woman, crush the serpent with his heel,  \nSince God is marching on.”\n\n*Chorus*\n\nHe has sounded forth the trumpet that shall never call retreat;  \nHe is sifting out the hearts of men before His judgment-seat:  \nOh, be swift, my soul, to answer Him\\! be jubilant, my feet\\!  \nOur God is marching on.\n\n*Chorus*\n\nIn the beauty of the lilies Christ was born across the sea,  \nWith a glory in His bosom that transfigures you and me:  \nAs He died to make men holy, let us die to make men free,  \nWhile God is marching on.\n\n*Chorus*\n\nHe is coming like the glory of the morning on the wave,  \nHe is Wisdom to the mighty, He is Succour to the brave,  \nSo the world shall be His footstool, and the soul of Time His slave,  \nOur God is marching on.\n\n*Chorus*",
     "background": null
@@ -53,7 +53,7 @@ export const songbookSongs = [
     "tune": "Standard tune, though it’s usually reduced to simply yelling",
     "setting": "Logs",
     "energy": "calm",
-    "description": "This is a very common morning wake up song. Gives the kids a chance to yell early in the morning and annoy the people who are still trying to sleep. You can work in actions as appropriate.",
+    "notes": "This is a very common morning wake up song. Gives the kids a chance to yell early in the morning and annoy the people who are still trying to sleep. You can work in actions as appropriate.",
     "actions": [
       {
         "beat": 1,
@@ -84,7 +84,7 @@ export const songbookSongs = [
     "tune": "Probably Original",
     "setting": "Campfire",
     "energy": "rowdy",
-    "description": "A personal favorite of mine, complete with ridiculous puns and a simple chorus.",
+    "notes": "A personal favorite of mine, complete with ridiculous puns and a simple chorus.",
     "actions": [
       {
         "beat": 1,
@@ -108,7 +108,7 @@ export const songbookSongs = [
     "tune": "Spoken",
     "setting": "Logs",
     "energy": "rowdy",
-    "description": "This was an instant hit, popular with Boy Scouts and Cub Scouts alike. Most beloved because it’s so simple to learn.",
+    "notes": "This was an instant hit, popular with Boy Scouts and Cub Scouts alike. Most beloved because it’s so simple to learn.",
     "actions": [],
     "lyrics": "*Actions: Clap with “skippin’” and snap your fingers jazz-style with the listing off of the family members.*\n\nOne day, when I came   \nSkippin’ home from school,  \nSkippin’ home from school,  \nSkippin’ home from school,  \nThere was mama  \nAnd there was papa,  \nAnd there was sister,  \nAnd there was brother,  \nAnd there was Herbie  \nThe family pet – CHA\\!  \nAnd he was this big *(1 inch)*  \nThis big\\!\n\n*Repeat song taking out a family member starting with brother*  \n…But there was NO BROTHER\\!\\! And I was Sooo mad\\!\\!  \nBut there was Herbie  \nThe family pet – CHA\\!  \nAnd he was this big *(1 foot)*  \nThis big\\!\n\n*Each verse loses the next family member up, you get more upset, and Herbie grows more until there’s no one left…*\n\nAnd ten Herbie let out the biggest belch I ever heard in my whole entire life\\!\n\nAnd there was mama  \nAnd there was papa,  \nAnd there was sister,  \nAnd there was brother,  \nAnd there was Herbie  \nThe family pet – CHA\\!  \nAnd he was this big *(1 inch)*  \nThis big\\!",
     "background": {
@@ -122,7 +122,7 @@ export const songbookSongs = [
     "tune": "Unknown",
     "setting": "Logs",
     "energy": "rowdy",
-    "description": "This is great for the younger crowds but the older kids may not go for it.",
+    "notes": "This is great for the younger crowds but the older kids may not go for it.",
     "actions": [],
     "lyrics": "Ding ding ding ding ding  \nHere comes my wagon  \nI can here my keeper calling me, me  \nDing ding ding ding ding  \nHere comes my wagon  \nTaking me back to the nutty factory\n\nLike a little nut that falls  \nI’m a little cracked that’s all  \nDing ding ding ding ding   \nHere comes my wagon\\!  \nMy kiddie car\\!  \nMy bus\\!  \nWheeeeeeeeeeeeeeeee\\!",
     "background": {
@@ -136,7 +136,7 @@ export const songbookSongs = [
     "tune": "Traditional",
     "setting": "Campfire",
     "energy": "rowdy",
-    "description": "Camp classic sung to the tune of \"Traditional\".",
+    "notes": "",
     "actions": [],
     "lyrics": "Here’s a llama  \nThere’s a llama  \nAnd another little llama  \nFuzzy Llama  \nFunny Llama  \nLlama Llama Duck\n\nLlama Llama Cheesecake Llama tablet brick potato Llama   \nLlama Llama mushroom Llama Llama Llama duck\n\nI was once a tree house  \nI lived in a cake  \nBut I never saw the way   \nThe orange slayed the rake  \nI was only three years dead  \nBut it told the tale  \nAnd now listen, little child  \nTo the safety rail\n\nDid you ever see a Llama  \nKiss a Llama   \nOn a Llama  \nLlama’s Llama  \nTaste of Llama  \nLlama Llama Duck\n\nHalf a llama  \nTwice a Llama  \nNot a Llama   \nFarmer   \nLlama  \nLlama in a car   \nAlarm a llama  \nLlama Duck\n\nIs this how it’s told now?  \nIs it all so old?  \nIs it made of lemon juice?  \nDoorknob Ankle Cold  \nNow my song is getting thin  \nI’ve run out of luck  \nTime for me to retire   \nAnd become a duck",
     "background": {
@@ -150,7 +150,7 @@ export const songbookSongs = [
     "tune": "Traditional",
     "setting": "Logs",
     "energy": "calm",
-    "description": "Camp classic sung to the tune of \"Traditional\".",
+    "notes": "",
     "actions": [],
     "lyrics": "Traditional Round  \nTune: Classic, similar to Rose Red  \n*I actually heard the root of this song once, as part of a much larger folk gospel song. This part however is simply the part everyone knows and makes for a great round. Also good with America, America, and Rose Red.* \n\nHey ho, nobody home  \nMeat nor sleep nor money have I none  \nBut I will still be merry…  \n*Continue round in 3 parts*",
     "background": null
@@ -161,7 +161,7 @@ export const songbookSongs = [
     "tune": "Into The Wild Blue Yonger",
     "setting": "Logs",
     "energy": "rowdy",
-    "description": "Fun song if you have a aircraft theme of some sort. It also lets you make a funny face.",
+    "notes": "Fun song if you have a aircraft theme of some sort. It also lets you make a funny face.",
     "actions": [],
     "lyrics": "*Make goggles using an OK sign with your fingers over your eyes upside down.*\n\nInto the air with Junior Birdman  \nInto the air upside down  \nInto the air with Junior Birdman  \nWith their noses to the ground\n\nAnd when you hear the ground announcement  \nThat their wings are made of tin… Get it?  \nThen you know that Junior Birdmen  \nHave all sent their box-tops in\n\nIt takes five box tops  \nFour bottle bottoms  \nThree wrappers  \nTwo coupons  \nAnd one thin dime  \nRRRRrrrrrroooowwwwww…..",
     "background": {
@@ -175,7 +175,7 @@ export const songbookSongs = [
     "tune": "Unknown",
     "setting": "Logs",
     "energy": "rowdy",
-    "description": "Actions are self explanatory.",
+    "notes": "Actions are self explanatory.",
     "actions": [],
     "lyrics": "Little cabin in the woods  \nLittle man by the window stood  \nSaw a rabbit hopping by  \nRapping at his door.\n\n“Help me\\! Help me\\! Help me\\!” He cried,  \n“Or the hunter’ll shoot me dead”  \n“Come little rabbit, come inside.  \nSafely to abide.”",
     "background": null
@@ -186,7 +186,7 @@ export const songbookSongs = [
     "tune": "Don McLean’s *American Pie*",
     "setting": "Campfire",
     "energy": "rowdy",
-    "description": "I wrote this song as a follow up to the Llama Song which had been a huge hit the summer before. This one never had the intensity of the original because it’s so long, but it gets plenty of requests.",
+    "notes": "I wrote this song as a follow up to the Llama Song which had been a huge hit the summer before. This one never had the intensity of the original because it’s so long, but it gets plenty of requests.",
     "actions": [],
     "lyrics": "A long, long time ago  \nI can still remember  \nHow that Llama used to make folks smile  \nAnd I knew if I had my chance  \nI could make that Llama dance  \nThen maybe you’d be happy for a while  \nBut late that summer made me shiver  \nWith every death threat they delivered  \nSomeone cried for mama  \nAnd I couldn’t do one more Llama  \nAnd I can’t remember if I cried  \nWhen they dragged me to the side  \nBut something touched me deep inside  \nThe day the Llama died…\n\n*Chorus*  \nSo bye-bye Mr. Tibetan Monk  \nDrove my Ford to the fjord   \nCause my Llama was drunk  \nThem good old monks are burning incense and pie  \nSinging “this’ll be the day that I fly\\!  \nThis’ll be the day that I fly\\!”\n\nDo you know that there’s Llama Lore?  \nTales I hope you won’t ignore  \nLet the Llama tell you so  \nDid you know that the Llama Great  \nInvented spam and called it fate  \nAnd used it for his meals on the go  \nWell I know a tale of two slabs of flesh  \nHe put together with glue and mesh  \nSent it up in late afternoon  \nMan I did that groovy moon  \nI was a lonely teenage Llama Man  \nWith a dark green robe and Soup-In-A-Can  \nBut I knew I was under ban   \nThe day the Llama died…\n\n*chorus \\- 3 times… then break into “I Believe I Can Fly” and run away flapping your arms… makes a great “what was that?” exit.*",
     "background": {
@@ -200,7 +200,7 @@ export const songbookSongs = [
     "tune": "Chorus \\- “Na Na Kiss Him Goodbye” Verses \\- “We Will Rock You",
     "setting": "Campfire",
     "energy": "rowdy",
-    "description": "What can I say about this song? It brought me from an obscure CIT to a popular staffer, developed a following that to this day can’t get enough of the song, and has captivated every audience I’ve subjected to it. Don’t take this song lightly, it’s more powerful than you can know. But have fun with it, the people who try to take it to seriously never get it right.",
+    "notes": "What can I say about this song? It brought me from an obscure CIT to a popular staffer, developed a following that to this day can’t get enough of the song, and has captivated every audience I’ve subjected to it. Don’t take this song lightly, it’s more powerful than you can know. But have fun with it, the people who try to take it to seriously never get it right.",
     "actions": [],
     "lyrics": "*Begin cross-legged in a mock meditation pose. Chant “Llama llama llama llama llaaaaaaaaaaama.” Repeat that three times, each time extending the length of the last “llama” until it pushes all your breath out. Then begin the chorus. Rise as you approach the first verse. If you have them, put on a pair of stylish sunglasses and you start the first verse. A big part of enjoying this song is to gradually take it from a serious chant into a hard rock song.* \n\n*Chorus*  \nLlama, Llama  \nLlama, Llama  \nI ride a, Ride a Llama  \nLlama, Llama  \nLlama, Llama  \nI ride a, Ride a Llama\n\n*Verse 1*  \nWhen I was born my parents said I stunk  \nSo they sent me off to be a Tibetan Monk  \nNow I’m in the Himalayas meditating all day  \nAnd during the night I just got to say…\n\n*chorus* \n\n*Verse 2*  \nSo where I am now it is very cold  \nAnd I’m gonna shave my head when I become old  \nBut I find it peaceful meditating in a cloud  \nAnd the avalanches come when I SING REAL LOUD\\!\\!\\!\n\n*chorus*   \n“Everyone\\!” *chorus again*  \n“One more time” *and again*\n\n*At the closure of the final chorus, slowly seat yourself back into the meditating position and return to chanting, this time extending it even further than before and then pretending to (preferably) pass out.*",
     "background": {
@@ -214,7 +214,7 @@ export const songbookSongs = [
     "tune": "Macarena",
     "setting": "Campfire",
     "energy": "rowdy",
-    "description": "This is the third of the popular Llama songs, and possibly one of the most universally applicable.",
+    "notes": "This is the third of the popular Llama songs, and possibly one of the most universally applicable.",
     "actions": [
       {
         "beat": 1,
@@ -253,7 +253,7 @@ export const songbookSongs = [
     "tune": "Probably Original",
     "setting": "Campfire",
     "energy": "rowdy",
-    "description": "Not much to say about this song except that the original use of the term “Mountain Dew” would be inappropriate for scouts, so thank goodness the caffeinated beverage we know today was created. Now it’s just a reference to the strength of the yellowy substance.",
+    "notes": "Not much to say about this song except that the original use of the term “Mountain Dew” would be inappropriate for scouts, so thank goodness the caffeinated beverage we know today was created. Now it’s just a reference to the strength of the yellowy substance.",
     "actions": [],
     "lyrics": "*Chorus*  \nOh they call it that good old Mountain Dew-Dew-Dew  \nAnd them that refuse it are few (darn few\\!)  \nI’ll shut my mug if you’ll fill up my jug  \nWith that good old Mountain Dew\n\nMy cousin Jake he got bit by a snake  \nWe thought that he wouldn’t pull through  \nBut he danced a jig when we gave him a swig  \nOf that good ol’ Mountain Dew\n\nMy Auntie Bess she has hair on her chest  \nWe asked her if she put it there with glue (or paste)  \nShe said, “Heck no\\! It just started to grow  \nWhen I took up that good ol’ Mountain Dew\n\nMy Auntie June got some new perfume  \nAnd it had a most peculiar phew  \nWell imagine her surprise when we had it analyzed  \nIt was nothing but that good ol’ Mountain Dew\n\nMy brother Nort he is sawed-off and short  \nHe stood about four foot two (or three)  \nBut he acts like a giant when you give him a pint  \nOf that good ol’ Mountain Dew\n\nOld Uncle Ned out back had a shed  \nWith a seat that’s about two by two (or three)  \nWell you can’t go there no more cause it’s piled from top to floor  \nWith cases of that good ol’ Mountain Dew",
     "background": null
@@ -264,7 +264,7 @@ export const songbookSongs = [
     "tune": "Miss Suzy (Perhaps based on a better tune, but that is the only song I can think of)",
     "setting": "Logs",
     "energy": "rowdy",
-    "description": "Great song for wasting time. You can sing it for as long as you want, and it’s always fun.",
+    "notes": "Great song for wasting time. You can sing it for as long as you want, and it’s always fun.",
     "actions": [],
     "lyrics": "Well my old man’s a *staffman*  \nNow what do you think of that?  \nHe wears a *staffman’s* collar  \nHe wear’s a *staffman’s* hat  \nHe wears a staffman’s raincoat  \nHe wears a *staffman’s* shoes  \nAnd every Sunday morning   \nHe reads the *staffman’s* news  \nSome day, if I can  \nI’m gonna be a *staffman*  \nJust like my old man.\n\n*Continue changing the occupation of your old man. Be as creative as you can, but keep it clean.*",
     "background": {
@@ -278,7 +278,7 @@ export const songbookSongs = [
     "tune": "There’ll Be A Hot Time In The Old Town Tonight",
     "setting": "Campfire",
     "energy": "rowdy",
-    "description": "This song is apparently about the great Chicago fire that, legend has it, was started by a cow kicking over a lantern. The fire burned up most of Chicago. Fire safety isn’t just relevant in the forest\\! It’s actually a pretty old song which is more commonly known as Old Mother Leary, but this is a Lawton song book, so here we have it as it is sung at Lawton. Ah the power of writing your own book\\!",
+    "notes": "This song is apparently about the great Chicago fire that, legend has it, was started by a cow kicking over a lantern. The fire burned up most of Chicago. Fire safety isn’t just relevant in the forest\\! It’s actually a pretty old song which is more commonly known as Old Mother Leary, but this is a Lawton song book, so here we have it as it is sung at Lawton. Ah the power of writing your own book\\!",
     "actions": [],
     "lyrics": "One dark night  \nWhen we were all in bed  \nOld Lady Leary left a lantern in the shed  \nAnd when the cow kicked it over  \nShe winked her eye and said,  \n“There’ll be a hot time  \nIn the old town Tonight\\!”\n\nFIRE FIRE FIRE  \nWATER WATER WATER  \nSAVE MY BABY\\! SAVE MY BABY\\!  \nJUMP LADY JUMP\\! SPLAT\\!\n\n*Sing faster each time you repeat, and shake things up with an alternate version:*\n\nOne night dark  \nWhen bed we all we in  \nOld Leary Lady left the shed a lantern in  \nAnd when the kick cowed it over  \nShe eyed her wink and said,  \n“There’ll be a time hot  \nIn the town old, tonight\\!”\n\nARF ARF ARF\\!",
     "background": {
@@ -292,7 +292,7 @@ export const songbookSongs = [
     "tune": "Varies, but traditional tunes",
     "setting": "Logs",
     "energy": "rowdy",
-    "description": "Honestly, this is my favorite action song (even above Llamarena which I helped write). It’s just fun and never annoying.",
+    "notes": "Honestly, this is my favorite action song (even above Llamarena which I helped write). It’s just fun and never annoying.",
     "actions": [],
     "lyrics": "*Actions: The problem with actions songs are they’re so hard to describe in a song book. With this song, I’m going to leave you on your own to figure them out. It’s not hard.* \n\n*Chorus*  \nOld McDonald had a farm  \nE-I-E-I-O  \nAnd on this farm he had a…\n\n…Tree  \nWell they chopped down the old pine tree  \nAnd they hauled it away to the mill  \nTra la la…\n\n…Home  \nHome, home on the range  \nWhere they chopped down the old pine tree…\n\n…Dog  \nOh where, oh where has my little dog gone  \nOh where, oh where can he be?  \nHe’s home, home on the range…\n\n…Sweetheart  \nLet me call you sweetheart  \nI’m in love with you  \nLet me whisper in your ear  \nOh where, oh where has my little dog gone…\n\n…Skunk hole  \nWell I stuck my head in the little skunk hole  \nAnd the little skunk said,  \n“Let me call you sweetheart…\n\n…Ending  \nE-I-E-I-OOOOOOOOOOOHH\\!\\!\\!",
     "background": null
@@ -303,7 +303,7 @@ export const songbookSongs = [
     "tune": "Spoken",
     "setting": "Logs",
     "energy": "rowdy",
-    "description": "Every camp does this a little different. This is Lawton’s variation. It’s fun to get good at it and then watch the audience squirm as you wait for them to repeat you.",
+    "notes": "Every camp does this a little different. This is Lawton’s variation. It’s fun to get good at it and then watch the audience squirm as you wait for them to repeat you.",
     "actions": [],
     "lyrics": "*Start with the first line, repeat adding the next line each time till at the end you’re doing all 10 in one run.*  \nOne Fat Hen  \nAnd a couple of ducks  \nThree baby brown bears  \nFour rabbit running hares  \nFive feisty felines frolicking in the forest  \nSix simple Simons selling salt in Siam  \nSeven slimy sailors sniffing snoots  \nEight elongated elephants elevating on an escalator  \nNine nasty-nosed Nimbrios nibbling on nine nasty-nosed Nimbriots   \nAnd   \nTen two-ton two-toned transcontinental trucks traveling from Tallahassee, Tennessee to Tyler, Texas on two tanks of True Test Texaco and twenty-two terrible tires\\!",
     "background": {
@@ -317,7 +317,7 @@ export const songbookSongs = [
     "tune": "Probably original",
     "setting": "Logs",
     "energy": "rowdy",
-    "description": "Talk to any long time scouter and they’ll surely know this song. Probably dates back to the early days of Boy Scouts, if not the military before that. Whatever the case, you know it now.",
+    "notes": "Talk to any long time scouter and they’ll surely know this song. Probably dates back to the early days of Boy Scouts, if not the military before that. Whatever the case, you know it now.",
     "actions": [],
     "lyrics": "There are snakes, snakes, snakes  \nBig as garden rakes  \nAt the store (at the store)  \nAt the store (at the store)  \nThere are snakes, snakes, snakes  \nBig as garden rakes  \nAt the Quartermaster’s Store\n\n*Chorus*\t  \n*1st half of group\t\t\t\t\t\t2nd half of group (slower)*\t  \nMy eyes are dim I cannot see\t\t\t\t\tMy eyes are dim  \nI have not brought my specs with me\t\t\t\tI cannot see\n\nThere are mice, mice, mice  \nRunning through the rice   \nAt the store (at the store)  \nAt the store (at the store)  \nThere are mice, mice, mice  \nRunning through the rice  \nAt the Quartermaster’s Store  \n*chorus* \n\nThere are rats, rats, rats  \nBig as alley cats  \nAt the store (at the store)  \nAt the store (at the store)  \nThere are rats, rats, rats  \nBig as alley cats  \nAt the Quartermaster’s Store\n\n*More verses can be found or made up, song can be made to fill any length of time*",
     "background": null
@@ -328,7 +328,7 @@ export const songbookSongs = [
     "tune": "Partially the British National Anthem",
     "setting": "Logs",
     "energy": "rowdy",
-    "description": "childhood. Best when sung loud and obnoxious.",
+    "notes": "childhood. Best when sung loud and obnoxious.",
     "actions": [],
     "lyrics": "Ten in the bed and little one said,  \n“Roll over, Roll over\\!”  \nSo they all rolled over and one fell out  \nHit the ground and gave a shout\\!  \n“Please remember to tie a knot in your pajamas  \nSingle beds are only made for   \n1-2-3-4-5-6-7-8…\n\nNine in the bed and the little one said….\n\n*Continue counting down to one with a loud yell with the final “Single beds are only made for ONE\\!\\!”*",
     "background": null
@@ -339,7 +339,7 @@ export const songbookSongs = [
     "tune": "Oh Christmas Tree” or “O’ Tannenbaum",
     "setting": "Campfire",
     "energy": "calm",
-    "description": "This song has been there throughout my scouting years, closing campfires in a way few other songs could. There’s nothing like an entire camp staff singing this song as the fire fades before scouts slowly file out. In my opinion, you can’t ever end a campfire without this song.",
+    "notes": "This song has been there throughout my scouting years, closing campfires in a way few other songs could. There’s nothing like an entire camp staff singing this song as the fire fades before scouts slowly file out. In my opinion, you can’t ever end a campfire without this song.",
     "actions": [],
     "lyrics": "Softly falls the light of day  \nAs our campfire fades away  \nSilently each scout should ask  \nHave I done my daily task?  \nHave I kept my honor bright?  \nHave I guiltless sleep tonight?  \nHave I done and have I dared  \nEverything to be prepared?\n\n*Second, less used verse*  \nListen Lord, oh listen Lord  \nAs I whisper soft and low  \nBless my Mom and bless my Dad  \nThere is something they should know  \nI have kept my honor bright  \nThe oath and law have been my guide  \nMom and Dad this you should know  \nDeep in my heart I love you so",
     "background": null
@@ -350,7 +350,7 @@ export const songbookSongs = [
     "tune": "Probably Original",
     "setting": "Logs",
     "energy": "rowdy",
-    "description": "This is a fun song I picked up at Camp School. It was almost disappointing I’d never heard it before, it seems like such a great standard.",
+    "notes": "This is a fun song I picked up at Camp School. It was almost disappointing I’d never heard it before, it seems like such a great standard.",
     "actions": [],
     "lyrics": "I’ve got sixpence, jolly jolly sixpence  \nI’ve got sixpence to last me all my life  \nI’ve got 2 pence to spend  \nAnd 2 pence to lend  \nAnd 2 pence to send home to my wife (Poor Wife\\!)\n\nNo cares have I to grieve me  \nNo pretty little girls to deceive me *(or “Nasty little girls”)*  \nI’m happy as a lark believe me  \nAs we go rolling, rolling home\n\nRolling home (Rolling home\\!)  \nRolling home (Rolling home\\!)  \nBy the light of the silvery moon\\!  \nHappy is the day when the STAFF GETS THEIR PAY\\! *(or “when we line up for pay”)*  \nAs we go rolling, rolling home\n\n*2nd verse*  \nI’ve got four pence, jolly jolly four pence…  \nI’ve got 2 pence to spend  \nAnd 2 pence to lend  \nAnd no pence to send home to my wife (Poor Wife\\!)  \n…\n\n*3rd Verse*  \nI’ve got two pence, jolly jolly two pence…  \nI’ve got 2 pence to spend   \nAnd no pence to lend  \nAnd no pence to send home to my wife (Poor Wife\\!)  \n…\n\n*4th Verse*  \nI’ve got no pence, jolly jolly no pence…  \nI’ve got no pence to spend   \nAnd no pence to lend  \nAnd no pence to send home to my wife (Poor Wife\\!)  \n…",
     "background": null
@@ -361,7 +361,7 @@ export const songbookSongs = [
     "tune": "Drunken Sailor",
     "setting": "Logs",
     "energy": "rowdy",
-    "description": "You don't have to say goodbye to the beloved Drunken Sailor song with this handy variation. Just don't get too violent with it.",
+    "notes": "You don't have to say goodbye to the beloved Drunken Sailor song with this handy variation. Just don't get too violent with it.",
     "actions": [
       {
         "beat": 1,
@@ -388,7 +388,7 @@ export const songbookSongs = [
     "tune": "Original",
     "setting": "Campfire",
     "energy": "rowdy",
-    "description": "This is a tradition at Lawton and many other camps as well. It’s the highlight of the end of the week campfire at Lawton, the only skit/song the staff does on Friday night, and the funniest they do all week.",
+    "notes": "This is a tradition at Lawton and many other camps as well. It’s the highlight of the end of the week campfire at Lawton, the only skit/song the staff does on Friday night, and the funniest they do all week.",
     "actions": [],
     "lyrics": "*Chorus*  \nIf I were a staffer a staffer I would be  \nBut if I weren’t a staffer  \n\\_\\_\\_\\_\\_\\_\\_ I would be….\n\n*Verses are done by each person left to right. The first person will do his/her verse twice, then step back. The second person (and progressively right) will do his/her verse twice, then everyone to the left of that person will step up and all will do their verse twice more with everyone to the right stands and waits. For instance, the last person will step up, do his/her verse, then everyone will step up and do their verse, preferably louder than before. Any time you can place parts that can interact with each other (like the actor/Lassie and the statue), it can be very funny. There is a very long list of verses here, pick and choose at most 8-10 of these to do. DO NOT have the entire staff on stage. The song should not be 20 minutes long.*\n\nA Plumber  \nFlush it, plunge it look out below *(with plunger)*\n\nA Carpenter  \nSix by Four\\! Nail it to the floor\\!  *(with measuring tape)*\n\nLady MacBeth  \nOUT, OUT, OUT DAMN SPOT\\!\\!   *(scrubbing hands)*\n\nA Birdwatcher  \nThere’s an eagle\\! There’s a hawk\\! There’s a pidgeon\\! SPLAT\\!\n\nA Farmer  \nGive Bessy\\! Give\\! The kids have got to live\\!\n\nA Baby  \nMommy\\! Daddy\\! I wuv yoo\\!\n\nA Washer Woman  \nWashy washy, washy washy, hang those clothes dry\\!\n\nA Fireman  \nJump lady\\! Jump\\! Ahhhhhh SPLAT\\!\\!\n\nAn Exterminator  \nSquish Em\\! Squash Em\\! Nuke em till they glow\\!",
     "background": null
@@ -399,7 +399,7 @@ export const songbookSongs = [
     "tune": "Traditional",
     "setting": "Campfire",
     "energy": "calm",
-    "description": "A must-know song that’s been ending scouting and military days (and lives) for as long as anyone can remember. The lyrics are sometimes more illusive, and the second verse is even more so.",
+    "notes": "A must-know song that’s been ending scouting and military days (and lives) for as long as anyone can remember. The lyrics are sometimes more illusive, and the second verse is even more so.",
     "actions": [],
     "lyrics": "Day is done  \nGone the sun  \nFrom the lakes, from the hills, from the sky  \nAll is well  \nSafely rest  \nGod is nigh\n\nFading light  \nDims the sight  \nAnd the stars gems the sky gleaming bright  \nFrom afar  \nDrawing nigh  \nFalls the night",
     "background": null
@@ -410,7 +410,7 @@ export const songbookSongs = [
     "tune": "Standard",
     "setting": "Logs",
     "energy": "calm",
-    "description": "If you don’t know this song, I’d be shocked. This is one of the most common rounds out there.",
+    "notes": "If you don’t know this song, I’d be shocked. This is one of the most common rounds out there.",
     "actions": [],
     "lyrics": "The more we get together, together, together  \nThe more we get together the happier we’ll be\n\nFor your friends are my friends  \nAnd my friends are your friends  \nThe more we get together the happier we’ll be\n\nFor you know that I know   \nAnd I know that you know  \nThe more we get together the happier we’ll be.",
     "background": null
@@ -421,7 +421,7 @@ export const songbookSongs = [
     "tune": "When Johnny Comes Marching Home",
     "setting": "Logs",
     "energy": "rowdy",
-    "description": "This is one of those songs that take you by surprise. Pirates may have been cruel evil scoundrels, but they’ve been the inspiration for some of the coolest songs ever\\! I gotta say, it’s a pirate’s life for me.",
+    "notes": "This is one of those songs that take you by surprise. Pirates may have been cruel evil scoundrels, but they’ve been the inspiration for some of the coolest songs ever\\! I gotta say, it’s a pirate’s life for me.",
     "actions": [],
     "lyrics": "Three pirates came to London Towne, Yo Ho\\! Yo Ho\\!  \nThree pirates came to London Towne, Yo Ho\\! Yo Ho\\!  \nThree pirates came to London Towne,  \nTo see the king put on his crown\\!  \nYo Ho\\! Ya lubbers\\! Yo Ho\\! Ya Lubbers\\!   \nYo Ho\\! Yo Ho\\! Yo Ho\\!\n\n*Replace lines with:*\n\nAt first they came to Wayside Inn…  \nTo say to the landlord, “LET US IN\\!”…\n\nOh landlord, have you good red wine…  \nEnough to fill this cask of mine…\n\nOh landlord, have you bags of gold…  \nEnough to fill the after hold…\n\nOh landlord, have you daughters fair…  \nWith laughing eyes and curly hair…\n\nOh landlord, will she marry me…  \nAnd sail with me across the sea…",
     "background": {
@@ -435,7 +435,7 @@ export const songbookSongs = [
     "tune": "Traditional",
     "setting": "Campfire",
     "energy": "calm",
-    "description": "A group of scouters singing this song is almost a spiritual experience. This is exactly what scouting is all about: the friendships and unity that we form together.",
+    "notes": "A group of scouters singing this song is almost a spiritual experience. This is exactly what scouting is all about: the friendships and unity that we form together.",
     "actions": [],
     "lyrics": "Let every good fellow now join in this song  \nViva la compagnie\\!  \t\t\t*(pronounced Veeva la company)*  \nSuccess to each other and pass it along  \nViva la compagnie\\!\n\n*Chorus*  \nVive la, vive la, vive l’amour  \nVive la, vive la, vive l’amour  \nVive la, vive la, vive l’amour  \nVive la compagnie\\!\n\nA friend on your left and a friend on your right  \nViva la compagnie\\!  \nIn love and good fellowship let us unite  \nViva la compagnie\\!  \n*chorus* \n\nNow wider and wider our circle expands  \nViva la compagnie\\!  \nWe sing to our comrades in faraway lands  \nViva la compagnie\\!  \n*chorus*",
     "background": null
@@ -446,7 +446,7 @@ export const songbookSongs = [
     "tune": "Probably Original",
     "setting": "Campfire",
     "energy": "rowdy",
-    "description": "This is a nice universal standard. Easy to teach, and easy to learn.",
+    "notes": "This is a nice universal standard. Easy to teach, and easy to learn.",
     "actions": [
       {
         "beat": 1,
@@ -477,7 +477,7 @@ export const songbookSongs = [
     "tune": "Auld Lang Syne",
     "setting": "Logs",
     "energy": "calm",
-    "description": "Really simple, great for Cub Scouts and Cub Scout leaders. Along the lines of the song that never ends.",
+    "notes": "Really simple, great for Cub Scouts and Cub Scout leaders. Along the lines of the song that never ends.",
     "actions": [],
     "lyrics": "We’re here because  \nWe’re here because  \nWe’re here because we’re here  \nWe’re here because  \nWe’re here because  \nWe’re here because we’re here",
     "background": {
@@ -491,7 +491,7 @@ export const songbookSongs = [
     "tune": "Auld Lang Syne",
     "setting": "Campfire",
     "energy": "rowdy",
-    "description": "This one is all over, in all the scout leader songbooks. For good reason. It’s exactly why we sing.",
+    "notes": "This one is all over, in all the scout leader songbooks. For good reason. It’s exactly why we sing.",
     "actions": [],
     "lyrics": "We’re here for fun   \nRight from the start  \nSo drop your dignity  \nJust laugh and sing with all your heart  \nAnd show your loyalty  \nMay all your troubles be forgot  \nLet this night be the best  \nJoin in the songs we sing tonight  \nBe happy with the rest.",
     "background": {
