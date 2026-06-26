@@ -275,7 +275,7 @@ a {
 
 .logo-text {
   font-family: var(--font-heading);
-  font-size: 24px;
+  font-size: 31px;
   font-weight: 800;
   letter-spacing: -0.5px;
   background: linear-gradient(135deg, hsl(var(--foreground)), hsl(var(--muted-foreground)));
