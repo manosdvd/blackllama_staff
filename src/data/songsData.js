@@ -103,33 +103,6 @@ export const songbookSongs = [
     "background": null
   },
   {
-    "id": "song-drunken-sailor-sleepy-camper",
-    "title": "Sleepy Camper",
-    "tune": "Drunken Sailor",
-    "setting": "Logs",
-    "energy": "rowdy",
-    "description": "You don't have to say goodbye to the beloved Drunken Sailor song with this handy variation. Just don't get too violent with it.",
-    "actions": [
-      {
-        "beat": 1,
-        "text": "What do you do... (Shrug shoulders)"
-      },
-      {
-        "beat": 6,
-        "text": "Way hey late... (Swing arms)"
-      },
-      {
-        "beat": 12,
-        "text": "Throw him in pool... (Throwing motion)"
-      }
-    ],
-    "lyrics": "What do you do with a sleeping camper?  \nWhat do you do with a sleeping camper?  \nWhat do you do with a sleeping camper?  \nEarly in the mornin’\\!\n\n*Verse*  \nThrow him in the pool with his pants on backwards  \nThrow him in the pool with his pants on backwards  \nThrow him in the pool with his pants on backwards  \nEarly in the mornin’\\!\n\n*Chorus*  \nWay hey late, ye risers  \nWay hey late, ye risers  \nWay hey late, ye risers  \nEarly in the Mornin’\\!\n\n*More Verses:*  \n\\-Pull him out of bed with a running Bowline  \n\\-Hit him in the face with a sopping wet towel  \n\\-Put him into bed at a sooner hour  \n*Early in the evening\\!*",
-    "background": {
-      "heading": "Operational Directives and Nautical Contrafactum: \"Sleepy Camper\"",
-      "text": "Residential camps are highly regimented environments requiring strict adherence to rigid daily schedules. \"Sleepy Camper,\" formally known in songbooks as \"What Do You Do With a Sleepy Camper?\", is a purely functional, operational song utilized by camp counselors as a disciplinary tool to rouse lethargic children from their bunks.50  \nOnce again, the folk process of contrafactum is overwhelmingly evident. The song entirely appropriates the melody, meter, and rhythmic drive of the traditional nautical sea shanty \"What Shall We Do with the Drunken Sailor?\".51 The chorus transitions seamlessly from the nautical \"Way hey and up she rises\" to the camp-specific \"Way hey late, ye risers... early in the morning\".50  \nThe lyrics outline a series of increasingly absurd and punitive measures for failing to wake up, demonstrating the playfully authoritarian structure of camp life. Documented verses include putting the sleepy camper \"in charge of washing dishes,\" physically pulling them out of bed \"with a running bowline\" (a nautical knot, showing the survival of the sea shanty's maritime roots), or threatening to \"throw him in the lake with his pants on backwards\".50 The final verse usually concludes with the practical, preventative measure of putting the camper \"to bed an hour sooner, early in the evening\".53  \nThe transition from a nautical work song—originally used to coordinate the grueling physical labor of pulling halyards on a merchant ship—to a camp wake-up song is highly logical. Both maritime and camp environments require the synchronized mobilization of a resistant group under the direction of an authoritative leader. The melody of \"Drunken Sailor\" is historically ancient, potentially adapting a traditional Irish tune, meaning \"Sleepy Camper\" operates entirely and freely within the public domain.51"
-    }
-  },
-  {
     "id": "song-herbie",
     "title": "Herbie",
     "tune": "Spoken",
@@ -381,6 +354,33 @@ export const songbookSongs = [
     "actions": [],
     "lyrics": "I’ve got sixpence, jolly jolly sixpence  \nI’ve got sixpence to last me all my life  \nI’ve got 2 pence to spend  \nAnd 2 pence to lend  \nAnd 2 pence to send home to my wife (Poor Wife\\!)\n\nNo cares have I to grieve me  \nNo pretty little girls to deceive me *(or “Nasty little girls”)*  \nI’m happy as a lark believe me  \nAs we go rolling, rolling home\n\nRolling home (Rolling home\\!)  \nRolling home (Rolling home\\!)  \nBy the light of the silvery moon\\!  \nHappy is the day when the STAFF GETS THEIR PAY\\! *(or “when we line up for pay”)*  \nAs we go rolling, rolling home\n\n*2nd verse*  \nI’ve got four pence, jolly jolly four pence…  \nI’ve got 2 pence to spend  \nAnd 2 pence to lend  \nAnd no pence to send home to my wife (Poor Wife\\!)  \n…\n\n*3rd Verse*  \nI’ve got two pence, jolly jolly two pence…  \nI’ve got 2 pence to spend   \nAnd no pence to lend  \nAnd no pence to send home to my wife (Poor Wife\\!)  \n…\n\n*4th Verse*  \nI’ve got no pence, jolly jolly no pence…  \nI’ve got no pence to spend   \nAnd no pence to lend  \nAnd no pence to send home to my wife (Poor Wife\\!)  \n…",
     "background": null
+  },
+  {
+    "id": "song-drunken-sailor-sleepy-camper",
+    "title": "Sleepy Camper",
+    "tune": "Drunken Sailor",
+    "setting": "Logs",
+    "energy": "rowdy",
+    "description": "You don't have to say goodbye to the beloved Drunken Sailor song with this handy variation. Just don't get too violent with it.",
+    "actions": [
+      {
+        "beat": 1,
+        "text": "What do you do... (Shrug shoulders)"
+      },
+      {
+        "beat": 6,
+        "text": "Way hey late... (Swing arms)"
+      },
+      {
+        "beat": 12,
+        "text": "Throw him in pool... (Throwing motion)"
+      }
+    ],
+    "lyrics": "What do you do with a sleeping camper?  \nWhat do you do with a sleeping camper?  \nWhat do you do with a sleeping camper?  \nEarly in the mornin’\\!\n\n*Verse*  \nThrow him in the pool with his pants on backwards  \nThrow him in the pool with his pants on backwards  \nThrow him in the pool with his pants on backwards  \nEarly in the mornin’\\!\n\n*Chorus*  \nWay hey late, ye risers  \nWay hey late, ye risers  \nWay hey late, ye risers  \nEarly in the Mornin’\\!\n\n*More Verses:*  \n\\-Pull him out of bed with a running Bowline  \n\\-Hit him in the face with a sopping wet towel  \n\\-Put him into bed at a sooner hour  \n*Early in the evening\\!*",
+    "background": {
+      "heading": "Operational Directives and Nautical Contrafactum: \"Sleepy Camper\"",
+      "text": "Residential camps are highly regimented environments requiring strict adherence to rigid daily schedules. \"Sleepy Camper,\" formally known in songbooks as \"What Do You Do With a Sleepy Camper?\", is a purely functional, operational song utilized by camp counselors as a disciplinary tool to rouse lethargic children from their bunks.50  \nOnce again, the folk process of contrafactum is overwhelmingly evident. The song entirely appropriates the melody, meter, and rhythmic drive of the traditional nautical sea shanty \"What Shall We Do with the Drunken Sailor?\".51 The chorus transitions seamlessly from the nautical \"Way hey and up she rises\" to the camp-specific \"Way hey late, ye risers... early in the morning\".50  \nThe lyrics outline a series of increasingly absurd and punitive measures for failing to wake up, demonstrating the playfully authoritarian structure of camp life. Documented verses include putting the sleepy camper \"in charge of washing dishes,\" physically pulling them out of bed \"with a running bowline\" (a nautical knot, showing the survival of the sea shanty's maritime roots), or threatening to \"throw him in the lake with his pants on backwards\".50 The final verse usually concludes with the practical, preventative measure of putting the camper \"to bed an hour sooner, early in the evening\".53  \nThe transition from a nautical work song—originally used to coordinate the grueling physical labor of pulling halyards on a merchant ship—to a camp wake-up song is highly logical. Both maritime and camp environments require the synchronized mobilization of a resistant group under the direction of an authoritative leader. The melody of \"Drunken Sailor\" is historically ancient, potentially adapting a traditional Irish tune, meaning \"Sleepy Camper\" operates entirely and freely within the public domain.51"
+    }
   },
   {
     "id": "song-staffer-song",
