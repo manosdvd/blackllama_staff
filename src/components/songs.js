@@ -101,7 +101,7 @@ export function initSongs() {
     songsMount.innerHTML = filteredSongs.map(song => `
       <button class="song-sidebar-btn ${song.id === activeSongId ? 'active' : ''}" data-song-id="${song.id}">
         <span class="song-sidebar-title">${song.title}</span>
-        <span class="song-sidebar-desc">${song.description.substring(0, 50)}...</span>
+        <span class="song-sidebar-desc">${(song.notes || song.lyrics || '').substring(0, 50)}...</span>
       </button>
     `).join('');
 
