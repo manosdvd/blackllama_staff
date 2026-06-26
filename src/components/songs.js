@@ -57,16 +57,6 @@ export function initSongs() {
 
   if (!songsMount || !detailsMount) return;
 
-  const songTags = {
-    'song-funky': { tune: 'Rhythm Rap', energy: 'rowdy', setting: 'Logs' },
-    'song-alfalfa': { tune: 'Auld Lang Syne', energy: 'calm', setting: 'Logs' },
-    'song-alive': { tune: 'If You\'re Happy', energy: 'rowdy', setting: 'Campfire' },
-    'song-bananas': { tune: 'Action Shout', energy: 'rowdy', setting: 'Campfire' },
-    'song-birdie': { tune: 'Morning Action Chant', energy: 'calm', setting: 'Logs' },
-    'song-crazy': { tune: 'Zipper Song', energy: 'rowdy', setting: 'Campfire' },
-    'song-camper': { tune: 'Drunken Sailor', energy: 'rowdy', setting: 'Logs' }
-  };
-
   let activeSongId = null;
   let metronomeInterval = null;
   let currentBeat = 0;
@@ -76,9 +66,8 @@ export function initSongs() {
 
   function renderSongsList() {
     const filteredSongs = songbookSongs.filter(song => {
-      const tags = songTags[song.id] || { tune: '', energy: 'rowdy', setting: 'Logs' };
-      const matchesSetting = activeSettingFilter === 'all' || tags.setting === activeSettingFilter;
-      const matchesEnergy = activeEnergyFilter === 'all' || tags.energy === activeEnergyFilter;
+      const matchesSetting = activeSettingFilter === 'all' || song.setting === activeSettingFilter;
+      const matchesEnergy = activeEnergyFilter === 'all' || song.energy === activeEnergyFilter;
       return matchesSetting && matchesEnergy;
     });
 
@@ -192,29 +181,49 @@ export function initSongs() {
 
   function renderSongDetails(song) {
     activeSongActions = song.actions || [];
+    const hasActions = activeSongActions.length > 0;
+
+    const metronomeHtml = hasActions ? `
+      <!-- Rhythmic Metronome cue track -->
+      <div class="metronome-cue-track" style="margin-bottom: 20px;">
+        <div class="metronome-controls">
+          <button class="metronome-play-btn" id="metronome-play-btn" aria-label="Play metronome">▶️</button>
+          <span style="font-size: 13px; font-weight: 700;">Action Cue Trainer</span>
+        </div>
+
+        <!-- Metronome Blinking Dots -->
+        <div class="metronome-dot-row">
+          <div class="metronome-dot" id="dot-0"></div>
+          <div class="metronome-dot" id="dot-1"></div>
+          <div class="metronome-dot" id="dot-2"></div>
+          <div class="metronome-dot" id="dot-3"></div>
+        </div>
+
+        <!-- scrolling prompts -->
+        <span class="action-cue-text" id="action-prompt">Get Ready...</span>
+      </div>
+    ` : '';
+
+    const moreInfoHtml = song.background ? `
+      <button class="glass-panel-interactive" id="btn-song-more-info" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; font-size: 12.5px; border-radius: var(--radius-sm); border: 1px solid var(--glass-border); background: var(--glass-bg); color: hsl(var(--primary)); cursor: pointer; font-weight: 600; margin-bottom: 18px; transition: all 0.2s;">
+        📖 Background & Copyright
+      </button>
+    ` : '';
+
     detailsMount.innerHTML = `
       <div class="lyrics-player-card" style="animation: tabFadeIn 0.3s ease;">
         <h2 style="color: hsl(var(--primary)); font-family: var(--font-heading); margin-bottom: 2px;">${song.title}</h2>
-        <p style="font-size: 14px; color: hsl(var(--muted-foreground));">${song.description}</p>
         
-        <!-- Rhythmic Metronome cue track -->
-        <div class="metronome-cue-track">
-          <div class="metronome-controls">
-            <button class="metronome-play-btn" id="metronome-play-btn" aria-label="Play metronome">▶️</button>
-            <span style="font-size: 13px; font-weight: 700;">Action Cue Trainer</span>
-          </div>
-
-          <!-- Metronome Blinking Dots -->
-          <div class="metronome-dot-row">
-            <div class="metronome-dot" id="dot-0"></div>
-            <div class="metronome-dot" id="dot-1"></div>
-            <div class="metronome-dot" id="dot-2"></div>
-            <div class="metronome-dot" id="dot-3"></div>
-          </div>
-
-          <!-- scrolling prompts -->
-          <span class="action-cue-text" id="action-prompt">Get Ready...</span>
+        <!-- Display Tune prominently -->
+        <div style="font-size: 13.5px; font-weight: 600; color: hsl(var(--primary) / 0.85); margin: 6px 0 14px 0; display: flex; align-items: center; gap: 6px;">
+          <span>🎵</span> Tune: <strong>${song.tune}</strong>
         </div>
+
+        <p style="font-size: 14px; color: hsl(var(--muted-foreground)); margin-bottom: 16px; line-height: 1.4;">${song.description}</p>
+        
+        ${moreInfoHtml}
+        
+        ${metronomeHtml}
 
         <div class="lyrics-pre">
           ${song.lyrics}
@@ -223,15 +232,78 @@ export function initSongs() {
     `;
 
     // Metronome click binding
-    const playBtn = document.getElementById('metronome-play-btn');
-    if (playBtn) {
-      playBtn.addEventListener('click', () => {
-        if (metronomeInterval) {
-          stopMetronome();
-        } else {
-          startMetronome();
-        }
-      });
+    if (hasActions) {
+      const playBtn = document.getElementById('metronome-play-btn');
+      if (playBtn) {
+        playBtn.addEventListener('click', () => {
+          if (metronomeInterval) {
+            stopMetronome();
+          } else {
+            startMetronome();
+          }
+        });
+      }
+    }
+
+    // More Information click binding
+    if (song.background) {
+      const moreInfoBtn = document.getElementById('btn-song-more-info');
+      if (moreInfoBtn) {
+        moreInfoBtn.addEventListener('click', () => {
+          openBackgroundModal(song.background);
+        });
+      }
+    }
+  }
+
+  function openBackgroundModal(bg) {
+    let modal = document.getElementById('song-background-modal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'song-background-modal';
+      modal.className = 'song-modal-overlay';
+      document.body.appendChild(modal);
+    }
+    
+    const formattedText = bg.text
+      .split('\n\n')
+      .map(p => `<p style="margin-bottom: 14px; line-height: 1.6; font-size: 14.5px; color: hsl(var(--muted-foreground));">${p.replace(/\n/g, '<br>')}</p>`)
+      .join('');
+
+    modal.innerHTML = `
+      <div class="song-modal-content glass-panel">
+        <div class="song-modal-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid hsl(var(--border) / 0.5); padding-bottom: 12px; margin-bottom: 16px;">
+          <h3 style="font-family: var(--font-heading); color: hsl(var(--primary)); margin: 0; font-size: 18px;">${bg.heading}</h3>
+          <button class="song-modal-close-btn" id="close-song-modal" style="background: none; border: none; font-size: 24px; cursor: pointer; color: hsl(var(--muted-foreground)); transition: color 0.2s; line-height: 1;">&times;</button>
+        </div>
+        <div class="song-modal-body" style="max-height: 60vh; overflow-y: auto; padding-right: 8px;">
+          ${formattedText}
+        </div>
+      </div>
+    `;
+
+    // Trigger open transition next tick
+    setTimeout(() => {
+      modal.classList.add('open');
+    }, 10);
+
+    const closeBtn = document.getElementById('close-song-modal');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', closeBackgroundModal);
+    }
+    
+    // Close on clicking overlay background
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        closeBackgroundModal();
+      }
+    });
+  }
+
+  function closeBackgroundModal() {
+    const modal = document.getElementById('song-background-modal');
+    if (modal) {
+      modal.classList.remove('open');
     }
   }
 
@@ -250,7 +322,6 @@ export function initSongs() {
 
     // Interval at 120 BPM = 500ms
     metronomeInterval = setInterval(() => {
-      // Toggle dot active
       const dotIdx = currentBeat % 4;
       dots.forEach((d, idx) => {
         if (d) {
@@ -259,7 +330,6 @@ export function initSongs() {
         }
       });
 
-      // Check actions
       const activeAction = activeSongActions.find(act => act.beat === currentBeat);
       if (activeAction && prompt) {
         prompt.textContent = activeAction.text;
@@ -271,7 +341,6 @@ export function initSongs() {
 
       currentBeat++;
       
-      // Stop loop after 32 beats if no more cues
       const maxBeat = activeSongActions.length > 0 
         ? Math.max(...activeSongActions.map(a => a.beat)) + 4 
         : 16;
@@ -308,6 +377,7 @@ export function initSongs() {
 
   const cleanup = () => {
     stopMetronome();
+    closeBackgroundModal();
     window.removeEventListener('before-view-change', cleanup);
   };
   window.addEventListener('before-view-change', cleanup);
