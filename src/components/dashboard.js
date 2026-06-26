@@ -27,12 +27,13 @@ const CAMP_CONTACT_CARD = `
       <div>
         <h4 style="font-weight: 700; margin-bottom: 6px; color: hsl(var(--primary));">📞 Camp Location & Communications</h4>
         <p style="margin: 0; color: hsl(var(--muted-foreground)); font-size: 13px;">
-          Camp Lawton is situated at 8,000 feet of elevation in the Santa Catalina Mountains near Tucson.
+          Camp Lawton is situated at 7,554 feet of elevation in the Santa Catalina Mountains near Tucson.
         </p>
         <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px; font-weight: 600;">
           <div>☎️ Camp Office: <a href="tel:520-576-1263" style="color: hsl(var(--primary)); text-decoration: none;">520-576-1263</a></div>
-          <div>📍 GPS Coordinates: 32°26'12"N, 110°46'52"W</div>
-          <div>⛰️ Elevation: ~8,000 feet</div>
+          <div>🚒 Mt. Lemmon Fire District: <a href="tel:520-576-1201" style="color: hsl(var(--primary)); text-decoration: none;">520-576-1201</a> (Non-Emergency)</div>
+          <div>📍 GPS Coordinates: 32°23'53"N, 110°43'30"W</div>
+          <div>⛰️ Elevation: 7,554 feet (QSLA3)</div>
         </div>
       </div>
     </div>

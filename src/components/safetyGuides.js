@@ -714,6 +714,9 @@ export function initSafetyGuides() {
 
     panelMount.innerHTML = `
       <div class="schedule-content-panel" style="animation: tabFadeIn 0.3s ease both;">
+        <p style="color: hsl(var(--muted-foreground)); font-size: 14px; grid-column: 1 / -1; margin: 0 0 10px 0; line-height: 1.5;">
+          For local fire safety bulletins and non-emergency notifications, you can contact the <strong>Mt. Lemmon Fire District</strong> at <a href="tel:520-576-1201" style="color: hsl(var(--primary)); text-decoration: underline; font-weight: 600;">520-576-1201</a>. In any life-threatening crisis or active wildfire threat, immediately dial <strong>911</strong>.
+        </p>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 20px;">
           
           <!-- Cabin Guidelines -->
