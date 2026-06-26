@@ -94,19 +94,36 @@ export const handler = async (event) => {
       return respond(400, { error: `Invalid status. Must be one of: ${validStatuses.join(', ')}` });
     }
 
-    const { data, error } = await supabaseAdmin
+    const updateData = {
+      status: body.status,
+      reviewed_at: new Date().toISOString(),
+      reviewed_by: profile.username,
+      review_notes: body.review_notes || null
+    };
+
+    const { data: application, error } = await supabaseAdmin
       .from('applications')
-      .update({
-        status: body.status,
-        reviewed_at: new Date().toISOString(),
-        reviewed_by: profile.username
-      })
+      .update(updateData)
       .eq('id', appId)
       .select()
       .single();
 
     if (error) return respond(500, { error: error.message });
-    return respond(200, { application: data });
+
+    // If approved, automatically shift user to the assigned position role
+    if (body.status === 'Approved' && application.user_id) {
+      const assignedRole = body.assigned_role || 'Staff';
+      const { error: profileError } = await supabaseAdmin
+        .from('profiles')
+        .update({ role: assignedRole })
+        .eq('id', application.user_id);
+        
+      if (profileError) {
+        console.error('Error updating user role on approval:', profileError);
+      }
+    }
+
+    return respond(200, { application });
   }
 
   return respond(405, { error: 'Method not allowed' });

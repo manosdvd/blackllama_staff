@@ -22,11 +22,6 @@ export const handler = async (event) => {
   }
 
   return respond(200, {
-    user: {
-      id: profile.id,
-      username: profile.username,
-      role: profile.role,
-      status: profile.status
-    }
+    user: profile
   });
 };

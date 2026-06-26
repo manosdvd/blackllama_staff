@@ -2820,3 +2820,651 @@ body::before {
   .admin-view-details-btn { font-size: 11px; padding: 4px 8px; }
 }
 
+/* ========================================================
+   WEATHER BANNER WIDGET
+   ======================================================== */
+.weather-alerts-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 12px 20px;
+  margin-bottom: 24px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  flex-wrap: wrap;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 800px) {
+  .weather-alerts-banner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 16px;
+  }
+}
+
+.weather-section, .alerts-section, .gps-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.weather-icon {
+  font-size: 26px;
+}
+
+.weather-temp-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.weather-temp {
+  font-size: 17px;
+  font-weight: 800;
+  font-family: var(--font-heading);
+}
+
+.weather-desc {
+  font-size: 12px;
+  color: hsl(var(--muted-foreground));
+}
+
+.alerts-section {
+  flex: 1;
+  background: hsl(var(--secondary) / 0.25);
+  border: 1px solid hsl(var(--border) / 0.5);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+}
+
+.alerts-section.alert-active {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
+.alerts-section.alert-danger {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.4);
+  animation: pulse-border 2.0s infinite;
+}
+
+.alerts-content {
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.gps-section {
+  justify-content: flex-end;
+}
+
+.gps-info {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+}
+
+@media (max-width: 800px) {
+  .gps-info {
+    text-align: left;
+  }
+  .gps-section {
+    justify-content: space-between;
+  }
+}
+
+.gps-coords {
+  font-size: 13px;
+  font-weight: 600;
+  font-family: monospace;
+}
+
+.gps-elev {
+  font-size: 12px;
+  color: hsl(var(--muted-foreground));
+}
+
+.gps-sync-btn {
+  background: hsl(var(--secondary));
+  border: 1px solid hsl(var(--border));
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.gps-sync-btn:hover {
+  background: hsl(var(--border));
+  transform: scale(1.05);
+}
+
+@keyframes pulse-border {
+  0% { border-color: rgba(239, 68, 68, 0.4); }
+  50% { border-color: rgba(239, 68, 68, 0.8); }
+  100% { border-color: rgba(239, 68, 68, 0.4); }
+}
+
+/* ========================================================
+   WYSIWYG CONTENT EDITOR
+   ======================================================== */
+.wysiwyg-editor-wrapper {
+  border: 1.5px dashed hsl(var(--primary) / 0.4);
+  background: hsl(var(--primary) / 0.02);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.wysiwyg-toolbar {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 6px;
+  background: hsl(var(--secondary) / 0.5);
+  border: 1px solid hsl(var(--border) / 0.5);
+  border-radius: var(--radius-sm);
+}
+
+.wysiwyg-toolbar button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px 10px;
+  font-weight: 700;
+  border-radius: 4px;
+  font-size: 13px;
+  transition: all 0.15s;
+}
+
+.wysiwyg-toolbar button:hover {
+  background: hsl(var(--muted));
+}
+
+.wysiwyg-content {
+  min-height: 250px;
+  background: var(--glass-bg);
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  overflow-y: auto;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.wysiwyg-content:focus {
+  outline: 2px solid hsl(var(--primary));
+}
+
+/* ========================================================
+   FORUM / DISCUSSION SYSTEM
+   ======================================================== */
+.forum-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+.forum-rules-banner {
+  background: linear-gradient(135deg, hsl(var(--primary) / 0.08), hsl(var(--accent) / 0.08));
+  border: 1px solid hsl(var(--primary) / 0.3);
+  padding: 18px 24px;
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.forum-rule-item {
+  font-size: 13px;
+  line-height: 1.4;
+  color: hsl(var(--muted-foreground));
+}
+
+.forum-posts-grid {
+  display: grid;
+  grid-template-columns: 2.2fr 1fr;
+  gap: 28px;
+}
+
+@media (max-width: 850px) {
+  .forum-posts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.forum-main-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.forum-post-card {
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.forum-post-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: hsl(var(--primary) / 0.3);
+}
+
+.forum-post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.forum-post-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: hsl(var(--muted-foreground));
+}
+
+.forum-user-badge {
+  background: hsl(var(--primary) / 0.1);
+  color: hsl(var(--primary));
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.forum-post-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: hsl(var(--primary));
+}
+
+.forum-post-body {
+  font-size: 14.5px;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.forum-post-card-details .forum-post-body {
+  display: block;
+  overflow: visible;
+}
+
+.forum-post-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid hsl(var(--border) / 0.4);
+  padding-top: 10px;
+  margin-top: 6px;
+}
+
+.forum-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: hsl(var(--muted-foreground));
+  cursor: pointer;
+}
+
+.forum-action-btn:hover {
+  color: hsl(var(--primary));
+}
+
+.forum-action-btn.delete:hover {
+  color: hsl(var(--danger));
+}
+
+/* Comments thread */
+.forum-comments-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 20px;
+  border-top: 1.5px solid hsl(var(--border));
+  padding-top: 20px;
+}
+
+.forum-comment-card {
+  background: hsl(var(--secondary) / 0.15);
+  border: 1px solid hsl(var(--border) / 0.4);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ========================================================
+   STAFF DIRECTORY & PROFILES
+   ======================================================== */
+.directory-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.directory-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.directory-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: hsl(var(--primary) / 0.3);
+}
+
+.directory-card.limited {
+  background: linear-gradient(135deg, hsl(var(--card)) 70%, hsl(var(--secondary) / 0.15));
+}
+
+.directory-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.directory-hometown {
+  font-size: 12.5px;
+  color: hsl(var(--muted-foreground));
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.directory-bio {
+  font-size: 13.5px;
+  line-height: 1.4;
+  opacity: 0.9;
+  border-top: 1px dashed hsl(var(--border) / 0.4);
+  padding-top: 10px;
+}
+
+.directory-fav-song {
+  background: hsl(var(--accent) / 0.1);
+  color: hsl(var(--accent-foreground));
+  border: 1px dashed hsl(var(--accent) / 0.3);
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.directory-onboarding-badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  font-size: 11px;
+  font-weight: 700;
+  background: hsl(var(--success-light));
+  color: hsl(var(--success));
+  padding: 2px 8px;
+  border-radius: 12px;
+  border: 1px solid hsl(var(--success) / 0.2);
+}
+
+/* Profile Edit View */
+.profile-edit-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1.8fr;
+  gap: 32px;
+}
+
+@media (max-width: 800px) {
+  .profile-edit-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.profile-color-picker-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.profile-color-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: transform 0.15s;
+}
+
+.profile-color-dot:hover {
+  transform: scale(1.1);
+}
+
+.profile-color-dot.active {
+  border-color: hsl(var(--foreground));
+  transform: scale(1.1);
+}
+
+/* ========================================================
+   VERTICAL MOBILE SCREENS OPTIMIZATIONS (max-width: 650px)
+   ======================================================== */
+@media screen and (max-width: 650px) {
+  /* 1. App Shell and Navigation */
+  .app-container {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  .sidebar {
+    height: auto !important;
+    position: sticky !important;
+    top: 0;
+    z-index: 1100;
+    padding: 10px 16px !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-right: none !important;
+    border-bottom: 1px solid hsl(var(--border) / 0.7) !important;
+    gap: 12px !important;
+  }
+
+  .logo-container {
+    margin-bottom: 0 !important;
+    gap: 8px !important;
+  }
+
+  .logo-container img {
+    width: 28px !important;
+    height: 28px !important;
+  }
+
+  .logo-text {
+    font-size: 16px !important;
+    letter-spacing: -0.25px !important;
+  }
+
+  .nav-links {
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    margin-bottom: 0 !important;
+    gap: 6px !important;
+    padding: 4px 0 !important;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    flex-grow: 0 !important;
+    max-width: 60%;
+  }
+
+  .nav-links::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav-item button {
+    padding: 6px 12px !important;
+    font-size: 12.5px !important;
+    gap: 6px !important;
+    white-space: nowrap !important;
+    scroll-snap-align: start;
+    border-radius: var(--radius-sm) !important;
+  }
+
+  .nav-icon {
+    font-size: 14px !important;
+  }
+
+  /* 2. Main Content Shell */
+  .main-content {
+    padding: 16px 14px !important;
+    gap: 20px !important;
+  }
+
+  /* 3. Header Reordering using CSS Grid */
+  .content-header {
+    display: grid !important;
+    grid-template-columns: 1fr auto auto !important;
+    grid-template-rows: auto auto !important;
+    gap: 12px 8px !important;
+    align-items: center !important;
+    position: relative !important;
+    width: 100% !important;
+  }
+
+  .header-title-section {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .header-title-section h1 {
+    font-size: 22px !important;
+    letter-spacing: -0.5px !important;
+  }
+
+  .header-title-section p {
+    font-size: 12.5px !important;
+  }
+
+  .theme-toggle-btn {
+    grid-column: 2;
+    grid-row: 1;
+    margin: 0 !important;
+    position: static !important;
+    width: 36px !important;
+    height: 36px !important;
+  }
+
+  .user-profile-badge {
+    grid-column: 3;
+    grid-row: 1;
+    margin: 0 !important;
+    padding: 4px 10px 4px 4px !important;
+  }
+
+  .global-search-container {
+    grid-column: 1 / span 3;
+    grid-row: 2;
+    margin: 0 !important;
+    width: 100% !important;
+  }
+
+  .search-input-wrapper {
+    width: 100% !important;
+  }
+
+  .search-results-dropdown {
+    width: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+  }
+
+  /* 4. Form Grids */
+  .profile-edit-grid {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+    padding: 16px !important;
+  }
+
+  .profile-edit-grid > div:first-child {
+    border-right: none !important;
+    padding-right: 0 !important;
+    border-bottom: 1px solid hsl(var(--border) / 0.4);
+    padding-bottom: 20px;
+  }
+
+  /* 5. Forum Rules safeguarding banner */
+  .forum-rules-banner div {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+  /* 6. Onboarding checklists & daily timelines */
+  .sunday-check-in-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .daily-timeline-item {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+    padding-left: 20px;
+    border-left: 2px solid hsl(var(--border));
+  }
+
+  .daily-timeline-dot {
+    left: -7px !important;
+    top: 6px !important;
+  }
+
+  .daily-timeline-time-box {
+    flex-direction: row !important;
+    align-items: center;
+    gap: 8px;
+    text-align: left !important;
+  }
+
+  .daily-timeline-card {
+    padding: 12px !important;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  /* Hide user name text on narrow screens to fit profile badge next to theme toggle */
+  .user-name-text {
+    display: none !important;
+  }
+  .user-profile-badge {
+    padding: 4px !important;
+  }
+}
+
+

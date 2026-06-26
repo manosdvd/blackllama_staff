@@ -1,5 +1,8 @@
 import { companyValues } from '../data/handbookData.js';
 import { openAppDialog } from '../main.js';
+import { getContent, wrapEditable, initEditable } from './wysiwygEditor.js';
+
+const DEFAULT_INTRO = 'Our culture represents how we interact, make decisions, and guide product direction. Click on any card below to read a story highlighting how we apply these values in our day-to-day operations.';
 
 export function renderValues() {
   const cardsHtml = companyValues.map(value => {
@@ -14,11 +17,11 @@ export function renderValues() {
     `;
   }).join('');
 
+  const introText = getContent('values_intro', DEFAULT_INTRO);
+
   return `
     <div style="display: flex; flex-direction: column; gap: 28px;">
-      <p style="color: hsl(var(--muted-foreground)); font-size: 15px; max-width: 700px; line-height: 1.5;">
-        Our culture represents how we interact, make decisions, and guide product direction. Click on any card below to read a story highlighting how we apply these values in our day-to-day operations.
-      </p>
+      ${wrapEditable('values_intro', `<p style="color: hsl(var(--muted-foreground)); font-size: 15px; max-width: 700px; line-height: 1.5;">${introText}</p>`)}
       
       <div class="values-grid">
         ${cardsHtml}
@@ -28,6 +31,8 @@ export function renderValues() {
 }
 
 export function initValues() {
+  initEditable('values_intro', DEFAULT_INTRO);
+
   const container = document.querySelector('.values-grid');
   if (!container) return;
 

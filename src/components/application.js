@@ -1,4 +1,5 @@
 import { state } from '../main.js';
+import { api } from '../services/apiClient.js';
 
 const applicationSchema = {
   steps: [
@@ -201,7 +202,7 @@ function attachListeners() {
   });
 }
 
-function submitApplication() {
+async function submitApplication() {
   if (!formData.signature || !formData.ackAgreements) {
     alert("Please provide a digital signature and check the agreement box before submitting.");
     return;
@@ -225,6 +226,15 @@ function submitApplication() {
   }
   
   localStorage.setItem('camp_lawton_applications', JSON.stringify(applications));
+
+  // Connect to the Supabase database via API client
+  if (state.username) {
+    try {
+      await api.submitApplication(formData);
+    } catch (err) {
+      console.error('Failed to submit application to database, stored in local storage:', err);
+    }
+  }
 
   // Clear draft
   localStorage.removeItem('camp_lawton_app_draft');

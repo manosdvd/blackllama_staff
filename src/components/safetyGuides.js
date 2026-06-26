@@ -759,6 +759,20 @@ export function initSafetyGuides() {
             </ul>
           </div>
 
+          <!-- Drugs, Alcohol & Contraband -->
+          <div class="glass-panel" style="display: flex; flex-direction: column; gap: 12px; border-top: 4px solid var(--safety-red);">
+            <h3 style="color: var(--safety-red); font-family: var(--font-heading); display: flex; align-items: center; gap: 8px;">
+              <span>🚫</span> Drugs, Alcohol & Contraband
+            </h3>
+            <ul style="font-size: 13.5px; color: hsl(var(--muted-foreground)); padding-left: 20px; line-height: 1.5; display: flex; flex-direction: column; gap: 8px;">
+              <li><strong>Alcohol Ban:</strong> Strictly forbidden on Camp Lawton property, even for those over 21. Violation leads to immediate termination.</li>
+              <li><strong>Marijuana Ban:</strong> No possession or use of marijuana is permitted in Camp Lawton (despite Arizona state laws). Under the influence is prohibited.</li>
+              <li><strong>Pornography & Wifi:</strong> Possession of pornography is prohibited. Navigation to adult sites over camp-provided wifi will be automatically escalated to the Catalina Council Chief Scout Executive.</li>
+              <li><strong>Trading Post Cash-Only:</strong> Staff discounts, free items, and tabs are not available. Cash or card at time of purchase only.</li>
+              <li><strong>Scout-Appropriate Recreation:</strong> No M-rated games, R-rated movies, or excessive language. Cards Against Humanity is banned; use Apples-to-Apples. Do not bring large desktop computer/gaming rigs.</li>
+            </ul>
+          </div>
+
         </div>
       </div>
     `;

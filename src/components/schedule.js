@@ -1,4 +1,20 @@
 import { sundayArrivalSteps, dailySchedule } from '../data/handbookData.js';
+import { getContent, wrapEditable, initEditable } from './wysiwygEditor.js';
+
+const DEFAULT_SUNDAY_INSTRUCTIONS = `
+  <h4 style="font-weight: 700; color: hsl(var(--primary)); margin-bottom: 6px;">Sunday Check-In Instructions:</h4>
+  <p style="font-size: 14px; line-height: 1.5; color: hsl(var(--muted-foreground));">
+    All staff are expected to report to camp by <strong>12:00 PM on Sunday</strong>. Sign in at the office in Class A Field uniform. You will be assigned a troop as their <strong>Troop Friend</strong>. Visit them daily to pass evaluations and act as their liaison!
+  </p>
+`;
+
+const DEFAULT_SIESTA_POLICY = `
+  💤 <strong>Siesta Policy:</strong> The daily gap between lunch and afternoon session (1:00 PM - 2:00 PM) is a designated quiet hour. Go to cabins, relax, rest, and reset your nervous system. Music must not be played outside.
+`;
+
+const DEFAULT_ROLES_INTRO = `
+  🛡️ <strong>Staff Age Requirements & Boundaries:</strong> Different roles carry strict age restrictions to comply with national and state guidelines. Safeguarding Youth guidelines apply to all staff levels.
+`;
 
 export function renderSchedule() {
   return `
@@ -41,20 +57,21 @@ export function initSchedule() {
       </div>
     `).join('');
 
+    const sundayInstructions = getContent('schedule_sunday_instructions', DEFAULT_SUNDAY_INSTRUCTIONS);
+
     panelMount.innerHTML = `
       <div class="schedule-content-panel">
         <div style="background: hsl(var(--primary) / 0.05); border: 1px dashed hsl(var(--primary) / 0.2); border-radius: var(--radius-md); padding: 16px;">
-          <h4 style="font-weight: 700; color: hsl(var(--primary)); margin-bottom: 6px;">Sunday Check-In Instructions:</h4>
-          <p style="font-size: 14px; line-height: 1.5; color: hsl(var(--muted-foreground));">
-            All staff are expected to report to camp by <strong>12:00 PM on Sunday</strong>. Sign in at the office in Class A Field uniform. You will be assigned a troop as their <strong>Troop Friend</strong>. Visit them daily to pass evaluations and act as their liaison!
-          </p>
+          ${wrapEditable('schedule_sunday_instructions', sundayInstructions)}
         </div>
         
-        <div class="sunday-check-in-grid">
+        <div class="sunday-check-in-grid" style="margin-top: 20px;">
           ${stepsHtml}
         </div>
       </div>
     `;
+
+    initEditable('schedule_sunday_instructions', DEFAULT_SUNDAY_INSTRUCTIONS);
   }
 
   function renderDailyPanel() {
@@ -76,10 +93,12 @@ export function initSchedule() {
       </div>
     `).join('');
 
+    const siestaPolicy = getContent('schedule_siesta_policy', DEFAULT_SIESTA_POLICY);
+
     panelMount.innerHTML = `
       <div class="schedule-content-panel">
         <div style="background: hsl(var(--accent) / 0.08); border: 1px dashed hsl(var(--accent) / 0.3); border-radius: var(--radius-md); padding: 16px; font-size: 14.5px; line-height: 1.5;">
-          💤 <strong>Siesta Policy:</strong> The daily gap between lunch and afternoon session (1:00 PM - 2:00 PM) is a designated quiet hour. Go to cabins, relax, rest, and reset your nervous system. Music must not be played outside.
+          ${wrapEditable('schedule_siesta_policy', siestaPolicy)}
         </div>
         
         <div class="daily-timeline">
@@ -87,6 +106,8 @@ export function initSchedule() {
         </div>
       </div>
     `;
+
+    initEditable('schedule_siesta_policy', DEFAULT_SIESTA_POLICY);
   }
 
   function renderRolesPanel() {
@@ -94,13 +115,15 @@ export function initSchedule() {
     dailyBtn.classList.remove('active');
     rolesBtn.classList.add('active');
 
+    const rolesIntro = getContent('schedule_roles_intro', DEFAULT_ROLES_INTRO);
+
     panelMount.innerHTML = `
       <div class="schedule-content-panel">
         <div style="background: hsl(var(--primary) / 0.05); border: 1px dashed hsl(var(--primary) / 0.2); border-radius: var(--radius-md); padding: 16px; font-size: 14.5px; line-height: 1.5;">
-          🛡️ <strong>Staff Age Requirements & Boundaries:</strong> Different roles carry strict age restrictions to comply with national and state guidelines. Safeguarding Youth guidelines apply to all staff levels.
+          ${wrapEditable('schedule_roles_intro', rolesIntro)}
         </div>
         
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 20px; margin-top: 10px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 20px; margin-top: 20px;">
           
           <div class="glass-panel" style="display: flex; flex-direction: column; gap: 10px; border-top: 4px solid #10b981; animation: tabFadeIn 0.3s ease both;">
             <h4 style="font-weight: 700; display: flex; align-items: center; gap: 6px;">🎒 Counselors in Training (CIT)</h4>
@@ -136,6 +159,8 @@ export function initSchedule() {
         </div>
       </div>
     `;
+
+    initEditable('schedule_roles_intro', DEFAULT_ROLES_INTRO);
   }
 
   // Bind tab events

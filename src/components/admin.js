@@ -1,99 +1,9 @@
 import { state, navigateTo, openAppDialog, closeAppDialog } from '../main.js';
 import { renderAdminUsers, initAdminUsers } from './adminUsers.js';
+import { api } from '../services/apiClient.js';
 
 let activeAdminTab = 'applications';
-
-// Initial Mock applications for testing if local database is empty
-const mockApps = [
-  {
-    id: 'app_mock1',
-    username: 'counselor_cody',
-    submittedAt: new Date(Date.now() - 86400000 * 3).toISOString(),
-    status: 'Pending',
-    formData: {
-      firstName: 'Cody',
-      lastName: 'Campfire',
-      nickname: 'Cody',
-      phone: '555-0199',
-      email: 'cody@campfire.org',
-      address: '123 Pine Needle Way, Flagstaff, AZ',
-      ageEligibility: '18',
-      workAuth: true,
-      scoutReg: true,
-      startDate: '2026-06-01',
-      endDate: '2026-08-15',
-      pref1: 'Scoutcraft Instructor',
-      pref2: 'Nature Instructor',
-      pref3: 'Handicraft Instructor',
-      shirtSize: 'L',
-      jacketSize: 'L',
-      scoutRank: 'Eagle Scout',
-      oaMember: true,
-      employer: 'Camp Lawton',
-      duties: 'Junior Counselor last year, led knot tying and fire building.',
-      ref1: 'Scoutmaster Dave, Troop 450, 555-0101',
-      ref2: 'Teacher Mrs. Smith, Flagstaff High, 555-0102',
-      ref3: 'Area Director Dan, Camp Lawton, 555-0103',
-      ackAltitude: true,
-      ackWildlife: true,
-      ackSanitation: true,
-      ackMedical: true,
-      certCPR: true,
-      certWFA: true,
-      ackAgreements: true,
-      signature: 'Cody Campfire',
-      sigDate: '2026-06-21'
-    }
-  },
-  {
-    id: 'app_mock2',
-    username: 'cit_sam',
-    submittedAt: new Date(Date.now() - 86400000 * 5).toISOString(),
-    status: 'Approved',
-    formData: {
-      firstName: 'Samantha',
-      lastName: 'Scout',
-      nickname: 'Sam',
-      phone: '555-0177',
-      email: 'sam@scouting.org',
-      address: '456 Mountain Trail Road, Tucson, AZ',
-      ageEligibility: '14',
-      workAuth: true,
-      scoutReg: true,
-      startDate: '2026-06-05',
-      endDate: '2026-07-28',
-      pref1: 'Counselor in Training (CIT)',
-      pref2: 'Handicraft Assistant',
-      pref3: 'Program Assistant',
-      shirtSize: 'M',
-      jacketSize: 'M',
-      scoutRank: 'First Class',
-      oaMember: false,
-      employer: 'Tucson School District',
-      duties: 'Library assistant volunteer.',
-      ref1: 'Patrol Leader Tommy, 555-0201',
-      ref2: 'Uncle Bob, Family Friend, 555-0202',
-      ref3: 'Coach Nelson, Tucson Soccer, 555-0203',
-      ackAltitude: true,
-      ackWildlife: true,
-      ackSanitation: true,
-      ackMedical: true,
-      certCPR: false,
-      certWFA: false,
-      ackAgreements: true,
-      signature: 'Samantha Scout',
-      sigDate: '2026-06-19'
-    }
-  }
-];
-
-// Ensure applications exist in DB
-function ensureDB() {
-  const apps = localStorage.getItem('camp_lawton_applications');
-  if (!apps) {
-    localStorage.setItem('camp_lawton_applications', JSON.stringify(mockApps));
-  }
-}
+let loadedApps = [];
 
 export function renderAdmin() {
   const tabsHtml = `
@@ -107,13 +17,10 @@ export function renderAdmin() {
     return tabsHtml + renderAdminUsers();
   }
 
-  ensureDB();
-  const apps = JSON.parse(localStorage.getItem('camp_lawton_applications') || '[]');
-  
-  const total = apps.length;
-  const pending = apps.filter(a => a.status === 'Pending').length;
-  const approved = apps.filter(a => a.status === 'Approved').length;
-  const rejected = apps.filter(a => a.status === 'Rejected').length;
+  const total = loadedApps.length;
+  const pending = loadedApps.filter(a => a.status === 'Pending').length;
+  const approved = loadedApps.filter(a => a.status === 'Approved').length;
+  const rejected = loadedApps.filter(a => a.status === 'Rejected').length;
 
   return tabsHtml + `
     <div style="display: flex; flex-direction: column; gap: 28px;">
@@ -167,9 +74,6 @@ export function renderAdmin() {
             <button class="welcome-banner-btn" id="admin-btn-export" style="background: hsl(var(--primary)); color: white; display: flex; align-items: center; gap: 8px; font-size: 14px;">
               <span>📥</span> Export Registry
             </button>
-            <button class="welcome-banner-btn" id="admin-btn-reset" style="background: hsl(var(--secondary)); color: hsl(var(--foreground)); border: 1px solid hsl(var(--border)); display: flex; align-items: center; gap: 8px; font-size: 14px;">
-              <span>🔄</span> Reset Mock Data
-            </button>
           </div>
 
         </div>
@@ -181,7 +85,7 @@ export function renderAdmin() {
           <thead>
             <tr>
               <th>Applicant Name</th>
-              <th>Preferred Role</th>
+              <th>Preferred Role Choices</th>
               <th>Submitted Date</th>
               <th>Eligibility</th>
               <th>Status</th>
@@ -189,7 +93,11 @@ export function renderAdmin() {
             </tr>
           </thead>
           <tbody id="admin-table-body">
-            <!-- Dynamic matching rows injected here -->
+            <tr>
+              <td colspan="6" style="text-align: center; padding: 32px; color: hsl(var(--muted-foreground)); font-weight: 500;">
+                Loading applicant registry...
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -237,17 +145,14 @@ export function initAdmin() {
   const statusFilter = document.getElementById('admin-filter-status');
   const roleFilter = document.getElementById('admin-filter-role');
   const exportBtn = document.getElementById('admin-btn-export');
-  const resetBtn = document.getElementById('admin-btn-reset');
 
   const filterAndRender = () => {
-    ensureDB();
-    const apps = JSON.parse(localStorage.getItem('camp_lawton_applications') || '[]');
     const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
     const status = statusFilter ? statusFilter.value : 'All';
     const role = roleFilter ? roleFilter.value : 'All';
 
-    const filtered = apps.filter(app => {
-      const form = app.formData || {};
+    const filtered = loadedApps.filter(app => {
+      const form = app.form_data || app.formData || {};
       const fullName = `${form.firstName || ''} ${form.lastName || ''}`.toLowerCase();
       const email = (form.email || '').toLowerCase();
       
@@ -282,10 +187,11 @@ export function initAdmin() {
     }
 
     tbody.innerHTML = filtered.map(app => {
-      const form = app.formData || {};
-      const dateStr = new Date(app.submittedAt).toLocaleDateString();
+      const form = app.form_data || app.formData || {};
+      const dateStr = new Date(app.submittedAt || app.submitted_at).toLocaleDateString();
       const ageText = form.ageEligibility ? `${form.ageEligibility}+ yrs` : 'Unknown';
-      const roleText = form.pref1 || 'Not Specified';
+      
+      const roleChoices = [form.pref1, form.pref2, form.pref3].filter(Boolean).join(' → ');
       
       let statusClass = 'pending';
       let statusLabel = 'Pending Review';
@@ -300,10 +206,10 @@ export function initAdmin() {
       return `
         <tr class="applicant-row" data-id="${app.id}">
           <td style="font-weight: 600;">
-            ${form.firstName || 'Anonymous'} ${form.lastName || ''}
+            ${form.firstName || app.username || 'Anonymous'} ${form.lastName || ''}
             ${form.nickname ? `<div style="font-size: 12px; font-weight: normal; color: hsl(var(--muted-foreground));">"${form.nickname}"</div>` : ''}
           </td>
-          <td style="font-size: 14.5px;">${roleText}</td>
+          <td style="font-size: 13.5px; opacity: 0.95;">${roleChoices || 'Not Specified'}</td>
           <td>${dateStr}</td>
           <td>
             <span style="font-size: 12px; background: hsl(var(--secondary)); padding: 2px 6px; border-radius: 4px; font-weight: 600;">${ageText}</span>
@@ -337,17 +243,25 @@ export function initAdmin() {
     });
   };
 
+  const loadAndFilter = async () => {
+    try {
+      const data = await api.admin.listApplications();
+      loadedApps = data.applications || [];
+      localStorage.setItem('camp_lawton_applications', JSON.stringify(loadedApps));
+    } catch (err) {
+      console.error('Failed to load apps from API, using local:', err);
+      loadedApps = JSON.parse(localStorage.getItem('camp_lawton_applications') || '[]');
+    }
+    filterAndRender();
+  };
+
   if (searchInput) searchInput.addEventListener('input', filterAndRender);
   if (statusFilter) statusFilter.addEventListener('change', filterAndRender);
   if (roleFilter) roleFilter.addEventListener('change', filterAndRender);
 
   if (exportBtn) {
     exportBtn.addEventListener('click', () => {
-      ensureDB();
-      const apps = localStorage.getItem('camp_lawton_applications') || '[]';
-      
-      // Prompt user to export as JSON
-      const blob = new Blob([apps], { type: 'application/json' });
+      const blob = new Blob([JSON.stringify(loadedApps, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -359,40 +273,28 @@ export function initAdmin() {
     });
   }
 
-  if (resetBtn) {
-    resetBtn.addEventListener('click', () => {
-      if (confirm('Are you sure you want to restore the default mock applications? This will overwrite the current application registry.')) {
-        localStorage.setItem('camp_lawton_applications', JSON.stringify(mockApps));
-        filterAndRender();
-        // Dispatch custom event to notify dashboard
-        window.dispatchEvent(new CustomEvent('camp-application-submitted'));
-      }
-    });
-  }
-
-  filterAndRender();
+  loadAndFilter();
 }
 
 function openReviewModal(appId) {
-  const apps = JSON.parse(localStorage.getItem('camp_lawton_applications') || '[]');
-  const app = apps.find(a => a.id === appId);
+  const app = loadedApps.find(a => a.id === appId);
   if (!app) return;
 
-  const form = app.formData || {};
+  const form = app.form_data || app.formData || {};
   
   let certs = [];
   if (form.certCPR) certs.push('CPR / AED');
   if (form.certWFA) certs.push('Wilderness First Aid');
 
   const contentHtml = `
-    <div style="display: flex; flex-direction: column; gap: 20px; max-height: 80vh; overflow-y: auto; padding-right: 10px;">
+    <div style="display: flex; flex-direction: column; gap: 20px; max-height: 80vh; overflow-y: auto; padding-right: 10px; text-align: left;">
       
       <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid hsl(var(--border)); padding-bottom: 16px;">
         <div>
           <h2 style="font-family: var(--font-heading); font-size: 26px; color: hsl(var(--primary)); margin: 0 0 4px 0;">
-            ${form.firstName || 'Anonymous'} ${form.lastName || ''}
+            ${form.firstName || app.username || 'Anonymous'} ${form.lastName || ''}
           </h2>
-          <p style="margin: 0; font-size: 14px; color: hsl(var(--muted-foreground));">
+          <p style="margin: 0; font-size: 13px; color: hsl(var(--muted-foreground));">
             Candidate Application Registry ID: <code>${app.id}</code>
           </p>
         </div>
@@ -461,13 +363,38 @@ function openReviewModal(appId) {
             <p>📅 <strong>Signature Date:</strong> ${form.sigDate || 'TBD'}</p>
           </div>
         </div>
-
       </div>
 
-      <!-- Action Panel -->
-      <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px; border-top: 1px solid hsl(var(--border)); padding-top: 16px;">
-        <button class="welcome-banner-btn" id="modal-reject-btn" style="background: hsl(var(--danger) / 0.1); border: 1px solid hsl(var(--danger) / 0.3); color: hsl(var(--danger));">Reject / Archive</button>
-        <button class="welcome-banner-btn" id="modal-approve-btn" style="background: hsl(var(--success)); color: white;">Approve Candidate</button>
+      <!-- Action Panel with Notes and Role Selection -->
+      <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 20px; border-top: 1px solid hsl(var(--border)); padding-top: 16px;">
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <label for="review-notes-input" style="font-weight: 600; font-size: 13.5px;">Reviewer Notes / Instructions</label>
+          <textarea id="review-notes-input" placeholder="Type instructions or reasons here (required for Rejections or Pending requests)..." style="padding: 10px; border-radius: var(--radius-sm); border: 1px solid hsl(var(--border)); min-height: 70px; font-size: 14px; background: var(--glass-bg); color: inherit; line-height: 1.4; outline: none;"></textarea>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 6px;">
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <label for="assign-role-select" style="font-weight: 600; font-size: 12px; color: hsl(var(--muted-foreground));">Appoint Position (On Approval)</label>
+            <select id="assign-role-select" style="padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid hsl(var(--border)); background: var(--glass-bg); color: hsl(var(--foreground)); font-size: 14px; width: 220px;">
+              <option value="Staff">General Staff</option>
+              <option value="Scoutcraft" ${form.pref1 === 'Scoutcraft Instructor' ? 'selected' : ''}>Scoutcraft Instructor</option>
+              <option value="Nature" ${form.pref1 === 'Nature / Ecology Instructor' ? 'selected' : ''}>Nature Instructor</option>
+              <option value="Shooting Sports" ${form.pref1 === 'Shooting Sports' ? 'selected' : ''}>Shooting Sports Director</option>
+              <option value="Handicraft" ${form.pref1 === 'Handicraft Instructor' ? 'selected' : ''}>Handicraft Instructor</option>
+              <option value="CIT" ${form.pref1 === 'Counselor in Training (CIT)' ? 'selected' : ''}>Counselor in Training (CIT)</option>
+              <option value="Ranger" ${form.pref1 === 'Camp Ranger' ? 'selected' : ''}>Camp Ranger</option>
+              <option value="Medic" ${form.pref1 === 'Health Officer / Medic' ? 'selected' : ''}>Health Officer / Medic</option>
+              <option value="Program Director">Program Director</option>
+              <option value="Camp Director">Camp Director</option>
+            </select>
+          </div>
+          
+          <div style="display: flex; gap: 10px; margin-top: 12px; margin-left: auto;">
+            <button class="welcome-banner-btn" id="modal-pending-btn" style="background: hsl(var(--warning)); color: white; padding: 10px 16px;">Mark Pending</button>
+            <button class="welcome-banner-btn" id="modal-reject-btn" style="background: hsl(var(--danger) / 0.1); border: 1px solid hsl(var(--danger) / 0.3); color: hsl(var(--danger)); padding: 10px 16px;">Reject</button>
+            <button class="welcome-banner-btn" id="modal-approve-btn" style="background: hsl(var(--success)); color: white; padding: 10px 20px;">Approve & Appoint</button>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -478,37 +405,45 @@ function openReviewModal(appId) {
   // Bind Actions
   const approveBtn = document.getElementById('modal-approve-btn');
   const rejectBtn = document.getElementById('modal-reject-btn');
+  const pendingBtn = document.getElementById('modal-pending-btn');
+  const notesInput = document.getElementById('review-notes-input');
+  const roleSelect = document.getElementById('assign-role-select');
 
-  const updateStatus = (newStatus) => {
-    const updatedApps = apps.map(a => {
-      if (a.id === appId) {
-        return { ...a, status: newStatus };
-      }
-      return a;
-    });
-    localStorage.setItem('camp_lawton_applications', JSON.stringify(updatedApps));
-    closeAppDialog();
-    
-    // Refresh the view
-    const viewMount = document.getElementById('view-mount-point');
-    if (viewMount && state.activeView === 'admin') {
-      viewMount.innerHTML = renderAdmin();
-      initAdmin();
+  const updateStatus = async (newStatus) => {
+    const notes = notesInput ? notesInput.value.trim() : '';
+    const assignedRole = roleSelect ? roleSelect.value : 'Staff';
+
+    if ((newStatus === 'Rejected' || newStatus === 'Pending') && !notes) {
+      alert(`Please provide reviewer notes/instructions explaining why this application is set to ${newStatus}.`);
+      return;
     }
-    
-    // Dispatch custom event to notify dashboard
-    window.dispatchEvent(new CustomEvent('camp-application-submitted'));
+
+    try {
+      approveBtn.disabled = true;
+      rejectBtn.disabled = true;
+      if (pendingBtn) pendingBtn.disabled = true;
+      
+      await api.admin.updateApplication(app.id, newStatus, notes, assignedRole);
+      closeAppDialog();
+      
+      // Refresh the view
+      const viewMount = document.getElementById('view-mount-point');
+      if (viewMount && state.activeView === 'admin') {
+        viewMount.innerHTML = renderAdmin();
+        initAdmin();
+      }
+      
+      // Dispatch custom event to notify dashboard
+      window.dispatchEvent(new CustomEvent('camp-application-submitted'));
+    } catch (err) {
+      alert(`Failed to update application: ${err.message}`);
+      approveBtn.disabled = false;
+      rejectBtn.disabled = false;
+      if (pendingBtn) pendingBtn.disabled = false;
+    }
   };
 
-  if (approveBtn) {
-    approveBtn.addEventListener('click', () => {
-      updateStatus('Approved');
-    });
-  }
-
-  if (rejectBtn) {
-    rejectBtn.addEventListener('click', () => {
-      updateStatus('Rejected');
-    });
-  }
+  if (approveBtn) approveBtn.addEventListener('click', () => updateStatus('Approved'));
+  if (rejectBtn) rejectBtn.addEventListener('click', () => updateStatus('Rejected'));
+  if (pendingBtn) pendingBtn.addEventListener('click', () => updateStatus('Pending'));
 }

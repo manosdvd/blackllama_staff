@@ -95,11 +95,11 @@ export const api = {
       return parseResponse(res);
     },
 
-    async updateApplication(appId, status) {
+    async updateApplication(appId, status, reviewNotes = '', assignedRole = 'Staff') {
       const res = await fetch(`${BASE_URL}/admin-applications?id=${appId}`, {
         method: 'PATCH',
         headers: getHeaders(),
-        body: JSON.stringify({ status })
+        body: JSON.stringify({ status, review_notes: reviewNotes, assigned_role: assignedRole })
       });
       return parseResponse(res);
     }
@@ -120,5 +120,113 @@ export const api = {
       body: JSON.stringify({ formData })
     });
     return parseResponse(res);
+  },
+
+  /** ── Blog / News Updates ── */
+  blog: {
+    async list() {
+      const res = await fetch(`${BASE_URL}/blog`, {
+        headers: getHeaders()
+      });
+      return parseResponse(res);
+    },
+    async create(postData) {
+      const res = await fetch(`${BASE_URL}/blog`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify(postData)
+      });
+      return parseResponse(res);
+    }
+  },
+
+  /** ── Forum ── */
+  forum: {
+    async listPosts() {
+      const res = await fetch(`${BASE_URL}/forum`, {
+        headers: getHeaders()
+      });
+      return parseResponse(res);
+    },
+    async getPost(postId) {
+      const res = await fetch(`${BASE_URL}/forum?post_id=${postId}`, {
+        headers: getHeaders()
+      });
+      return parseResponse(res);
+    },
+    async createPost(title, content) {
+      const res = await fetch(`${BASE_URL}/forum`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify({ title, content })
+      });
+      return parseResponse(res);
+    },
+    async createComment(postId, content) {
+      const res = await fetch(`${BASE_URL}/forum?post_id=${postId}`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify({ content })
+      });
+      return parseResponse(res);
+    },
+    async deletePost(postId) {
+      const res = await fetch(`${BASE_URL}/forum?id=${postId}`, {
+        method: 'DELETE',
+        headers: getHeaders()
+      });
+      return parseResponse(res);
+    },
+    async deleteComment(commentId) {
+      const res = await fetch(`${BASE_URL}/forum?comment_id=${commentId}`, {
+        method: 'DELETE',
+        headers: getHeaders()
+      });
+      return parseResponse(res);
+    }
+  },
+
+  /** ── Site Content (WYSIWYG edits) ── */
+  siteContent: {
+    async get(key) {
+      const res = await fetch(`${BASE_URL}/site-content?key=${key}`, {
+        headers: getHeaders()
+      });
+      return parseResponse(res);
+    },
+    async update(key, content) {
+      const res = await fetch(`${BASE_URL}/site-content`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify({ key, content })
+      });
+      return parseResponse(res);
+    }
+  },
+
+  /** ── Profile & Staff Directory ── */
+  profiles: {
+    async list() {
+      const res = await fetch(`${BASE_URL}/profile-directory`, {
+        headers: getHeaders()
+      });
+      return parseResponse(res);
+    },
+    async update(userId, updates) {
+      const res = await fetch(`${BASE_URL}/profile-directory?id=${userId}`, {
+        method: 'PATCH',
+        headers: getHeaders(),
+        body: JSON.stringify(updates)
+      });
+      return parseResponse(res);
+    },
+    async updateSelf(updates) {
+      const res = await fetch(`${BASE_URL}/profile-directory`, {
+        method: 'PATCH',
+        headers: getHeaders(),
+        body: JSON.stringify(updates)
+      });
+      return parseResponse(res);
+    }
   }
 };

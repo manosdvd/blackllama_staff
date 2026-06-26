@@ -9,6 +9,7 @@ export function renderTraining() {
         <button class="schedule-tab-btn" id="training-tab-culture">Mission, Rules & Self-Care</button>
         <button class="schedule-tab-btn" id="training-tab-service">Customer Service (Disney & FISH)</button>
         <button class="schedule-tab-btn" id="training-tab-program">Program Controls & Discipline</button>
+        <button class="schedule-tab-btn" id="training-tab-roles">Staff Structure & NCS</button>
       </div>
 
       <!-- Panel Mount -->
@@ -22,6 +23,7 @@ export function initTraining() {
   const cultureBtn = document.getElementById('training-tab-culture');
   const serviceBtn = document.getElementById('training-tab-service');
   const programBtn = document.getElementById('training-tab-program');
+  const rolesBtn = document.getElementById('training-tab-roles');
   const panelMount = document.getElementById('training-panel-mount');
 
   if (!panelMount) return;
@@ -133,6 +135,7 @@ export function initTraining() {
     cultureBtn.classList.remove('active');
     serviceBtn.classList.remove('active');
     programBtn.classList.remove('active');
+    if (rolesBtn) rolesBtn.classList.remove('active');
 
     panelMount.innerHTML = `
       <div class="schedule-content-panel" style="animation: tabFadeIn 0.3s ease both;">
@@ -306,6 +309,7 @@ export function initTraining() {
     cultureBtn.classList.remove('active');
     serviceBtn.classList.add('active');
     programBtn.classList.remove('active');
+    if (rolesBtn) rolesBtn.classList.remove('active');
 
     panelMount.innerHTML = `
       <div class="schedule-content-panel" style="animation: tabFadeIn 0.3s ease both;">
@@ -479,6 +483,7 @@ export function initTraining() {
     cultureBtn.classList.add('active');
     serviceBtn.classList.remove('active');
     programBtn.classList.remove('active');
+    if (rolesBtn) rolesBtn.classList.remove('active');
 
     const rulesHtml = trainingCultureData.rules ? trainingCultureData.rules.map((rule, idx) => `
       <div style="background: hsl(var(--card)); border: 1px solid hsl(var(--border)); padding: 14px; border-radius: var(--radius-sm); border-left: 4px solid hsl(var(--danger));">
@@ -563,6 +568,7 @@ export function initTraining() {
     cultureBtn.classList.remove('active');
     serviceBtn.classList.remove('active');
     programBtn.classList.add('active');
+    if (rolesBtn) rolesBtn.classList.remove('active');
 
     panelMount.innerHTML = `
       <div class="schedule-content-panel" style="animation: tabFadeIn 0.3s ease both;">
@@ -630,10 +636,136 @@ export function initTraining() {
     `;
   }
 
+  function renderRoles() {
+    scoutingBtn.classList.remove('active');
+    cultureBtn.classList.remove('active');
+    serviceBtn.classList.remove('active');
+    programBtn.classList.remove('active');
+    if (rolesBtn) rolesBtn.classList.add('active');
+
+    panelMount.innerHTML = `
+      <div class="schedule-content-panel" style="animation: tabFadeIn 0.3s ease both;">
+        
+        <!-- Staff Structures and Classifications -->
+        <div class="glass-panel" style="display: flex; flex-direction: column; gap: 16px;">
+          <h3 style="color: hsl(var(--primary)); font-family: var(--font-heading); display: flex; align-items: center; gap: 8px;">
+            <span>👥</span> Staff Role Classifications & Structure
+          </h3>
+          <p style="font-size: 14.5px; color: hsl(var(--muted-foreground)); line-height: 1.5;">
+            Camp Lawton operates with distinct role tiers to comply with national standards and Arizona labor guidelines. Every colleague deserves full professional respect.
+          </p>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 16px;">
+            
+            <div style="background: hsl(var(--card)); border: 1px solid hsl(var(--border)); padding: 16px; border-radius: var(--radius-sm); border-top: 3px solid hsl(var(--primary));">
+              <h4 style="font-weight: 700; margin-bottom: 6px; color: hsl(var(--primary));">🎓 Counselors-in-Training (CIT)</h4>
+              <p style="font-size: 13px; color: hsl(var(--muted-foreground)); line-height: 1.45; margin: 0 0 8px 0;">
+                <strong>Ages 14-15.</strong> CITs are part of a training program (similar to interns). Labor laws strictly limit their schedule to between <strong>7 AM and 9 PM</strong> and a maximum of <strong>8 hours/day</strong>.
+              </p>
+              <span style="font-size: 12px; font-weight: 700; color: hsl(var(--danger)); display: block; border-top: 1px solid hsl(var(--border)); padding-top: 6px;">
+                ⚠️ Critical Rule: Never leave a CIT to teach a merit badge alone. They are not clean-up servants.
+              </span>
+            </div>
+
+            <div style="background: hsl(var(--card)); border: 1px solid hsl(var(--border)); padding: 16px; border-radius: var(--radius-sm); border-top: 3px solid hsl(var(--accent));">
+              <h4 style="font-weight: 700; margin-bottom: 6px; color: hsl(var(--accent));">🏹 Junior Staff</h4>
+              <p style="font-size: 13px; color: hsl(var(--muted-foreground)); line-height: 1.45; margin: 0;">
+                <strong>Ages 16-17.</strong> A highly fulfilling summer job. Studies show camp staff roles prepare youth for the workforce better than retail or food service, building strong interpersonal, teaching, and crisis-management skills.
+              </p>
+            </div>
+
+            <div style="background: hsl(var(--card)); border: 1px solid hsl(var(--border)); padding: 16px; border-radius: var(--radius-sm); border-top: 3px solid #3b82f6;">
+              <h4 style="font-weight: 700; margin-bottom: 6px; color: #3b82f6;">🏕️ Adult Staff</h4>
+              <p style="font-size: 13px; color: hsl(var(--muted-foreground)); line-height: 1.45; margin: 0;">
+                <strong>Ages 18+.</strong> Generally includes Area Directors. Subject to full Safeguarding Youth (YPT) rules. No professional distinction from junior staff—adults are not exempt from logs, campfire leading, or cleanup chores.
+              </p>
+            </div>
+
+            <div style="background: hsl(var(--card)); border: 1px solid hsl(var(--border)); padding: 16px; border-radius: var(--radius-sm); border-top: 3px solid #8b5cf6;">
+              <h4 style="font-weight: 700; margin-bottom: 6px; color: #8b5cf6;">⚙️ Support Staff</h4>
+              <p style="font-size: 13px; color: hsl(var(--muted-foreground)); line-height: 1.45; margin: 0;">
+                Includes <strong>Kitchen, Maintenance, Commissioners, Health Lodge, Trading Post, and HQ</strong>. These departments are every bit as vital as program areas. Support staff deserve the exact same respect and courtesy.
+              </p>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- NCS / National Camp School Certification Roles -->
+        <div class="glass-panel" style="display: flex; flex-direction: column; gap: 16px;">
+          <h3 style="color: hsl(var(--primary)); font-family: var(--font-heading); display: flex; align-items: center; gap: 8px;">
+            <span>⚜️</span> NCS Certification & Age Requirements (NCAP Standards)
+          </h3>
+          <p style="font-size: 14.5px; color: hsl(var(--muted-foreground)); line-height: 1.5;">
+            To meet the National Camp Accreditation Program (NCAP) standards, key leadership positions require National Camp School training or equivalent third-party credentials.
+          </p>
+          
+          <div style="overflow-x: auto; width: 100%;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left; min-width: 500px; font-size: 13.5px;">
+              <thead>
+                <tr style="border-bottom: 2px solid hsl(var(--border)); color: hsl(var(--primary)); font-family: var(--font-heading);">
+                  <th style="padding: 10px;">Camp Position</th>
+                  <th style="padding: 10px;">Min. Age</th>
+                  <th style="padding: 10px;">Required Certification / Training</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom: 1px solid hsl(var(--border));">
+                  <td style="padding: 10px; font-weight: 600;">Camp Director</td>
+                  <td style="padding: 10px;">21</td>
+                  <td style="padding: 10px; color: hsl(var(--muted-foreground));">NCS Camp Director Certification (Valid for 5 years)</td>
+                </tr>
+                <tr style="border-bottom: 1px solid hsl(var(--border));">
+                  <td style="padding: 10px; font-weight: 600;">Program Director</td>
+                  <td style="padding: 10px;">21</td>
+                  <td style="padding: 10px; color: hsl(var(--muted-foreground));">NCS Program Director Certification (Valid for 5 years)</td>
+                </tr>
+                <tr style="border-bottom: 1px solid hsl(var(--border));">
+                  <td style="padding: 10px; font-weight: 600;">Range Activities Director / Archery Director</td>
+                  <td style="padding: 10px;">21 / 18</td>
+                  <td style="padding: 10px; color: hsl(var(--muted-foreground));">NCS Shooting Sports / Archery Director Certification</td>
+                </tr>
+                <tr style="border-bottom: 1px solid hsl(var(--border));">
+                  <td style="padding: 10px; font-weight: 600;">Climbing Director</td>
+                  <td style="padding: 10px;">21</td>
+                  <td style="padding: 10px; color: hsl(var(--muted-foreground));">NCS Climbing Certification</td>
+                </tr>
+                <tr style="border-bottom: 1px solid hsl(var(--border));">
+                  <td style="padding: 10px; font-weight: 600;">Trek / High Adventure Director</td>
+                  <td style="padding: 10px;">21</td>
+                  <td style="padding: 10px; color: hsl(var(--muted-foreground));">NCS Trek/High Adventure Certification</td>
+                </tr>
+                <tr style="border-bottom: 1px solid hsl(var(--border));">
+                  <td style="padding: 10px; font-weight: 600;">Outdoor Skills / Nature Directors</td>
+                  <td style="padding: 10px;">18</td>
+                  <td style="padding: 10px; color: hsl(var(--muted-foreground));">NCS or approved equivalent training in Scoutcraft / Ecology</td>
+                </tr>
+                <tr style="border-bottom: 1px solid hsl(var(--border));">
+                  <td style="padding: 10px; font-weight: 600;">Camp Health Officer</td>
+                  <td style="padding: 10px;">21</td>
+                  <td style="padding: 10px; color: hsl(var(--muted-foreground));">Arizona state-approved license (EMT, RN, MD, CNA, or paramedic)</td>
+                </tr>
+                <tr style="border-bottom: 1px solid hsl(var(--border));">
+                  <td style="padding: 10px; font-weight: 600;">Camp Ranger</td>
+                  <td style="padding: 10px;">21</td>
+                  <td style="padding: 10px; color: hsl(var(--muted-foreground));">"Camp Ranger Basic" training from Scouting U + annual continuing education</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="font-size: 12.5px; font-style: italic; color: hsl(var(--muted-foreground)); margin: 4px 0 0 0;">
+            * National Camp School is a week-long program. Catalina Council typically covers the attendance cost for required positions.
+          </p>
+        </div>
+
+      </div>
+    `;
+  }
+
   scoutingBtn.addEventListener('click', renderScouting);
   cultureBtn.addEventListener('click', renderCulture);
   serviceBtn.addEventListener('click', renderService);
   programBtn.addEventListener('click', renderProgram);
+  if (rolesBtn) rolesBtn.addEventListener('click', renderRoles);
 
   renderScouting();
 }

@@ -304,8 +304,36 @@ function showUserDetails(user) {
   const joined = new Date(user.created_at).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
   const updated = new Date(user.updated_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 
+  // Onboarding verification section for Staff/Admins
+  const isCandidate = user.role === 'Candidate';
+  const confirmed = user.onboarding_confirmed || false;
+  const confirmedText = confirmed 
+    ? `🟢 Confirmed by @${user.onboarding_confirmed_by || 'admin'} on ${new Date(user.onboarding_confirmed_at).toLocaleDateString()}`
+    : '⏳ Pending administrative confirmation';
+
+  const onboardingVerificationHtml = isCandidate ? '' : `
+    <div style="grid-column: 1 / -1; margin-top: 10px; background: hsl(var(--secondary) / 0.15); border: 1px dashed hsl(var(--border)); border-radius: var(--radius-sm); padding: 16px;">
+      <h4 style="color: hsl(var(--primary)); margin: 0 0 6px 0; font-size: 14px;">Onboarding Checklist Verification</h4>
+      <p style="font-size: 13px; line-height: 1.4; color: hsl(var(--muted-foreground)); margin-bottom: 12px;">
+        Verify that all checklist requirements (signed contracts, tax forms, conduct, quiz) have been received.
+      </p>
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <span style="font-size: 13px; font-weight: 600;">${confirmedText}</span>
+        ${!confirmed ? `
+          <button class="welcome-banner-btn" id="admin-verify-onboarding-btn" style="background: hsl(var(--success)); color: white; padding: 6px 14px; font-size: 12.5px; font-weight: 700;">
+            Confirm Received ✅
+          </button>
+        ` : `
+          <button class="welcome-banner-btn" id="admin-unverify-onboarding-btn" style="background: hsl(var(--danger) / 0.1); border: 1px solid hsl(var(--danger) / 0.3); color: hsl(var(--danger)); padding: 6px 14px; font-size: 12.5px; font-weight: 700;">
+            Revoke Confirmation ✕
+          </button>
+        `}
+      </div>
+    </div>
+  `;
+
   const html = `
-    <div style="display: flex; flex-direction: column; gap: 20px; padding: 4px 0;">
+    <div style="display: flex; flex-direction: column; gap: 20px; padding: 4px 0; text-align: left;">
       <div style="display: flex; align-items: center; gap: 16px;">
         <div style="width: 64px; height: 64px; border-radius: 50%; background: ${roleColor}22; color: ${roleColor}; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 900; font-family: var(--font-heading); flex-shrink: 0;">
           ${user.username.charAt(0).toUpperCase()}
@@ -321,10 +349,33 @@ function showUserDetails(user) {
         ${detailRow('Status', user.status === 'active' ? '🟢 Active' : '🔴 Inactive')}
         ${detailRow('Joined', joined)}
         ${detailRow('Last Updated', updated)}
+        ${onboardingVerificationHtml}
       </div>
     </div>
   `;
   openAppDialog(`<h2 style="margin: 0 0 20px; font-size: 20px; font-weight: 800; font-family: var(--font-heading);">👤 User Details</h2>${html}`);
+
+  // Bind onboarding verification buttons
+  const verifyBtn = document.getElementById('admin-verify-onboarding-btn');
+  const unverifyBtn = document.getElementById('admin-unverify-onboarding-btn');
+
+  const toggleOnboarding = async (val) => {
+    if (verifyBtn) verifyBtn.disabled = true;
+    if (unverifyBtn) unverifyBtn.disabled = true;
+    try {
+      await api.profiles.update(user.id, { onboarding_confirmed: val });
+      showToast(`User onboarding status updated! ✅`);
+      closeAppDialog();
+      await loadUsers(); // reload registry list
+    } catch (err) {
+      alert(`Error updating onboarding: ${err.message}`);
+      if (verifyBtn) verifyBtn.disabled = false;
+      if (unverifyBtn) unverifyBtn.disabled = false;
+    }
+  };
+
+  if (verifyBtn) verifyBtn.addEventListener('click', () => toggleOnboarding(true));
+  if (unverifyBtn) unverifyBtn.addEventListener('click', () => toggleOnboarding(false));
 }
 
 function detailRow(label, value) {

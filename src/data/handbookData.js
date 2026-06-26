@@ -15,46 +15,70 @@ export const campLeadership = [
 ];
 
 export const packingList = [
+  // Necessary Clothing
   { id: 'pack-cloth-1', name: 'Field Uniform Shirt (Class A) - 2+ recommended', category: 'Clothing', status: 'necessary' },
-  { id: 'pack-cloth-2', name: 'Activity Uniform - Staff Shirts (Class B)', category: 'Clothing', status: 'necessary' },
-  { id: 'pack-cloth-3', name: 'Scout Pants / Shorts', category: 'Clothing', status: 'necessary' },
-  { id: 'pack-cloth-4', name: 'Scout Belt (scout-approved buckle)', category: 'Clothing', status: 'necessary' },
-  { id: 'pack-cloth-5', name: 'Off-Duty Clothes ("Civvies")', category: 'Clothing', status: 'necessary' },
-  { id: 'pack-cloth-6', name: 'Jacket, fleece, or heavy sweater', category: 'Clothing', status: 'necessary' },
-  { id: 'pack-cloth-7', name: 'Closed-toed shoes / hiking boots', category: 'Clothing', status: 'necessary' },
-  { id: 'pack-cloth-8', name: 'Shower shoes (flip-flops/crocs)', category: 'Clothing', status: 'necessary' },
-  { id: 'pack-cloth-9', name: 'Underwear, socks, and pajamas', category: 'Clothing', status: 'necessary' },
-  { id: 'pack-cloth-10', name: 'Hat (brimmed for sun protection)', category: 'Clothing', status: 'necessary' },
+  { id: 'pack-cloth-2', name: 'Activity Uniform - Staff Shirts (Class B) - 2+ shirts provided', category: 'Clothing', status: 'necessary' },
+  { id: 'pack-cloth-3', name: 'Additional Staff Shirts from past years (if you have any)', category: 'Clothing', status: 'necessary' },
+  { id: 'pack-cloth-4', name: 'Scout Related t-shirts', category: 'Clothing', status: 'necessary' },
+  { id: 'pack-cloth-5', name: 'Scout Pants / Shorts', category: 'Clothing', status: 'necessary' },
+  { id: 'pack-cloth-6', name: 'Scout Belt (scout-approved buckle)', category: 'Clothing', status: 'necessary' },
+  { id: 'pack-cloth-7', name: 'Off-Duty Clothes ("Civvies")', category: 'Clothing', status: 'necessary' },
+  { id: 'pack-cloth-8', name: 'Jacket, fleece, or heavy sweater', category: 'Clothing', status: 'necessary' },
+  { id: 'pack-cloth-9', name: 'Sleepwear / Pajamas', category: 'Clothing', status: 'necessary' },
+  { id: 'pack-cloth-10', name: 'Underwear', category: 'Clothing', status: 'necessary' },
+  { id: 'pack-cloth-11', name: 'Socks', category: 'Clothing', status: 'necessary' },
+  { id: 'pack-cloth-12', name: 'Tennis shoes and/or hiking boots', category: 'Clothing', status: 'necessary' },
+  { id: 'pack-cloth-13', name: 'Shower Shoes (flip-flops/crocs)', category: 'Clothing', status: 'necessary' },
+  { id: 'pack-cloth-14', name: 'Hat (brimmed for sun protection)', category: 'Clothing', status: 'necessary' },
 
+  // Necessary Gear
   { id: 'pack-gear-1', name: 'Completed Medical Form (Parts A, B, C)', category: 'Gear', status: 'necessary' },
-  { id: 'pack-gear-2', name: 'Sleeping bag or bedding & pillow', category: 'Gear', status: 'necessary' },
-  { id: 'pack-gear-3', name: 'Lockable trunk or heavy duffel bag', category: 'Gear', status: 'necessary' },
-  { id: 'pack-gear-4', name: 'Canteen or large water bottle (uniform part)', category: 'Gear', status: 'necessary' },
-  { id: 'pack-gear-5', name: 'Flashlight & extra batteries', category: 'Gear', status: 'necessary' },
-  { id: 'pack-gear-6', name: 'Towels & washcloths', category: 'Gear', status: 'necessary' },
-  { id: 'pack-gear-7', name: 'Personal hygiene (lightly-scented soap, brush, etc.)', category: 'Gear', status: 'necessary' },
-  { id: 'pack-gear-8', name: 'Laundry bag & sunscreen', category: 'Gear', status: 'necessary' },
-  { id: 'pack-gear-9', name: 'Pocket knife (if Tot\'n Chip card held)', category: 'Gear', status: 'necessary' },
-  { id: 'pack-gear-10', name: 'Tot\'n Chip & Firem\'n Chit cards', category: 'Gear', status: 'necessary' },
+  { id: 'pack-gear-2', name: 'Pencil & note pad', category: 'Gear', status: 'necessary' },
+  { id: 'pack-gear-3', name: 'Sleeping bag or bedding & pillow', category: 'Gear', status: 'necessary' },
+  { id: 'pack-gear-4', name: 'Lockable trunk or heavy duffel bag', category: 'Gear', status: 'necessary' },
+  { id: 'pack-gear-5', name: 'Canteen or large water bottle (uniform part)', category: 'Gear', status: 'necessary' },
+  { id: 'pack-gear-6', name: 'Flashlight', category: 'Gear', status: 'necessary' },
+  { id: 'pack-gear-7', name: 'Extra Batteries', category: 'Gear', status: 'necessary' },
+  { id: 'pack-gear-8', name: 'Towels & washcloths', category: 'Gear', status: 'necessary' },
+  { id: 'pack-gear-9', name: 'Personal hygiene products (comb/brush, lightly scented deodorant, toothbrush, toothpaste, soap, shampoo)', category: 'Gear', status: 'necessary' },
+  { id: 'pack-gear-10', name: 'Laundry bag', category: 'Gear', status: 'necessary' },
+  { id: 'pack-gear-11', name: 'Sunscreen', category: 'Gear', status: 'necessary' },
+  { id: 'pack-gear-12', name: 'Pocket knife (if Tot\'n Chip card held)', category: 'Gear', status: 'necessary' },
+  { id: 'pack-gear-13', name: 'Tot\'n Chip & Firem\'n Chit cards', category: 'Gear', status: 'necessary' },
+  { id: 'pack-gear-14', name: 'Staff Handbook', category: 'Gear', status: 'necessary' },
+  { id: 'pack-gear-15', name: 'Spending money', category: 'Gear', status: 'necessary' },
 
+  // Optional Gear
   { id: 'pack-opt-1', name: 'Scouts BSA Handbook', category: 'Optional', status: 'optional' },
-  { id: 'pack-opt-2', name: 'Camera (dedicated device preferred)', category: 'Optional', status: 'optional' },
-  { id: 'pack-opt-3', name: 'Compass & sewing kit', category: 'Optional', status: 'optional' },
-  { id: 'pack-opt-4', name: 'Hangers & light twine/rope', category: 'Optional', status: 'optional' },
-  { id: 'pack-opt-5', name: 'Musical Instruments & reading books', category: 'Optional', status: 'optional' },
+  { id: 'pack-opt-2', name: 'Camera and photo gear', category: 'Optional', status: 'optional' },
+  { id: 'pack-opt-3', name: 'Compass', category: 'Optional', status: 'optional' },
+  { id: 'pack-opt-4', name: 'Hangers', category: 'Optional', status: 'optional' },
+  { id: 'pack-opt-5', name: 'Personal first-aid kit', category: 'Optional', status: 'optional' },
+  { id: 'pack-opt-6', name: 'Hiking staff', category: 'Optional', status: 'optional' },
+  { id: 'pack-opt-7', name: 'Sewing kit', category: 'Optional', status: 'optional' },
+  { id: 'pack-opt-8', name: 'Sharpening stone', category: 'Optional', status: 'optional' },
+  { id: 'pack-opt-9', name: 'Sunglasses', category: 'Optional', status: 'optional' },
+  { id: 'pack-opt-10', name: 'Insect repellent', category: 'Optional', status: 'optional' },
+  { id: 'pack-opt-11', name: 'Shaving Kit (if needed)', category: 'Optional', status: 'optional' },
+  { id: 'pack-opt-12', name: 'Laundry soap', category: 'Optional', status: 'optional' },
+  { id: 'pack-opt-13', name: 'Twine or light rope', category: 'Optional', status: 'optional' },
+  { id: 'pack-opt-14', name: 'Musical Instruments & reading books', category: 'Optional', status: 'optional' },
+  { id: 'pack-opt-15', name: 'Personal resource library', category: 'Optional', status: 'optional' },
 
+  // Privileged Gear
   { id: 'pack-priv-1', name: 'Smartphone (use in cabin only)', category: 'Privileged', status: 'privileged' },
   { id: 'pack-priv-2', name: 'Portable gaming console (Switch, etc.)', category: 'Privileged', status: 'privileged' },
-  { id: 'pack-priv-3', name: 'Headphones / Bluetooth speaker (for cabin)', category: 'Privileged', status: 'privileged' },
-  { id: 'pack-priv-4', name: 'Laptop screen (cabin use only)', category: 'Privileged', status: 'privileged' },
+  { id: 'pack-priv-3', name: 'Headphones (for cabin, off Staff Hill banned)', category: 'Privileged', status: 'privileged' },
+  { id: 'pack-priv-4', name: 'Bluetooth speaker (for cabin, no loud music)', category: 'Privileged', status: 'privileged' },
+  { id: 'pack-priv-5', name: 'Laptop or portable screen (cabin use only)', category: 'Privileged', status: 'privileged' },
+  { id: 'pack-priv-6', name: 'General home comforts approved by cabin-mates & Camp Director', category: 'Privileged', status: 'privileged' },
 
-  { id: 'pack-proh-1', name: 'Sheath knives or novelty knives', category: 'Prohibited', status: 'prohibited' },
-  { id: 'pack-proh-2', name: 'Personal firearms, ammo, or Air Soft toys', category: 'Prohibited', status: 'prohibited' },
-  { id: 'pack-proh-3', name: 'Fireworks or personal firestarters', category: 'Prohibited', status: 'prohibited' },
-  { id: 'pack-proh-4', name: 'Full-size TVs or desktop rigs', category: 'Prohibited', status: 'prohibited' },
-  { id: 'pack-proh-5', name: 'Open-toed sandals/shoes outside cabin', category: 'Prohibited', status: 'prohibited' },
-  { id: 'pack-proh-6', name: 'Personal food and snacks (attracts bears)', category: 'Prohibited', status: 'prohibited' },
-  { id: 'pack-proh-7', name: 'Pets, adult posters, or alcohol/drugs/marijuana', category: 'Prohibited', status: 'prohibited' }
+  // Prohibited Items
+  { id: 'pack-proh-1', name: 'Weapons: Sheath knives, novelty knives, personal hatchets, firearms, ammunition, Air Soft', category: 'Prohibited', status: 'prohibited' },
+  { id: 'pack-proh-2', name: 'Fire: Fireworks, personal fire-starting equipment', category: 'Prohibited', status: 'prohibited' },
+  { id: 'pack-proh-3', name: 'Electronics: Televisions, desktop computers/gaming rigs, large sound systems', category: 'Prohibited', status: 'prohibited' },
+  { id: 'pack-proh-4', name: 'Clothing & Food: Open-toed shoes/sandals outside cabin, personal food & snacks (attracts bears)', category: 'Prohibited', status: 'prohibited' },
+  { id: 'pack-proh-5', name: 'Contraband: Pets, posters with adult themes, pornography, alcohol, illegal drugs, or marijuana', category: 'Prohibited', status: 'prohibited' }
 ];
 
 export const sundayArrivalSteps = [
@@ -447,12 +471,18 @@ export const trainingCultureData = {
       { title: "Systems over Scripts", desc: "Build excellence into repeatable systems, rather than rigid scripts." }
     ],
     fish: [
-      { title: "Play", desc: "Bring a lighthearted, spontaneous energy to your environment." },
-      { title: "Make Their Day", desc: "Look for ways to create a memorable, positive experience for someone else." },
-      { title: "Be There", desc: "Give the customer your complete, undivided attention." },
-      { title: "Choose Your Attitude", desc: "Take total responsibility for the mindset you bring to work each day." }
     ]
-  }
+  },
+  rules: [
+    { title: "Phones", content: "Keep it put away. Camp needs you here. Will begin with no blanket ban, but abuse will bring the hammer." },
+    { title: "Fraternization", content: "Keep the physical stuff out of camp. Represent scouting values. Fraternization can lead to drama, morality issues, and professionalism issues." },
+    { title: "Media", content: "Video games/movies are fine in off-time, but MUST be scout appropriate. No M-rated games, R-rated movies, or excessive language." },
+    { title: "Recreational Items & Cards", content: "Recreational items must be kept in quarters and used only when it won't interfere with duties. Cards Against Humanity is banned; use Apples-to-Apples. Do not bring large desktop computer/gaming rigs." },
+    { title: "Alcohol & Drugs (Zero Tolerance)", content: "Consuming or possessing alcohol (even 21+), tobacco/vapes (by minors), or marijuana (in any form) is strictly forbidden. Violation leads to immediate termination." },
+    { title: "Smoking & Vaping", content: "Tobacco possessed by staff 21+ must be kept in locked vehicles. Smoking is allowed ONLY inside vehicles with windows closed. Vapes only when no youth are present." },
+    { title: "Pornography & Wifi", content: "Possession of pornography is prohibited. Navigation to adult sites over camp-provided wifi will be automatically escalated to the Catalina Council Chief Scout Executive." },
+    { title: "Trading Post", content: "The Trading Post is cash or card only at the time of purchase. No staff discounts, free items, or tabs are available." }
+  ]
 };
 
 export const policiesProceduresData = {
@@ -468,7 +498,10 @@ export const policiesProceduresData = {
     { title: "At Will Employment", content: "Employment is 'at-will' and can be terminated by either party at any time without cause." },
     { title: "Equal Employment Opportunity", content: "Camp Lawton is an EEO employer. No discrimination based on race, religion, sex, etc. Accommodations provided where reasonable." },
     { title: "Employee Grievances", content: "Raise concerns with Area Directors first. If unresolved, submit a signed written grievance to the Camp Director. No retaliation will occur." },
-    { title: "Whistleblower Policy", content: "Zero tolerance for retaliation against employees making good faith complaints regarding legal violations, safety dangers, or discrimination." }
+    { title: "Whistleblower Policy", content: "Zero tolerance for retaliation against employees making good faith complaints regarding legal violations, safety dangers, or discrimination." },
+    { title: "Emergency Leave Protocol", content: "Stuff happens. We don't expect this job to take priority over your real life. To request leave (family emergency, bereavement, important milestones), speak to the Camp Director with as much notice as possible and we'll make it work." },
+    { title: "Worker's Compensation", content: "All staff are covered by worker's compensation. Catalina Council pays medical bills for job-related injuries. Report all injuries, no matter how minor, to the nearest Area Director immediately for documentation." },
+    { title: "Job Appraisals & Performance", content: "Area Directors perform periodic evaluations of staff members. These are constructive feedback tools to help you grow. Program Directors evaluate Area Directors, and the Camp Director evaluates the Program Director." }
   ],
   rules: [
     { title: "Phones", content: "Keep it put away. Camp needs you here. Will begin with no blanket ban, but abuse will bring the hammer." },
@@ -494,9 +527,9 @@ export const onboardingData = {
     { id: 'pw-2', name: 'Letter of Agreement' },
     { id: 'pw-3', name: 'Code of Conduct (signed)' },
     { id: 'pw-4', name: 'Medical Forms A, B, and C' },
-    { id: 'pw-5', name: 'Vehicle Permit Form (if applicable)' },
-    { id: 'pw-6', name: 'Venture/Leader Application' },
-    { id: 'pw-7', name: 'I-9 Form and W-4 (if paid)' }
+    { id: 'pw-5', name: 'Vehicle Permit Form / Transportation Authorization (if bringing a vehicle)' },
+    { id: 'pw-6', name: 'Venture Application / Leader Application (if not already registered)' },
+    { id: 'pw-7', name: 'I-9 Form & W-4 * (Paid staff only; requires copy of two forms of I.D.)' }
   ]
 };
 

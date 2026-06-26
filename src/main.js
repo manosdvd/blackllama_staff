@@ -10,6 +10,10 @@ import { renderOnboarding, initOnboarding, setOnboardingTab } from './components
 import { renderAdmin, initAdmin } from './components/admin.js';
 import { initAmbiance } from './components/ambiance.js';
 import { AuthService } from './services/auth.js';
+import { api } from './services/apiClient.js';
+import { renderWeatherBanner, initWeatherBanner } from './components/weatherFeed.js';
+import { renderForum, initForum } from './components/forum.js';
+import { renderDirectory, initDirectory } from './components/directory.js';
 
 // Global State Manager
 export const state = {
@@ -137,6 +141,18 @@ const views = {
     subtitle: 'Review candidate applications and manage staff onboarding credentials.',
     render: renderAdmin,
     init: initAdmin
+  },
+  forum: {
+    title: 'Staff Discussion Board',
+    subtitle: 'Reddit-style chat & community forum for staff.',
+    render: renderForum,
+    init: initForum
+  },
+  directory: {
+    title: 'Staff Directory',
+    subtitle: 'Get to know your fellow camp staff members and update your profile.',
+    render: renderDirectory,
+    init: initDirectory
   }
 };
 
@@ -184,11 +200,37 @@ function updateUserUI() {
   // Update onboarding tab visibility
   const onboardingNav = document.getElementById('nav-item-onboarding');
   if (onboardingNav) {
-    const isLoggedIn = !!state.username;
-    onboardingNav.style.display = isLoggedIn ? 'block' : 'none';
+    const isStaff = state.username && state.role !== 'Candidate';
+    onboardingNav.style.display = isStaff ? 'block' : 'none';
     
-    // Redirect if they log out while viewing the onboarding panel
-    if (state.activeView === 'onboarding' && !isLoggedIn) {
+    // Redirect if they log out or lose staff status while viewing the onboarding panel
+    if (state.activeView === 'onboarding' && !isStaff) {
+      navigateTo('dashboard');
+      return;
+    }
+  }
+
+  // Update forum tab visibility
+  const forumNav = document.getElementById('nav-item-forum');
+  if (forumNav) {
+    const isStaff = state.username && state.role !== 'Candidate';
+    forumNav.style.display = isStaff ? 'block' : 'none';
+    
+    // Redirect if they lose staff status while viewing the forum panel
+    if (state.activeView === 'forum' && !isStaff) {
+      navigateTo('dashboard');
+      return;
+    }
+  }
+
+  // Update directory tab visibility
+  const directoryNav = document.getElementById('nav-item-directory');
+  if (directoryNav) {
+    const isStaff = state.username && state.role !== 'Candidate';
+    directoryNav.style.display = isStaff ? 'block' : 'none';
+    
+    // Redirect if they lose staff status while viewing the directory panel
+    if (state.activeView === 'directory' && !isStaff) {
       navigateTo('dashboard');
       return;
     }
@@ -657,6 +699,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
   initTheme();
   initAmbiance();
+
+  const weatherMount = document.getElementById('weather-banner-mount');
+  if (weatherMount) {
+    weatherMount.innerHTML = renderWeatherBanner();
+    initWeatherBanner();
+  }
+
+  // Pre-load all custom site content edits from Supabase
+  state.siteContent = {};
+  api.siteContent.get().then(data => {
+    if (data && data.contentBlocks) {
+      data.contentBlocks.forEach(block => {
+        state.siteContent[block.key] = block.content;
+      });
+    }
+    // Refresh display to apply custom content
+    navigateTo(state.activeView);
+  }).catch(err => {
+    console.error('Failed to load custom site content:', err);
+  });
 
   // Validate session server-side on load (async — updates cache silently)
   AuthService.validateSession().then(user => {
