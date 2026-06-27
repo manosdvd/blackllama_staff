@@ -37,5 +37,8 @@ ALTER TABLE public.wiki_pages ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.wiki_revisions ENABLE ROW LEVEL SECURITY;
 
 -- Read Access: Open to all authenticated/public users
+DROP POLICY IF EXISTS "Allow public select for wiki pages" ON public.wiki_pages;
 CREATE POLICY "Allow public select for wiki pages" ON public.wiki_pages FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Allow public select for wiki revisions" ON public.wiki_revisions;
 CREATE POLICY "Allow public select for wiki revisions" ON public.wiki_revisions FOR SELECT USING (true);
