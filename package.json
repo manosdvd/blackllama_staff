@@ -1,0 +1,8 @@
+{
+  "name": "blackllama-staff-netlify-build-wrapper",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "npm --prefix legacy ci && npm --prefix legacy run build && rm -rf dist && cp -R legacy/dist dist"
+  }
+}
