@@ -36,22 +36,26 @@ ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.applications ENABLE ROW LEVEL SECURITY;
 
 -- Profiles: Users can read their own profile
+DROP POLICY IF EXISTS "Users can read own profile" ON public.profiles;
 CREATE POLICY "Users can read own profile"
   ON public.profiles FOR SELECT
   USING (auth.uid() = id);
 
 -- Profiles: Users can update their own non-sensitive fields
+DROP POLICY IF EXISTS "Users can update own profile" ON public.profiles;
 CREATE POLICY "Users can update own profile"
   ON public.profiles FOR UPDATE
   USING (auth.uid() = id)
   WITH CHECK (auth.uid() = id);
 
 -- Applications: Users can read their own applications
+DROP POLICY IF EXISTS "Users can read own application" ON public.applications;
 CREATE POLICY "Users can read own application"
   ON public.applications FOR SELECT
   USING (auth.uid() = user_id);
 
 -- Applications: Users can insert their own application
+DROP POLICY IF EXISTS "Users can submit own application" ON public.applications;
 CREATE POLICY "Users can submit own application"
   ON public.applications FOR INSERT
   WITH CHECK (auth.uid() = user_id);
@@ -70,6 +74,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS set_profiles_updated_at ON public.profiles;
 CREATE TRIGGER set_profiles_updated_at
   BEFORE UPDATE ON public.profiles
   FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
@@ -93,6 +98,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
