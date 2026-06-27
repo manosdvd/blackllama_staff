@@ -76,14 +76,18 @@ ALTER TABLE public.forum_comments ENABLE ROW LEVEL SECURITY;
 -- which bypasses RLS entirely. We will define simple policies 
 -- just in case direct access is ever configured in the future.
 
+DROP POLICY IF EXISTS "Allow public select for site content" ON public.site_content;
 CREATE POLICY "Allow public select for site content" ON public.site_content
   FOR SELECT USING (true);
 
+DROP POLICY IF EXISTS "Allow public select for blog posts" ON public.blog_posts;
 CREATE POLICY "Allow public select for blog posts" ON public.blog_posts
   FOR SELECT USING (true);
 
+DROP POLICY IF EXISTS "Allow select for forum posts" ON public.forum_posts;
 CREATE POLICY "Allow select for forum posts" ON public.forum_posts
   FOR SELECT USING (true);
 
+DROP POLICY IF EXISTS "Allow select for forum comments" ON public.forum_comments;
 CREATE POLICY "Allow select for forum comments" ON public.forum_comments
   FOR SELECT USING (true);
