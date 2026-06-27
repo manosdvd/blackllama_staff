@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "dev": "npm --prefix apps/staff-portal run dev",
     "build": "npm --prefix apps/staff-portal ci && npm --prefix apps/staff-portal run build && rm -rf dist && cp -R apps/staff-portal/out dist"
   }
 }
