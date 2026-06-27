@@ -87,10 +87,14 @@ It should help:
 Start here:
 
 - [`docs/BLUEPRINT_OVERHAUL_PLAN.md`](docs/BLUEPRINT_OVERHAUL_PLAN.md)
+- [`docs/LEGACY_SALVAGE_REPORT.md`](docs/LEGACY_SALVAGE_REPORT.md)
+
+Current transitional scaffold:
+
+- [`src/data/contentSeed.js`](src/data/contentSeed.js)
 
 Recommended next documentation additions:
 
-- `docs/LEGACY_SALVAGE_REPORT.md`
 - `docs/TARGET_ARCHITECTURE.md`
 - `docs/CONTENT_MODEL.md`
 - `docs/SECURITY_AND_SAFEGUARDING.md`
@@ -130,12 +134,13 @@ That setup is useful for prototype testing, but it should not be considered the 
 
 ## Recommended Next Steps
 
-1. Create a legacy salvage report.
-2. Restructure handbook/content seed data around the blueprint content model.
-3. Add honest offline/stale/draft state indicators to the prototype.
-4. Begin a Next.js/TypeScript/Tailwind rebuild branch or app directory.
-5. Implement the Supabase data model and RLS policies from the blueprint.
-6. Validate security, safeguarding, offline behavior, and governance before any real launch.
+1. Restructure handbook/content seed data around the blueprint content model.
+2. Add honest offline/stale/draft state indicators to the prototype.
+3. Add a target architecture document.
+4. Add a security and safeguarding document.
+5. Begin a Next.js/TypeScript/Tailwind rebuild branch or app directory.
+6. Implement the Supabase data model and RLS policies from the blueprint.
+7. Validate security, safeguarding, offline behavior, and governance before any real launch.
 
 ## Bottom Line
 
