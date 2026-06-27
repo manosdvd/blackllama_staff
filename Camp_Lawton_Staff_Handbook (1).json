@@ -1,0 +1,310 @@
+{
+    "title": "Camp Lawton Staff Handbook",
+    "welcome": "Congratulations on joining the Camp Lawton team! For over a century, Camp Lawton has helped shape the lives of generations of Scouts...",
+    "leadership_directory": {
+        "Phil Shipley": "Territorial Director, Acting CEO",
+        "Mike Korcheck": "Council Operations Manager",
+        "Ethan Crisp": "Council District Executive",
+        "MaryLou Chopelas": "Council Camp Ranger & Camp Director",
+        "Alexis Smith": "Camp Program Director",
+        "Jim Tarleton": "Scoutcraft Area Director",
+        "Jack Erickson": "Handicraft Area Director",
+        "Andrew Rasmussen": "Nature Area Director",
+        "Mike Jones": "Council Advancement Chair",
+        "Brian Rome": "Range and Target Area Director",
+        "Jim Harrington": "Cook/climbing wall/MB",
+        "Jack Pickell": "Camp Maintenance"
+    },
+    "camp_address": {
+        "addressee": "Staff's Name, Staff",
+        "organization": "Camp Lawton, BSA",
+        "po_box": "PO Box 786",
+        "location": "Mt. Lemmon, AZ 85619",
+        "phone": "520-576-1263"
+    },
+    "part_1_camp_staff_training_and_culture": {
+        "mission_and_vision": {
+            "mission_statement": "The mission of Scouting America is to prepare young people to make ethical and moral choices over their lifetimes by instilling in them the values of the Scout Oath and Law.",
+            "vision_statement": "Scouting America will prepare every eligible youth in America to become a responsible, participating citizen and leader who is guided by the Scout Oath and Law."
+        },
+        "core_pillars_of_summer_camp": {
+            "Physical": "Camp helps develop habits of healthy living through balanced meals and supervised physical activities.",
+            "Mental": "Advancement programs offer challenges that build self-sufficiency and responsibility.",
+            "Social": "The community of a summer camp helps build strong, morally rich people skills.",
+            "Spiritual": "Spiritually rich time in nature helps develop a deeper understanding of a scout\u2019s place in the universe."
+        },
+        "the_aims_and_methods_of_scouting": {
+            "the_aims_of_scouting": [
+                "Character",
+                "Citizenship",
+                "Personal Fitness",
+                "Leadership"
+            ],
+            "the_methods_of_scouting": [
+                "Ideals",
+                "Patrols",
+                "Outdoor Programs",
+                "Advancement",
+                "Association with Adults",
+                "Personal Growth",
+                "Leadership Development",
+                "Uniform"
+            ]
+        },
+        "what_makes_a_staff": {
+            "Appearance": "Hygiene, uniform, and how you present yourself make an impression.",
+            "Attitude": "Stay positive and remember you are there to serve as well as have fun.",
+            "Personality": "Patience, friendliness, humor, respect and enthusiasm; these traits make all the difference.",
+            "Knowledge": "When teaching a Merit Badge or skill, the staff member should be an authority on the subject that he or she is teaching."
+        },
+        "chain_of_command": {
+            "Camp Director": "Runs the camp, making sure things are done safely, efficiently, on budget, and according to national standards.",
+            "Program Director": "Runs the camp experience - the merit badge and advancement classes, campfires, Funday, and the general camp staff.",
+            "Structural Core": [
+                "Ranger",
+                "Trading Post Manager/Business Manager",
+                "Medic",
+                "Kitchen Staff",
+                "Camp Commissioner"
+            ],
+            "Program Staff": [
+                "Area Directors",
+                "Instructors",
+                "Junior Staff",
+                "CITs"
+            ]
+        },
+        "age_requirements_for_staff_leadership": {
+            "Camp Director & Program Director": "Minimum age 21",
+            "Range Activities Director and Climbing Director": "Minimum age 21",
+            "Area Directors": "Minimum age 18",
+            "Instructors / Junior Staff": "Minimum age 16",
+            "Counselors in Training (CIT)": "Ages 14-15"
+        },
+        "staff_types": {
+            "Counselors-in-Training (CITs) & Volunteers": "Interns participating in a leadership development program. Working hours strictly limited.",
+            "Junior Staff": "Older teenagers. Qualifies as a summer job.",
+            "Adult Staff": "Anyone 18 and older. Mostly Area Directors.",
+            "Program Areas and Directors": "Responsible for the upkeep and operation of his/her area.",
+            "Support Staff": "Kitchen, maintenance, Commissioners, Health Lodge, Trading Post, and Headquarters."
+        },
+        "staff_expectations": {
+            "duties": [
+                "Attend all staff meetings, trainings, and Staff Week.",
+                "Engage in these meetings and trainings.",
+                "Be early to things, not just on time.",
+                "Participate in and assist with all camp-wide programs.",
+                "Be courteous and respectful to everyone.",
+                "Follow the chain of command.",
+                "Keep your appearance presentable and respectable.",
+                "Be in appropriate uniform for all activities.",
+                "Maintain your readiness and willingness to perform your duties.",
+                "Keep your staff quarters clean, orderly, and comfortable.",
+                "Take proper care of all camp equipment and facilities.",
+                "Take personal responsibility for the success of the entire camp.",
+                "Name Tags must be visible at all times.",
+                "Abide by the Scout Oath, Law, and ALL of the ideals of scouting."
+            ]
+        },
+        "the_rules": {
+            "Phones": "Keep it put away.",
+            "Photography and social media": "Run any content you intend to post to social media by the Camp Director.",
+            "Video Games and other recreation": "Must be in line with scout values.",
+            "Drugs, Alcohol, Pornography": "Strictly prohibited.",
+            "Fraternization": "Keep the physical stuff out of camp."
+        },
+        "stress_management": {
+            "1. Work the Problem": "Run a self-diagnostic: Are you dehydrated? Fueled? Sleep-deprived?",
+            "2. Use Your Siesta": "Go to your cabin, lie down, and let your brain stop processing external input for an hour.",
+            "3. Manage Sensory Overload": "Find a quiet space out of sight of the campers where you can safely decompress.",
+            "4. Tag Out (The Strategic Retreat)": "Tell your Area Director, 'I need five minutes.'",
+            "5. Call in the Grown-Ups": "Go to an adult staff member that you trust if your mental health is slipping."
+        },
+        "this_is_your_life_schedule": {
+            "Sunday Check-in": "Report to camp by 12pm, troop check-in, camp tours, Flags and Dinner.",
+            "Daily Life": "6am Eagle Trail, Flags, Breakfast, Program (9-11:50), Lunch/Siesta, Program (2-5), Flags, Dinner.",
+            "Meetings": "Daily short meeting to debrief.",
+            "Staff Campfire": "Monday night.",
+            "Funday": "Wednesday.",
+            "Camper Campfire": "Friday night.",
+            "Saturday Checkout": "Truncated flag ceremony, simple breakfast, campsite inspections, dismissal."
+        }
+    },
+    "part_2_policies_procedures_guidelines_and_laws": {
+        "severe_weather_preparedness": {
+            "Lightning Safety & The 30/30 Rule": "Suspend all outdoor activities immediately if 30 seconds or less between flash and thunder. Primary shelter is the Dining Hall.",
+            "Heat & Thermal Stress Mitigation": "Hydrate. Watch for Heat Exhaustion vs. Heatstroke.",
+            "High Winds & Hazard Trees": "Look out for 'Widowmakers' and suspend climbing/range activities.",
+            "Emergency Action Plans": "Camp bell ringing continuously means report directly to the parade grounds."
+        },
+        "safeguarding_youth": {
+            "Supervision and Contact": [
+                "Two-Deep Leadership",
+                "No One-on-One Contact",
+                "The Buddy System"
+            ],
+            "Privacy and Accommodations": [
+                "Separate Accommodations",
+                "Restroom Privacy",
+                "Respect of Privacy"
+            ],
+            "Behavior and Discipline": [
+                "Constructive Discipline",
+                "Zero Tolerance for hazing/bullying",
+                "No Sexual Activity",
+                "Appropriate Attire"
+            ],
+            "Incident Response and Mandatory Reporting": [
+                "Intervene Immediately",
+                "Confidentiality",
+                "Mandatory Reporters: Arizona State Law (ARS 13-3620) requires reporting to DCS."
+            ]
+        },
+        "the_camp_lawton_guidelines": [
+            "The Rule of Two",
+            "Boundaries (Staff housing and kitchen are off-limits)",
+            "Respect the Facilities",
+            "Safety (Closed-toed shoes)",
+            "Zero Tolerance for Put-Downs",
+            "No Pranks",
+            "The Camper's Covenant"
+        ],
+        "health_and_safety": {
+            "Emergencies And Other Incidents": [
+                "Report Everything",
+                "Minor Injuries",
+                "Uncertain or Mobility-Limiting Injuries",
+                "Suspected Spinal or Collar-Bone Injuries"
+            ],
+            "Missing Person (Code Blue)": "Gather Critical Details, Initiate 'Code Blue' over radio, Search Coordination by Camp Director.",
+            "Emergency Alarm Procedures": "Secure Immediate Hazards, Evacuate to the Parade Grounds, Assembly & Accountability.",
+            "Bear & Wildlife Safety": "Smellables Policy (secure in Bear Box). Call 'Code Brown' for bear sightings.",
+            "Fire Safety": "Campfires must never be built above knee level. Evacuate if alarm sounds.",
+            "Armed Intruder / Active Shooter": "Run, Hide, Fight protocol.",
+            "Fatality Protocol": "Immediate Reporting, Secure & Shield the Area, Preserve the Scene."
+        },
+        "legal_policies": {
+            "At-Will Employment": "Free to resign or be terminated at any time.",
+            "Equal Employment Opportunity & Your Rights": "Employment based on qualifications without regard to protected characteristics.",
+            "Employee Grievances": "Step 1: Area Director Level. Step 2: Written Grievance.",
+            "Anti-Retaliation & Whistleblower Policy": "Protection for good faith complaints."
+        }
+    },
+    "part_3_campfire_master_class_and_songbook": {
+        "how_to_write_funny": [
+            "Module 1: Finding Your Core Concept",
+            "Module 2: Establishing the Scene and the 'Take'",
+            "Module 3: Brainstorming and Joke Discipline",
+            "Module 4: Crafting Comedic Characters",
+            "Module 5: Escalation and Drafting",
+            "Module 6: The Closer and the Edit"
+        ],
+        "writing_songs": [
+            "The Melodic Blueprint",
+            "Structuring for 'Zero-Friction' Learning",
+            "Writing Lyrics that Stick",
+            "Designing the Acapella 'Track'"
+        ]
+    },
+    "part_4_onboarding": {
+        "required_paperwork": {
+            "All Staff": [
+                "Staff Application",
+                "Letter of Agreement",
+                "Signed Code of Conduct",
+                "Annual Health and Medical Record (Parts A, B, and C)",
+                "Vehicle Permit Form / Transportation Authorization",
+                "Venturing or Adult Leader Application"
+            ],
+            "Paid Staff Only": [
+                "W-4 Form",
+                "I-9 Form"
+            ]
+        },
+        "packing_list": {
+            "Necessary Clothing": [
+                "Field Uniform Shirt (Class A)",
+                "Activity Uniform - Staff Shirts (Class B)",
+                "Scout Pants",
+                "Scout Belt",
+                "Off-Duty clothes",
+                "Jacket and/or sweater",
+                "Sleepwear / Pajamas",
+                "Underwear",
+                "Socks",
+                "Tennis shoes and/or hiking boots",
+                "Shower Shoes",
+                "Hat"
+            ],
+            "Necessary Gear": [
+                "Completed Medical Form",
+                "Pencil & note pad",
+                "Sleeping bag/bedding",
+                "Lockable trunk/duffel bag",
+                "Canteen/water bottle",
+                "Flashlight",
+                "Extra Batteries",
+                "Towels & washcloth",
+                "Personal hygiene products",
+                "Laundry bag",
+                "Sunscreen",
+                "Pocket knife",
+                "Tot'n Chip & Firem'n Chit Cards",
+                "Staff Handbook",
+                "Spending money"
+            ],
+            "Optional Gear": [
+                "Scouts BSA Handbook",
+                "Camera",
+                "Compass",
+                "Hangers",
+                "Personal first-aid kit",
+                "Hiking staff",
+                "Sewing kit",
+                "Sharpening stone",
+                "Sunglasses",
+                "Insect repellent",
+                "Shaving Kit",
+                "Laundry soap",
+                "Twine",
+                "Musical Instruments",
+                "Books"
+            ],
+            "Privileged Gear": [
+                "Smartphone",
+                "Portable gaming consoles",
+                "Headphones",
+                "Bluetooth Speaker",
+                "Laptop or portable screen",
+                "General home comforts"
+            ],
+            "Strictly Prohibited": [
+                "Weapons & Tools",
+                "Fire & Safety (Fireworks)",
+                "Full Size Electronics",
+                "Clothing & Food (Open-Toed Shoes, Food)",
+                "Contraband & Other (Pets, Pornography, alcohol, illegal drugs)"
+            ]
+        },
+        "commitment_and_code_of_conduct": {
+            "Support & Accountability Framework": [
+                "Phase 1: Coaching & Realignment",
+                "Phase 2: Formal Intervention",
+                "Phase 3: Separation (Dismissal)"
+            ],
+            "Daily Behavioral Expectations": [
+                "1. Professionalism & Engagement",
+                "2. Respect for the Community",
+                "3. Integrity & Focus"
+            ],
+            "Zero-Tolerance: Immediate Discharge": [
+                "Safety & Abuse Violations",
+                "Substance Violations",
+                "Theft & Destruction",
+                "Contraband",
+                "Falsification",
+                "Endangerment"
+            ]
+        }
+    }
+}

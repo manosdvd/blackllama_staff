@@ -6,13 +6,14 @@ function escapeHtml(str) {
 }
 
 function renderHandbookSection(h3Title, icon = '📖') {
-  const section = rawHandbook.find(s => s.h3 === h3Title || s.h2 === h3Title || s.h1 === h3Title);
+  const query = h3Title.toLowerCase();
+  const section = rawHandbook.find(s => s.title && s.title.toLowerCase() === query);
   if (!section) return '';
   return `
     <details class="glass-panel comedy-card" style="border-left: 4px solid hsl(var(--primary));">
       <summary class="comedy-card-summary" style="padding: 14px 18px;">
         <div class="comedy-card-header">
-          <h4 style="font-weight: 700; margin: 0; font-size: 15px;">${icon} ${section.h3 || section.h2 || section.h1}</h4>
+          <h4 style="font-weight: 700; margin: 0; font-size: 15px;">${icon} ${section.title}</h4>
         </div>
         <span class="comedy-card-toggle">▼</span>
       </summary>

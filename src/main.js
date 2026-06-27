@@ -1,5 +1,6 @@
 import { renderHandbookCourse, initHandbookCourse } from './components/handbookCourse.js';
 import './style.css';
+import { rawHandbook } from './data/rawHandbook.js';
 
 // Import View Components
 import { renderDashboard, initDashboard } from './components/dashboard.js';
@@ -24,6 +25,7 @@ export const state = {
   wamCount: parseInt(localStorage.getItem('lawton_wam_count') || '0'),
   signedConduct: false,
   activeView: 'dashboard',
+  currentLessonIndex: 0,
   
   syncUser() {
     const user = AuthService.getCurrentUser();
@@ -98,6 +100,7 @@ export const state = {
 
 // Eagerly load user data from current session on import
 state.loadUserData(state.username);
+window.state = state;
 
 // Route View Map
 const views = {
@@ -311,9 +314,9 @@ export function navigateTo(viewId) {
 // ========================================================
 // GLOBAL HANDBOOK SEARCH INDEX
 // ========================================================
-const searchIndex = [
+const manualSearchIndex = [
   // Part 1: Pillars & Culture
-  { title: 'Core Pillars of Summer Camp', snippet: '🏃 Physical, 🧠 Mental, 🤝 Social, 🌌 Spiritual development areas.', viewId: 'training', tabId: null, isSafety: false },
+  { title: 'Core Pillars of Summer Camp', snippet: 'Physical, Mental, Social, Spiritual development areas.', viewId: 'training', tabId: null, isSafety: false },
   { title: 'The Aims of Scouting', snippet: 'Character Development, Citizenship Training, Personal Fitness, and Leadership.', viewId: 'training', tabId: null, isSafety: false },
   { title: 'The Methods of Scouting', snippet: 'Ideals, Patrol Method, Outdoor Programs, Advancement, Association with Adults...', viewId: 'training', tabId: null, isSafety: false },
   { title: 'What Makes a Staff? (4 Pillars)', snippet: 'Appearance, Attitude, Personality, and Knowledge guidelines.', viewId: 'training', tabId: null, isSafety: false },
@@ -343,6 +346,45 @@ const searchIndex = [
   { title: 'Code of Conduct Commitment Signer', snippet: 'Digital agreement form. Zero-tolerance policy on YPT, alcohol, drugs, weapons.', viewId: 'onboarding', tabId: 'conduct', isSafety: true },
   { title: 'Handbook Quiz & Certification', snippet: '10-question training certification quiz on weather, safety, and reporting policies.', viewId: 'onboarding', tabId: 'quiz', isSafety: false },
   { title: 'Staff Application 2026', snippet: 'Apply to join the Camp Lawton staff.', viewId: 'onboarding', tabId: 'apply', isSafety: false }
+];
+
+const searchIndex = [
+  ...manualSearchIndex,
+  ...rawHandbook
+    .map((section, idx) => {
+      const hasContent = section.content && section.content.trim().length > 0;
+      if (!hasContent) return null;
+
+      // Avoid duplication with manual routes
+      if (manualSearchIndex.some(m => m.title.toLowerCase() === section.title.toLowerCase())) {
+        return null;
+      }
+
+      const textToSearch = (section.title + " " + section.content).toLowerCase();
+      const isSafety = textToSearch.includes('safety') || 
+                       textToSearch.includes('emergency') || 
+                       textToSearch.includes('lightning') || 
+                       textToSearch.includes('fire') || 
+                       textToSearch.includes('shooter') || 
+                       textToSearch.includes('code blue') || 
+                       textToSearch.includes('code brown') || 
+                       textToSearch.includes('abuse') || 
+                       textToSearch.includes('reporting');
+
+      let snippet = section.content.substring(0, 120);
+      if (section.content.length > 120) snippet += '...';
+      snippet = snippet.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
+
+      return {
+        title: section.title,
+        snippet: snippet,
+        viewId: 'course',
+        tabId: null,
+        isSafety: isSafety,
+        lessonIndex: idx
+      };
+    })
+    .filter(item => item !== null)
 ];
 
 function escapeHtml(str) {
@@ -852,6 +894,10 @@ document.addEventListener('DOMContentLoaded', () => {
           const viewId = el.getAttribute('data-view-id');
           const tabId = el.getAttribute('data-tab-id');
 
+          // Find match in searchIndex to retrieve lessonIndex
+          const title = el.querySelector('.search-result-title').textContent.trim();
+          const match = searchIndex.find(item => item.title === title);
+
           // Reset search
           searchInput.value = '';
           searchDropdown.style.display = 'none';
@@ -863,6 +909,10 @@ document.addEventListener('DOMContentLoaded', () => {
             setPoliciesTab(tabId);
           } else if (viewId === 'onboarding' && tabId) {
             setOnboardingTab(tabId);
+          }
+
+          if (viewId === 'course' && match && match.lessonIndex !== undefined) {
+            state.currentLessonIndex = match.lessonIndex;
           }
 
           // Navigate

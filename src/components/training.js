@@ -6,13 +6,14 @@ function escapeHtml(str) {
 }
 
 function renderHandbookSection(h3Title, icon = '📖') {
-  const section = rawHandbook.find(s => s.h3 === h3Title);
+  let query = h3Title;
+  const section = rawHandbook.find(s => s.title === query || s.h3 === query || s.h2 === query || s.h1 === query);
   if (!section) return '';
   return `
     <details class="glass-panel training-accordion-card" style="border-left: 4px solid hsl(var(--primary));">
       <summary class="training-accordion-summary" style="padding: 14px 18px;">
         <div class="training-accordion-header">
-          <h4 style="font-weight: 700; margin: 0; font-size: 15px;">${icon} ${section.h3}</h4>
+          <h4 style="font-weight: 700; margin: 0; font-size: 15px;">${icon} ${section.title}</h4>
         </div>
         <span class="training-accordion-toggle">▼</span>
       </summary>

@@ -7,13 +7,18 @@ function escapeHtml(str) {
 }
 
 function renderHandbookSection(h3Title, icon = '📖') {
-  const section = rawHandbook.find(s => s.h3 === h3Title);
+  let query = h3Title.toLowerCase();
+  
+  // Mapping legacy Markdown headers to new JSON titles
+  if (query.includes('this is your life')) query = 'this is your life schedule';
+
+  const section = rawHandbook.find(s => s.title && s.title.toLowerCase() === query);
   if (!section) return '';
   return `
     <details class="glass-panel training-accordion-card" style="border-left: 4px solid hsl(var(--primary)); margin-top: 16px;">
       <summary class="training-accordion-summary" style="padding: 14px 18px;">
         <div class="training-accordion-header">
-          <h4 style="font-weight: 700; margin: 0; font-size: 15px;">${icon} ${section.h3}</h4>
+          <h4 style="font-weight: 700; margin: 0; font-size: 15px;">${icon} ${section.title}</h4>
         </div>
         <span class="training-accordion-toggle">▼</span>
       </summary>
