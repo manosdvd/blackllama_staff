@@ -14,10 +14,10 @@ export function EmergencyQuickAction() {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-40 bg-red-600 hover:bg-red-700 text-white font-bold py-3.5 px-6 rounded-full shadow-2xl flex items-center gap-2.5 transition-transform duration-300 hover:scale-105 active:scale-95 border-2 border-white/20 animate-bounce reduced-stimulation:animate-none reduced-stimulation:bg-red-800"
+        className="fixed bottom-6 right-6 z-40 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full shadow-2xl flex items-center gap-1.5 transition-transform duration-300 hover:scale-105 active:scale-95 border-2 border-white/20 text-xs reduced-stimulation:bg-red-800"
         title="Emergency Procedures"
       >
-        <ShieldAlert size={20} />
+        <ShieldAlert size={14} />
         <span>🚨 EMERGENCY</span>
       </button>
 

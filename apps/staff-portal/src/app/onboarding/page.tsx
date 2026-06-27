@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useOffline } from '@/hooks/useOffline';
-import { Save, CloudLightning, ShieldAlert, CheckCircle, Smartphone } from 'lucide-react';
+import { Save, ShieldAlert, CheckCircle, Smartphone } from 'lucide-react';
 
 export default function OnboardingPage() {
   const isOffline = useOffline();
@@ -148,9 +148,12 @@ export default function OnboardingPage() {
         <h2 className="text-2xl font-black text-emerald-800 dark:text-emerald-500 font-heading">
           APPLICATION SUBMITTED!
         </h2>
-        <p className="text-neutral-600 dark:text-neutral-350 text-sm leading-relaxed">
+        <p className="text-neutral-600 dark:text-neutral-400 text-sm leading-relaxed">
           Thank you for applying to Camp Lawton! Your application has been successfully synchronized and uploaded. The administration will contact you shortly.
         </p>
+        <a href="/dashboard" className="mt-2 py-2.5 px-6 bg-emerald-800 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition-colors inline-block">
+          Return to Dashboard
+        </a>
       </div>
     );
   }
@@ -162,16 +165,19 @@ export default function OnboardingPage() {
         <h2 className="text-2xl font-black text-amber-500 font-heading">
           APPLICATION QUEUED LOCALLY!
         </h2>
-        <p className="text-neutral-600 dark:text-neutral-350 text-sm leading-relaxed">
-          Your application has been **saved locally** as a pending draft on this device because you are offline. It has **NOT** been received by the council yet.
+        <p className="text-neutral-600 dark:text-neutral-400 text-sm leading-relaxed">
+          Your application has been saved locally as a pending draft on this device because you are offline. It has NOT been received by the council yet.
         </p>
-        <div className="bg-neutral-100 dark:bg-neutral-850 p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 text-xs text-left leading-relaxed flex flex-col gap-2">
+        <div className="bg-neutral-100 dark:bg-neutral-900/40 p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 text-xs text-left leading-relaxed flex flex-col gap-2">
           <strong>Next Steps:</strong>
           <ol className="list-decimal list-inside space-y-1 text-neutral-500">
             <li>Keep this device connected or reconnect to the internet.</li>
             <li>Reopen this portal when online to automatically synchronize the queued application.</li>
           </ol>
         </div>
+        <a href="/dashboard" className="mt-2 py-2.5 px-6 bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold rounded-xl transition-colors inline-block">
+          Return to Dashboard
+        </a>
       </div>
     );
   }

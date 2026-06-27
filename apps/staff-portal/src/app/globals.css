@@ -128,7 +128,7 @@
 
 body {
   background-color: hsl(var(--background));
-  background-image: linear-gradient(180deg, hsl(205, 75%, 55%) 0%, hsl(200, 65%, 80%) 65%, hsl(195, 50%, 92%) 100%);
+  background-image: linear-gradient(180deg, hsl(200, 40%, 92%) 0%, hsl(43, 30%, 95%) 100%);
   background-attachment: fixed;
   color: hsl(var(--foreground));
   transition: background-color 0.4s ease, color 0.4s ease;
@@ -138,6 +138,72 @@ body {
 
 [data-theme="dark"] body {
   background-image: none;
+}
+
+/* --- ACCESSIBILITY TEXT CONTRAST SYSTEM --- */
+
+/* 1. Light Mode General Text Contrast */
+html:not([data-theme="dark"]) .text-neutral-300,
+html:not([data-theme="dark"]) .text-neutral-400,
+html:not([data-theme="dark"]) .text-neutral-500,
+html:not([data-theme="dark"]) .text-neutral-600,
+html:not([data-theme="dark"]) .text-neutral-700,
+html:not([data-theme="dark"]) .text-neutral-800,
+html:not([data-theme="dark"]) .text-neutral-850,
+html:not([data-theme="dark"]) .text-neutral-900,
+html:not([data-theme="dark"]) .text-neutral-650,
+html:not([data-theme="dark"]) .text-neutral-750 {
+  color: #1f2937 !important; /* Zinc 800 - dark, highly readable text */
+}
+
+/* 2. Dark Mode General Text Contrast */
+[data-theme="dark"] .text-neutral-300,
+[data-theme="dark"] .text-neutral-400,
+[data-theme="dark"] .text-neutral-500,
+[data-theme="dark"] .text-neutral-600,
+[data-theme="dark"] .text-neutral-700,
+[data-theme="dark"] .text-neutral-800,
+[data-theme="dark"] .text-neutral-850,
+[data-theme="dark"] .text-neutral-900,
+[data-theme="dark"] .text-neutral-650,
+[data-theme="dark"] .text-neutral-750 {
+  color: #f1f5f9 !important; /* Slate 100 - bright, highly readable text */
+}
+
+/* 3. Light Background Containers (In both Light & Dark Mode) */
+/* Force dark text inside white buttons, inputs, alerts, and tags */
+.bg-white,
+.bg-white *,
+.bg-neutral-50,
+.bg-neutral-50 *,
+.bg-neutral-100,
+.bg-neutral-100 *,
+.bg-neutral-150,
+.bg-neutral-150 *,
+.bg-neutral-200,
+.bg-neutral-200 *,
+.bg-neutral-250,
+.bg-neutral-250 *,
+button.bg-white,
+button.bg-white *,
+a.bg-white,
+a.bg-white * {
+  color: #111827 !important; /* Dark gray */
+}
+
+/* 4. Dark/Primary Background Containers (In both Light & Dark Mode) */
+/* Prevent green active states, safety red highlights, or active tags from being overwritten to dark */
+.bg-emerald-800,
+.bg-emerald-800 *,
+.bg-red-650,
+.bg-red-650 *,
+.bg-red-800,
+.bg-red-800 *,
+.bg-amber-600,
+.bg-amber-600 *,
+.text-white,
+.text-white * {
+  color: #ffffff !important; /* Light text */
 }
 
 /* Glassmorphism Panel styles */

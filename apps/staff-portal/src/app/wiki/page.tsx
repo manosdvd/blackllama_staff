@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Search, Plus, Map, Edit3, ArrowLeft, RotateCcw } from 'lucide-react';
+import { Search, Plus, Map, Edit3, RotateCcw } from 'lucide-react';
 import seededArticles from '@/data/wiki_seeded.json';
 import { WikiGraph } from '@/components/ui/WikiGraph';
 

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Cloud, Flame, Trees, RefreshCw } from 'lucide-react';
+import { Cloud, Flame, Trees } from 'lucide-react';
 import { useOffline } from '@/hooks/useOffline';
 
 interface WeatherData {
@@ -20,30 +20,26 @@ export function OperationalHUD() {
     isCached: false
   });
 
-  const [fireDanger, setFireDanger] = useState<'LOW' | 'MODERATE' | 'HIGH' | 'EXTREME'>('HIGH');
+  // In production this would be fetched from NWS API — static const for now
+  const fireDanger: 'LOW' | 'MODERATE' | 'HIGH' | 'EXTREME' = 'HIGH';
 
   useEffect(() => {
-    // Mock weather fetch - in real app, hits NWS API and caches in localStorage
-    const saved = localStorage.getItem('camp_lawton_weather_cache');
-    if (saved) {
-      try {
+    // Load cached weather on mount — in production, would hit NWS API
+    try {
+      const saved = localStorage.getItem('camp_lawton_weather_cache');
+      if (saved) {
         const parsed = JSON.parse(saved);
-        setWeather({
-          ...parsed,
-          isCached: true
-        });
-      } catch {
-        // ignore
+        setWeather({ ...parsed, isCached: true });
+      } else {
+        const defaultWeather = {
+          temp: 72,
+          condition: 'Sunny / Mild',
+          updatedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        };
+        localStorage.setItem('camp_lawton_weather_cache', JSON.stringify(defaultWeather));
       }
-    } else {
-      const defaultWeather = {
-        temp: 72,
-        condition: 'Sunny / Mild',
-        updatedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      };
-      localStorage.setItem('camp_lawton_weather_cache', JSON.stringify(defaultWeather));
-    }
-  }, [isOffline]);
+    } catch { /* ignore */ }
+  }, []);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">

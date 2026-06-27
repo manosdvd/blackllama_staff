@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Users, ShieldAlert, Lock, Mail, Phone } from 'lucide-react';
+import React from 'react';
+import { ShieldAlert, Lock, Mail, Phone } from 'lucide-react';
 
 interface StaffProfile {
   id: string;
@@ -14,41 +14,41 @@ interface StaffProfile {
   avatarColor: string;
 }
 
-export default function DirectoryPage() {
-  const [selectedStaff, setSelectedStaff] = useState<StaffProfile | null>(null);
+// Static staff list defined outside component for performance stability
+const STAFF_LIST: StaffProfile[] = [
+  {
+    id: 's1',
+    name: 'MaryLou Chopelas',
+    role: 'Camp Ranger & Camp Director',
+    age: 48,
+    hometown: 'Tucson, AZ',
+    favSong: 'The Mountain Song',
+    bio: 'Serving Camp Lawton since 2018. Love hiking, wilderness scouting, and maintaining Mt Lemmon trails.',
+    avatarColor: '#1F4D3A'
+  },
+  {
+    id: 's2',
+    name: 'Jimmy Tarleton',
+    role: 'Scoutcraft Area Director',
+    age: 22,
+    hometown: 'Phoenix, AZ',
+    favSong: 'Campfire Flicker Song',
+    bio: 'NCS certified in outdoor skills. Expert in knot tying, lashings, and building pioneering camp structures.',
+    avatarColor: '#D9A521'
+  },
+  {
+    id: 's3',
+    name: 'Bobby Jenkins',
+    role: 'CIT / Volunteer',
+    age: 15, // Minor
+    hometown: 'Sierra Vista, AZ',
+    favSong: 'Silly Songs',
+    bio: 'Excited for my first season on Staff Hill! Learning handicraft and nature skills.',
+    avatarColor: '#1A2B3C'
+  }
+];
 
-  const staffList: StaffProfile[] = [
-    {
-      id: 's1',
-      name: 'MaryLou Chopelas',
-      role: 'Camp Ranger & Camp Director',
-      age: 48,
-      hometown: 'Tucson, AZ',
-      favSong: 'The Mountain Song',
-      bio: 'Serving Camp Lawton since 2018. Love hiking, wilderness scouting, and maintaining Mt Lemmon trails.',
-      avatarColor: '#1F4D3A'
-    },
-    {
-      id: 's2',
-      name: 'Jimmy Tarleton',
-      role: 'Scoutcraft Area Director',
-      age: 22,
-      hometown: 'Phoenix, AZ',
-      favSong: 'Campfire Flicker Song',
-      bio: 'NCS certified in outdoor skills. Expert in knot tying, lashings, and building pioneering camp structures.',
-      avatarColor: '#D9A521'
-    },
-    {
-      id: 's3',
-      name: 'Bobby Jenkins',
-      role: 'CIT / Volunteer',
-      age: 15, // Minor
-      hometown: 'Sierra Vista, AZ',
-      favSong: 'Silly Songs',
-      bio: 'Excited for my first season on Staff Hill! Learning handicraft and nature skills.',
-      avatarColor: '#1A2B3C'
-    }
-  ];
+export default function DirectoryPage() {
 
   return (
     <div className="flex flex-col gap-6">
@@ -64,7 +64,7 @@ export default function DirectoryPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {staffList.map(staff => {
+        {STAFF_LIST.map(staff => {
           const isMinor = staff.age < 18;
           return (
             <div
