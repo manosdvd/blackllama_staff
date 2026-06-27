@@ -3,6 +3,6 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "npm --prefix legacy ci && npm --prefix legacy run build && rm -rf dist && cp -R legacy/dist dist"
+    "build": "npm --prefix apps/staff-portal ci && npm --prefix apps/staff-portal run build && rm -rf dist && cp -R apps/staff-portal/out dist"
   }
 }
