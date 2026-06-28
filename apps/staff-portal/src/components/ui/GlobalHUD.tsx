@@ -103,14 +103,21 @@ export function GlobalHUD() {
             </span>
           ) : (
             data.alerts.map((alert, idx) => (
-              <div key={idx} className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-bold border max-w-full ${
-                alert.severity === 'Severe' || alert.severity === 'Extreme' || isEmergency
-                  ? 'bg-red-500/20 text-red-300 border-red-500/30'
-                  : 'bg-amber-500/10 text-amber-500 border-amber-500/20'
-              }`}>
+              <a 
+                key={idx} 
+                href="https://forecast.weather.gov/MapClick.php?zoneid=AZZ504"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-bold border max-w-full hover:opacity-80 transition-opacity ${
+                  alert.severity === 'Severe' || alert.severity === 'Extreme' || isEmergency
+                    ? 'bg-red-500/20 text-red-300 border-red-500/30'
+                    : 'bg-amber-500/10 text-amber-500 border-amber-500/20'
+                }`}
+              >
                 <AlertTriangle size={12} className="flex-shrink-0 animate-pulse" />
                 <span className="truncate">{alert.event}</span>
-              </div>
+                <ExternalLink size={10} className="ml-1 opacity-60 flex-shrink-0" />
+              </a>
             ))
           )}
         </div>
