@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 :root {
   --camp-forest: #1F4D3A;
   --camp-gold: #D9A521;
@@ -142,68 +144,187 @@ body {
 
 /* --- ACCESSIBILITY TEXT CONTRAST SYSTEM --- */
 
-/* 1. Light Mode General Text Contrast */
-html:not([data-theme="dark"]) .text-neutral-300,
-html:not([data-theme="dark"]) .text-neutral-400,
-html:not([data-theme="dark"]) .text-neutral-500,
-html:not([data-theme="dark"]) .text-neutral-600,
-html:not([data-theme="dark"]) .text-neutral-700,
-html:not([data-theme="dark"]) .text-neutral-800,
-html:not([data-theme="dark"]) .text-neutral-850,
-html:not([data-theme="dark"]) .text-neutral-900,
-html:not([data-theme="dark"]) .text-neutral-650,
-html:not([data-theme="dark"]) .text-neutral-750 {
-  color: #1f2937 !important; /* Zinc 800 - dark, highly readable text */
+/* Default readable page copy. Component-specific surfaces below can override this. */
+html:not([data-theme="dark"]) {
+  color-scheme: light;
 }
 
-/* 2. Dark Mode General Text Contrast */
-[data-theme="dark"] .text-neutral-300,
-[data-theme="dark"] .text-neutral-400,
-[data-theme="dark"] .text-neutral-500,
-[data-theme="dark"] .text-neutral-600,
-[data-theme="dark"] .text-neutral-700,
-[data-theme="dark"] .text-neutral-800,
-[data-theme="dark"] .text-neutral-850,
-[data-theme="dark"] .text-neutral-900,
-[data-theme="dark"] .text-neutral-650,
-[data-theme="dark"] .text-neutral-750 {
-  color: #f1f5f9 !important; /* Slate 100 - bright, highly readable text */
+[data-theme="dark"] {
+  color-scheme: dark;
 }
 
-/* 3. Light Background Containers (In both Light & Dark Mode) */
-/* Force dark text inside white buttons, inputs, alerts, and tags */
-.bg-white,
-.bg-white *,
-.bg-neutral-50,
-.bg-neutral-50 *,
-.bg-neutral-100,
-.bg-neutral-100 *,
-.bg-neutral-150,
-.bg-neutral-150 *,
-.bg-neutral-200,
-.bg-neutral-200 *,
-.bg-neutral-250,
-.bg-neutral-250 *,
-button.bg-white,
-button.bg-white *,
-a.bg-white,
-a.bg-white * {
-  color: #111827 !important; /* Dark gray */
+html:not([data-theme="dark"]) body {
+  color: #111827;
 }
 
-/* 4. Dark/Primary Background Containers (In both Light & Dark Mode) */
-/* Prevent green active states, safety red highlights, or active tags from being overwritten to dark */
-.bg-emerald-800,
-.bg-emerald-800 *,
-.bg-red-650,
-.bg-red-650 *,
-.bg-red-800,
-.bg-red-800 *,
-.bg-amber-600,
-.bg-amber-600 *,
-.text-white,
-.text-white * {
-  color: #ffffff !important; /* Light text */
+[data-theme="dark"] body {
+  color: #f8fafc;
+}
+
+/* Light mode neutral text must stay dark enough on the light wilderness theme. */
+html:not([data-theme="dark"]) :is(
+  .text-neutral-300,
+  .text-neutral-350,
+  .text-neutral-400,
+  .text-neutral-450,
+  .text-neutral-500,
+  .text-neutral-600,
+  .text-neutral-650,
+  .text-neutral-700,
+  .text-neutral-750,
+  .text-neutral-800,
+  .text-neutral-850,
+  .text-neutral-900
+) {
+  color: #111827 !important;
+}
+
+/* Dark mode neutral text must stay light enough on dark surfaces. */
+[data-theme="dark"] :is(
+  .text-neutral-100,
+  .text-neutral-150,
+  .text-neutral-200,
+  .text-neutral-250,
+  .text-neutral-300,
+  .text-neutral-350,
+  .text-neutral-400,
+  .text-neutral-450,
+  .text-neutral-500,
+  .text-neutral-600,
+  .text-neutral-650,
+  .text-neutral-700,
+  .text-neutral-750,
+  .text-neutral-800,
+  .text-neutral-850,
+  .text-neutral-900
+) {
+  color: #f8fafc !important;
+}
+
+/* Translucent and solid light surfaces. Attribute selectors catch Tailwind opacity utilities like bg-white/70. */
+html:not([data-theme="dark"]) :is(
+  .glass-panel,
+  [class*="bg-white"],
+  [class*="bg-neutral-50"],
+  [class*="bg-neutral-100"],
+  [class*="bg-neutral-150"],
+  [class*="bg-neutral-200"],
+  [class*="bg-neutral-250"],
+  input,
+  textarea,
+  select
+) {
+  color: #111827;
+}
+
+html:not([data-theme="dark"]) :is(
+  .glass-panel,
+  [class*="bg-white"],
+  [class*="bg-neutral-50"],
+  [class*="bg-neutral-100"],
+  [class*="bg-neutral-150"],
+  [class*="bg-neutral-200"],
+  [class*="bg-neutral-250"]
+) :is(p, span, div, label, li, h1, h2, h3, h4, h5, h6, strong, em, small, input, textarea, select) {
+  color: inherit;
+}
+
+/* Dark theme surfaces, including elements that carry both light and dark Tailwind classes. */
+[data-theme="dark"] :is(
+  .glass-panel,
+  [class*="dark:bg-neutral"],
+  [class*="dark:bg-emerald"],
+  [class*="dark:bg-red"],
+  [class*="dark:bg-amber"],
+  [class*="bg-neutral-700"],
+  [class*="bg-neutral-800"],
+  [class*="bg-neutral-850"],
+  [class*="bg-neutral-900"],
+  [class*="bg-neutral-950"],
+  [class*="bg-emerald-950"],
+  [class*="bg-red-950"],
+  input,
+  textarea,
+  select
+) {
+  color: #f8fafc;
+}
+
+[data-theme="dark"] :is(
+  .glass-panel,
+  [class*="dark:bg-neutral"],
+  [class*="dark:bg-emerald"],
+  [class*="dark:bg-red"],
+  [class*="dark:bg-amber"],
+  [class*="bg-neutral-700"],
+  [class*="bg-neutral-800"],
+  [class*="bg-neutral-850"],
+  [class*="bg-neutral-900"],
+  [class*="bg-neutral-950"],
+  [class*="bg-emerald-950"],
+  [class*="bg-red-950"]
+) :is(p, span, div, label, li, h1, h2, h3, h4, h5, h6, strong, em, small, input, textarea, select) {
+  color: inherit;
+}
+
+/* High-contrast command and status backgrounds always need light foregrounds. */
+:is(
+  .bg-emerald-700,
+  .bg-emerald-800,
+  .bg-red-600,
+  .bg-red-700,
+  .bg-red-800,
+  .bg-amber-600,
+  .bg-neutral-900,
+  .bg-neutral-950,
+  .text-white
+),
+:is(
+  .bg-emerald-700,
+  .bg-emerald-800,
+  .bg-red-600,
+  .bg-red-700,
+  .bg-red-800,
+  .bg-amber-600,
+  .bg-neutral-900,
+  .bg-neutral-950,
+  .text-white
+) * {
+  color: #ffffff !important;
+}
+
+/* Preserve semantic colored text on pale badges and warnings while keeping readable contrast. */
+html:not([data-theme="dark"]) :is(.text-emerald-700, .text-emerald-800) {
+  color: #065f46 !important;
+}
+
+html:not([data-theme="dark"]) :is(.text-amber-500, .text-amber-600, .text-amber-800) {
+  color: #92400e !important;
+}
+
+html:not([data-theme="dark"]) :is(.text-red-500, .text-red-600, .text-red-650) {
+  color: #991b1b !important;
+}
+
+[data-theme="dark"] :is(.text-emerald-400, .text-emerald-450, .text-emerald-500) {
+  color: #6ee7b7 !important;
+}
+
+[data-theme="dark"] :is(.text-amber-400, .text-amber-500) {
+  color: #fbbf24 !important;
+}
+
+[data-theme="dark"] :is(.text-red-400, .text-red-500) {
+  color: #fca5a5 !important;
+}
+
+::placeholder {
+  color: #4b5563;
+  opacity: 1;
+}
+
+[data-theme="dark"] ::placeholder {
+  color: #cbd5e1;
 }
 
 /* Glassmorphism Panel styles */
