@@ -1,0 +1,22 @@
+{
+  "name": "Camp Lawton Staff Portal",
+  "short_name": "Lawton Portal",
+  "description": "Camp Lawton staff handbook, training, schedules, and operations portal.",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#065f46",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/camp-logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

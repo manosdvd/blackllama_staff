@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
-import { ShieldAlert, Plus, Send } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ShieldAlert, Plus, Send, RefreshCw } from 'lucide-react';
+import { supabase } from '@/lib/supabase/client';
 
 interface Thread {
   id: string;
@@ -42,16 +43,7 @@ const defaultThreads: Thread[] = [
   }
 ];
 
-const readActiveRole = () => {
-  if (typeof window === 'undefined') return 'CIT';
-  const activeUser = localStorage.getItem('camp_lawton_active_user');
-  if (!activeUser) return 'CIT';
-  try {
-    return JSON.parse(activeUser).role || 'CIT';
-  } catch {
-    return 'CIT';
-  }
-};
+// Removing mock active role logic
 
 const readThreads = () => {
   if (typeof window === 'undefined') return defaultThreads;
@@ -81,8 +73,33 @@ export default function ForumPage() {
   const [replyContent, setReplyContent] = useState('');
   const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
 
-  // Simulation user role
-  const [role] = useState(readActiveRole); // Default to CIT for strict safety testing
+  // User state
+  const [role, setRole] = useState('CIT'); // Default to CIT for strict safety
+  const [username, setUsername] = useState('ScoutHelper');
+  const [authLoading, setAuthLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        const { data } = await supabase.from('profiles').select('username, role').eq('id', session.user.id).single();
+        if (data) {
+          setRole(data.role || 'CIT');
+          setUsername(data.username || session.user.email?.split('@')[0] || 'ScoutHelper');
+        }
+      }
+      setAuthLoading(false);
+    };
+    fetchUser();
+  }, []);
+
+  if (authLoading) {
+    return (
+      <div className="flex-1 flex justify-center items-center">
+        <RefreshCw className="animate-spin text-emerald-500" size={32} />
+      </div>
+    );
+  }
 
   const categories = [
     'General Staff Room',
@@ -117,7 +134,7 @@ export default function ForumPage() {
       id: 't_' + Date.now(),
       category: activeCategory,
       title: newTitle,
-      author: '@ScoutHelper',
+      author: '@' + username,
       content: newContent,
       createdAt: 'Just now',
       replies: []
@@ -142,7 +159,7 @@ export default function ForumPage() {
           replies: [
             ...t.replies,
             {
-              author: '@ScoutHelper',
+              author: '@' + username,
               content: replyContent,
               createdAt: 'Just now'
             }

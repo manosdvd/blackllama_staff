@@ -26,6 +26,7 @@ import { EmergencyQuickAction } from '../ui/EmergencyQuickAction';
 import { MobileBottomNav } from './MobileBottomNav';
 import { performWeightedSearch, SearchResult } from '@/lib/search';
 import { AlertsDashboardBar } from '../ui/AlertsDashboardBar';
+import { supabase } from '@/lib/supabase/client';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -42,17 +43,6 @@ const readTheme = (): Theme => {
 const readCalmMode = () => {
   if (typeof window === 'undefined') return false;
   return localStorage.getItem('camp_lawton_calm_mode') === 'true';
-};
-
-const readActiveUser = () => {
-  if (typeof window === 'undefined') return null;
-  const activeUser = localStorage.getItem('camp_lawton_active_user');
-  if (!activeUser) return null;
-  try {
-    return JSON.parse(activeUser) as { username: string; role: string };
-  } catch {
-    return null;
-  }
 };
 
 // ---- Static nav icon helpers (defined outside to avoid re-creation per render) ----
@@ -72,7 +62,8 @@ export function AppShell({ children }: AppShellProps) {
   const [theme, setTheme] = useState<Theme>(readTheme);
   const [isCalm, setIsCalm] = useState(readCalmMode);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-  const [user, setUser] = useState<{ username: string; role: string } | null>(readActiveUser);
+  const [user, setUser] = useState<{ username: string; role: string } | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const [searchVal, setSearchVal] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [emergencyAlert, setEmergencyAlert] = useState<{ title: string; snippet: string } | null>(null);
@@ -110,14 +101,50 @@ export function AppShell({ children }: AppShellProps) {
       } else {
         document.documentElement.classList.remove('reduced-stimulation');
       }
-
-      if (!user) {
-        router.push('/');
-      }
     } catch {
       // localStorage unavailable (sandboxed iframe, etc.)
     }
-  }, [isCalm, router, theme, user]);
+  }, [isCalm, theme]);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        setUser(null);
+        setAuthLoading(false);
+        router.push('/');
+        return;
+      }
+      
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('username, role')
+        .eq('id', session.user.id)
+        .single();
+        
+      if (profile) {
+        setUser(profile as { username: string; role: string });
+      } else {
+        setUser({ username: session.user.email?.split('@')[0] || 'Unknown', role: 'Candidate' });
+      }
+      setAuthLoading(false);
+    };
+    
+    fetchUser();
+    
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (!session) {
+        setUser(null);
+        router.push('/');
+      } else if (event === 'SIGNED_IN') {
+        fetchUser();
+      }
+    });
+    
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, [router]);
 
   // Close user dropdown when clicking outside
   useEffect(() => {
@@ -164,19 +191,10 @@ export function AppShell({ children }: AppShellProps) {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('camp_lawton_active_user');
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
     setUser(null);
     router.push('/');
-  };
-
-  const handleSimulateRole = (r: string) => {
-    const updated = { username: user?.username || 'ScoutHelper', role: r };
-    setUser(updated);
-    localStorage.setItem('camp_lawton_active_user', JSON.stringify(updated));
-    setUserDropdownOpen(false);
-    router.push('/dashboard');
-    window.dispatchEvent(new CustomEvent('role-change', { detail: r }));
   };
 
   const isStaffOrAdmin = user?.role === 'Staff' || user?.role === 'Admin';
@@ -391,23 +409,6 @@ export function AppShell({ children }: AppShellProps) {
                   <div className="px-4 py-2 border-b border-neutral-100 dark:border-neutral-800 text-xs text-neutral-400">
                     Signed in as <strong className="text-neutral-700 dark:text-neutral-200">@{user?.username}</strong>
                   </div>
-                  <div className="px-4 py-1.5 border-b border-neutral-100 dark:border-neutral-800 text-[9px] text-neutral-400 font-bold uppercase tracking-wider">
-                    Simulate Role
-                  </div>
-                  {['Candidate', 'Parent', 'Staff', 'Admin'].map(r => (
-                    <button
-                      key={r}
-                      role="menuitem"
-                      onClick={() => handleSimulateRole(r)}
-                      className={`w-full text-left px-4 py-2 text-xs font-semibold hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors ${
-                        user?.role === r
-                          ? 'text-emerald-700 dark:text-emerald-500 font-extrabold bg-emerald-500/5'
-                          : 'text-neutral-600 dark:text-neutral-300'
-                      }`}
-                    >
-                      {r}
-                    </button>
-                  ))}
                   <button
                     role="menuitem"
                     onClick={handleLogout}

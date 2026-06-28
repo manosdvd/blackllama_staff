@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { CheckSquare, Square, Download, Landmark, ArrowRight, UserCheck } from 'lucide-react';
 import { OperationalHUD } from '@/components/ui/OperationalHUD';
 import Link from 'next/link';
+import { supabase } from '@/lib/supabase/client';
+import { RefreshCw } from 'lucide-react';
 
 interface ChecklistItem {
   id: string;
@@ -35,36 +37,36 @@ const readParentCoSigned = () => {
   return localStorage.getItem('camp_lawton_parent_cosigned') === 'true';
 };
 
-const readActiveRole = () => {
-  if (typeof window === 'undefined') return 'Staff';
-  const activeUser = localStorage.getItem('camp_lawton_active_user');
-  if (!activeUser) return 'Staff';
-  try {
-    return JSON.parse(activeUser).role || 'Staff';
-  } catch {
-    return 'Staff';
-  }
-};
-
 export default function DashboardPage() {
-  const [role, setRole] = useState(readActiveRole);
+  const [role, setRole] = useState('Staff');
+  const [authLoading, setAuthLoading] = useState(true);
   const [parentCoSigned, setParentCoSigned] = useState(readParentCoSigned);
   const [parentSignatureName, setParentSignatureName] = useState('');
   
   const [checklist, setChecklist] = useState<ChecklistItem[]>(readChecklist);
 
   useEffect(() => {
-    const getRole = () => {
-      setRole(readActiveRole());
+    const getRole = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        const { data } = await supabase.from('profiles').select('role').eq('id', session.user.id).single();
+        if (data?.role) {
+          setRole(data.role);
+        }
+      }
+      setAuthLoading(false);
     };
 
-    // Listen for custom role-change event from AppShell dropdown
-    window.addEventListener('role-change', getRole);
-
-    return () => {
-      window.removeEventListener('role-change', getRole);
-    };
+    getRole();
   }, []);
+
+  if (authLoading) {
+    return (
+      <div className="flex-1 flex justify-center items-center">
+        <RefreshCw className="animate-spin text-emerald-500" size={32} />
+      </div>
+    );
+  }
 
   const toggleChecklistItem = (id: string) => {
     const updated = checklist.map(item =>

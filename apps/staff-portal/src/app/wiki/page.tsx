@@ -2,6 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { Search, Plus, Map, Edit3, RotateCcw } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeSlug from 'rehype-slug';
 import seededArticles from '@/data/wiki_seeded.json';
 import { WikiGraph } from '@/components/ui/WikiGraph';
 
@@ -110,70 +113,19 @@ export default function WikiPage() {
     });
   };
 
-  // Convert double-bracket wiki links [[TargetSlug]] or [[TargetSlug|Label]] into HTML
-  const parseWikiLinks = (content: string) => {
+  // Preprocess content before ReactMarkdown to handle [[WikiLinks]]
+  const preprocessMarkdown = (content: string) => {
     if (!content) return '';
-
-    const parts: React.ReactNode[] = [];
-    let lastIndex = 0;
-    const regex = /\[\[(.*?)\]\]/g;
-    let match;
-
-    while ((match = regex.exec(content)) !== null) {
-      const textBefore = content.substring(lastIndex, match.index);
-      if (textBefore) {
-        parts.push(<span key={`text-${lastIndex}`}>{textBefore}</span>);
-      }
-
-      const rawLink = match[1];
+    return content.replace(/\[\[(.*?)\]\]/g, (match, rawLink) => {
       let targetName = rawLink;
       let label = rawLink;
-
       if (rawLink.includes('|')) {
         const split = rawLink.split('|');
         targetName = split[0];
         label = split[1];
       }
-
-      const targetSlug = targetName
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)/g, '');
-
-      const targetExists = articles.some(a => a.slug === targetSlug);
-
-      if (targetExists) {
-        parts.push(
-          <button
-            key={`link-${match.index}`}
-            onClick={() => handleSelectArticle(targetSlug)}
-            className="text-emerald-700 dark:text-emerald-400 hover:underline font-bold"
-          >
-            {label}
-          </button>
-        );
-      } else {
-        parts.push(
-          <button
-            key={`unresolved-${match.index}`}
-            onClick={() => handleTriggerCreateUnresolved(targetName)}
-            className="text-red-500 hover:text-red-600 font-bold border-b-2 border-dashed border-red-500 cursor-pointer"
-            title="Click to create this handbook article"
-          >
-            {label} ❓
-          </button>
-        );
-      }
-
-      lastIndex = regex.lastIndex;
-    }
-
-    const textEnd = content.substring(lastIndex);
-    if (textEnd) {
-      parts.push(<span key={`text-end`}>{textEnd}</span>);
-    }
-
-    return <div className="whitespace-pre-line leading-relaxed text-sm text-neutral-700 dark:text-neutral-300">{parts}</div>;
+      return `[${label}](wiki:${targetName})`;
+    });
   };
 
   const handleTriggerCreateUnresolved = (title: string) => {
@@ -294,7 +246,8 @@ export default function WikiPage() {
       .filter(line => line.startsWith('###') || line.startsWith('####'))
       .map(line => {
         const clean = line.replace(/#/g, '').replace(/\*/g, '').trim();
-        return clean;
+        const id = clean.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        return { label: clean, id };
       });
   };
 
@@ -514,7 +467,46 @@ export default function WikiPage() {
             </header>
 
             {/* Wiki Link Parsed Content */}
-            <div className="min-h-[250px]">{parseWikiLinks(activeArticle.content)}</div>
+            <div className="min-h-[250px] overflow-hidden">
+              <div className="text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed [&>h1]:text-2xl [&>h1]:font-bold [&>h1]:mt-6 [&>h1]:mb-4 [&>h2]:text-xl [&>h2]:font-bold [&>h2]:mt-6 [&>h2]:mb-3 [&>h3]:text-lg [&>h3]:font-bold [&>h3]:mt-5 [&>h3]:mb-2 [&>h4]:text-base [&>h4]:font-bold [&>h4]:mt-4 [&>h4]:mb-2 [&>p]:mb-4 [&>ul]:list-disc [&>ul]:pl-5 [&>ul]:mb-4 [&>ol]:list-decimal [&>ol]:pl-5 [&>ol]:mb-4 [&>li]:mb-1 [&>blockquote]:border-l-4 [&>blockquote]:border-neutral-300 [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:mb-4">
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  rehypePlugins={[rehypeSlug]}
+                  components={{
+                    a: ({ node, ...props }) => {
+                      if (props.href?.startsWith('wiki:')) {
+                        const targetName = decodeURIComponent(props.href.replace('wiki:', ''));
+                        const targetSlug = targetName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+                        const targetExists = articles.some(a => a.slug === targetSlug);
+                        if (targetExists) {
+                          return (
+                            <button
+                              onClick={() => handleSelectArticle(targetSlug)}
+                              className="text-emerald-700 dark:text-emerald-400 hover:underline font-bold inline"
+                            >
+                              {props.children}
+                            </button>
+                          );
+                        } else {
+                          return (
+                            <button
+                              onClick={() => handleTriggerCreateUnresolved(targetName)}
+                              className="text-red-500 hover:text-red-600 font-bold border-b-2 border-dashed border-red-500 cursor-pointer inline"
+                              title="Click to create this handbook article"
+                            >
+                              {props.children} ❓
+                            </button>
+                          );
+                        }
+                      }
+                      return <a {...props} className="text-emerald-600 hover:underline" target="_blank" rel="noopener noreferrer" />;
+                    }
+                  }}
+                >
+                  {preprocessMarkdown(activeArticle.content)}
+                </ReactMarkdown>
+              </div>
+            </div>
 
             {/* Backlinks panel */}
             {getBacklinks().length > 0 && (
@@ -547,13 +539,14 @@ export default function WikiPage() {
         {getOutlineHeadings().length > 0 ? (
           <nav className="flex flex-col gap-2 border-l border-neutral-200 dark:border-neutral-850 pl-3 py-1">
             {getOutlineHeadings().map((h, idx) => (
-              <div
+              <a
                 key={idx}
-                className="text-xs text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 cursor-pointer transition-colors leading-normal"
-                title={`Jump to ${h}`}
+                href={`#${h.id}`}
+                className="text-xs text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 transition-colors leading-normal"
+                title={`Jump to ${h.label}`}
               >
-                {h}
-              </div>
+                {h.label}
+              </a>
             ))}
           </nav>
         ) : (

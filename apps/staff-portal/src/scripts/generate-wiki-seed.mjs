@@ -24,65 +24,134 @@ const skipTitles = new Set([
   'part 4 onboarding',
 ]);
 
+const standaloneExactMatch = new Set([
+  'phones',
+  'photography and social media',
+  'video games and other recreation',
+  'drugs, alcohol, pornography',
+  'fraternization',
+  'severe weather preparedness',
+  'lightning safety',
+  'heat & thermal stress mitigation',
+  'safeguarding youth',
+  'mandatory reporting',
+  'missing person / code blue',
+  'bear & wildlife safety',
+  'fire safety',
+  'armed intruder / active shooter',
+  'fatality protocol',
+  'packing list',
+  'required paperwork',
+  'code of conduct',
+  'camp address',
+  'catalina council/camp lawton leadership'
+]);
+
 const markdown = normalizeMarkdown(readFileSync(handbookPath, 'utf8'));
 const lines = markdown.split(/\r?\n/);
-const headings = [];
+
+const current_section = { level: 0, title: "Root", lines: [], children: [], category: 'Introduction & Culture' };
+const stack = [current_section];
 let currentCategory = 'Introduction & Culture';
 
-for (let index = 0; index < lines.length; index += 1) {
-  const match = /^(#{1,6})\s+(.*)$/.exec(lines[index]);
-  if (!match) continue;
-
-  const level = match[1].length;
-  const title = cleanHeading(match[2]);
-  if (!title) continue;
-
-  currentCategory = nextCategory(currentCategory, title);
-  headings.push({ index, level, title, category: currentCategory });
+for (let line of lines) {
+  const match = /^(#{1,6})\s+(.*)$/.exec(line);
+  if (match) {
+    const level = match[1].length;
+    const title = cleanHeading(match[2]);
+    currentCategory = nextCategory(currentCategory, title);
+    
+    const new_section = { level, title, lines: [], children: [], category: currentCategory };
+    
+    while (stack.length > 0 && stack[stack.length - 1].level >= level) {
+      stack.pop();
+    }
+    
+    if (stack.length > 0) {
+      stack[stack.length - 1].children.push(new_section);
+    }
+    
+    stack.push(new_section);
+  } else {
+    if (stack.length > 0) {
+      stack[stack.length - 1].lines.push(line);
+    }
+  }
 }
 
 const articles = [];
-let sourceIndex = 0;
 
-for (let i = 0; i < headings.length; i += 1) {
-  const heading = headings[i];
-  const titleKey = heading.title.toLowerCase();
-  if (heading.level > 2 || skipTitles.has(titleKey) || /^part\s+\d+$/i.test(heading.title)) {
-    continue;
+function process_node(node, parent_article = null) {
+  const titleKey = node.title.toLowerCase();
+  const level = node.level;
+  
+  let is_standalone = false;
+  if (level > 0 && level <= 2) {
+    is_standalone = true;
+  }
+  if (standaloneExactMatch.has(titleKey)) {
+    is_standalone = true;
+  }
+  
+  if (skipTitles.has(titleKey) || /^part\s+\d+$/i.test(node.title)) {
+    is_standalone = false;
+  }
+  
+  if (level === 0) {
+    is_standalone = false;
   }
 
-  const nextHeading = headings
-    .slice(i + 1)
-    .find((candidate) => candidate.level <= 2);
-  const endIndex = nextHeading ? nextHeading.index : lines.length;
-  const content = cleanContent(lines.slice(heading.index + 1, endIndex).join('\n'));
-  if (!content || content.length < 12) continue;
-
-  const category = heading.category;
-  articles.push({
-    slug: uniqueSlug(slugify(heading.title), articles),
-    title: heading.title,
-    category,
-    content,
-    offline_priority: inferOfflinePriority(heading.title, content),
-    tags: buildTags(heading.title, content, category),
-    revision_no: 1,
-    source_index: sourceIndex,
-  });
-  sourceIndex += 1;
+  let current_article = null;
+  
+  if (is_standalone) {
+    current_article = {
+      title: node.title,
+      category: node.category,
+      content: node.lines.join('\n').trim(),
+      slug: null, // assigned later
+    };
+    articles.push(current_article);
+    
+    if (parent_article) {
+      parent_article.content += `\n\n[[${node.title}]]\n\n`;
+    }
+  } else {
+    if (parent_article && level > 0) {
+      parent_article.content += `\n\n${'#'.repeat(level)} ${node.title}\n`;
+      parent_article.content += node.lines.join('\n').trim();
+    }
+  }
+  
+  for (const child of node.children) {
+    process_node(child, is_standalone ? current_article : parent_article);
+  }
 }
 
-articles.sort((a, b) => {
+process_node(current_section);
+
+// Clean up contents and metadata
+for (let article of articles) {
+  article.content = cleanContent(article.content);
+  article.slug = uniqueSlug(slugify(article.title), articles);
+  article.offline_priority = inferOfflinePriority(article.title, article.content);
+  article.tags = buildTags(article.title, article.content, article.category);
+  article.revision_no = 1;
+}
+
+// Remove empty articles
+const validArticles = articles.filter(a => a.content && a.content.length >= 12);
+
+validArticles.sort((a, b) => {
   const categoryDelta = categoryOrder.indexOf(a.category) - categoryOrder.indexOf(b.category);
-  return categoryDelta || a.source_index - b.source_index;
+  return categoryDelta || 0; // maintain relative order inside categories
 });
 
-articles.forEach((article, index) => {
+validArticles.forEach((article, index) => {
   article.source_index = index;
 });
 
-writeFileSync(outputPath, `${JSON.stringify(articles, null, 2)}\n`, 'utf8');
-console.log(`Generated ${articles.length} wiki articles from staffHandbookCL.md.`);
+writeFileSync(outputPath, JSON.stringify(validArticles, null, 2) + '\n', 'utf8');
+console.log(`Generated ${validArticles.length} wiki articles from staffHandbookCL.md.`);
 
 function normalizeMarkdown(value) {
   return value
@@ -120,7 +189,7 @@ function uniqueSlug(baseSlug, existing) {
   const fallback = baseSlug || 'article';
   let slug = fallback;
   let suffix = 2;
-  const used = new Set(existing.map((article) => article.slug));
+  const used = new Set(existing.map((article) => article.slug).filter(Boolean));
   while (used.has(slug)) {
     slug = `${fallback}-${suffix}`;
     suffix += 1;

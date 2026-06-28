@@ -37,7 +37,8 @@ export const metadata: Metadata = {
     icon: '/favicon.png',
     shortcut: '/favicon.png',
     apple: '/camp-logo.png'
-  }
+  },
+  manifest: '/manifest.json'
 };
 
 export default function RootLayout({
@@ -46,7 +47,7 @@ export default function RootLayout({
   children: ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${outfit.variable} ${plusJakarta.variable} ${bebasNeue.variable}`}>
+    <html lang="en" className={`${outfit.variable} ${plusJakarta.variable} ${bebasNeue.variable}`} suppressHydrationWarning>
       <body className="antialiased min-h-screen relative">
         {/* Inline script: sets theme before first paint to avoid FOUC */}
         <script
@@ -56,6 +57,13 @@ export default function RootLayout({
         />
         {/* Canvas animated backdrop */}
         <EmberBackground />
+
+        {/* Register Service Worker */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `if ('serviceWorker' in navigator) { window.addEventListener('load', function() { navigator.serviceWorker.register('/sw.js').then(function(r) { console.log('SW registered'); }).catch(function(e) { console.log('SW registration failed'); }); }); }`
+          }}
+        />
 
         {/* App Shell routing layer */}
         <AppShell>

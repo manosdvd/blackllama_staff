@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ShieldCheck, UserCheck, Settings, RefreshCw, AlertOctagon, CheckCircle, XCircle } from 'lucide-react';
+import { supabase } from '@/lib/supabase/client';
 
 interface Application {
   id: string;
@@ -63,6 +64,7 @@ const readStoredAuditLogs = () => {
 
 export default function AdminPortalPage() {
   const router = useRouter();
+  const [authLoading, setAuthLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'queue' | 'logs' | 'rollover'>('queue');
   const [apps, setApps] = useState<Application[]>(readStoredApplications);
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>(readStoredAuditLogs);
@@ -73,23 +75,30 @@ export default function AdminPortalPage() {
 
   // Role gate: redirect non-admins to dashboard
   useEffect(() => {
-    try {
-      const activeUser = localStorage.getItem('camp_lawton_active_user');
-      if (activeUser) {
-        const parsed = JSON.parse(activeUser);
-        if (parsed.role !== 'Admin') {
-          router.push('/dashboard');
-          return;
-        }
-      } else {
+    const checkAdmin = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
         router.push('/');
         return;
       }
-    } catch {
-      router.push('/');
-      return;
-    }
+      
+      const { data } = await supabase.from('profiles').select('role').eq('id', session.user.id).single();
+      if (data?.role !== 'Admin') {
+        router.push('/dashboard');
+      } else {
+        setAuthLoading(false);
+      }
+    };
+    checkAdmin();
   }, [router]);
+
+  if (authLoading) {
+    return (
+      <div className="flex-1 flex justify-center items-center">
+        <RefreshCw className="animate-spin text-emerald-500" size={32} />
+      </div>
+    );
+  }
 
   const handleUpdateStatus = (id: string, nextStatus: 'Approved' | 'Rejected') => {
     const updated = apps.map(a => {
@@ -154,15 +163,8 @@ export default function AdminPortalPage() {
     setApps([]);
     localStorage.setItem('camp_lawton_admin_apps', JSON.stringify([]));
 
-    // Update active simulated user status back to Candidate (with try/catch)
-    try {
-      const activeUser = localStorage.getItem('camp_lawton_active_user');
-      if (activeUser) {
-        const parsed = JSON.parse(activeUser);
-        parsed.role = 'Candidate';
-        localStorage.setItem('camp_lawton_active_user', JSON.stringify(parsed));
-      }
-    } catch { /* ignore */ }
+    // Real active user status update would go here with a Supabase mutation
+    // For now, we omit the localStorage manipulation of the mock active user
 
     setStatusToast('🎉 Seasonal Rollover completed! Season archived.');
     setTimeout(() => { setStatusToast(null); window.location.reload(); }, 2500);

@@ -8,6 +8,7 @@ interface FeedAlert {
   message: string;
   link: string;
   source: string;
+  isCritical?: boolean;
 }
 
 // Defined outside component so the array reference is stable
@@ -51,37 +52,98 @@ const FEED_ALERTS: FeedAlert[] = [
 ];
 
 export function AlertsDashboardBar() {
+  const [alertsList, setAlertsList] = useState<FeedAlert[]>(FEED_ALERTS);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentIndex(prev => (prev + 1) % FEED_ALERTS.length);
-    }, 6000);
-    return () => clearInterval(timer);
+    const fetchWeather = async () => {
+      try {
+        const res = await fetch('/api/weather');
+        if (res.ok) {
+          const data = await res.json();
+          const dynamicAlerts: FeedAlert[] = [];
+          
+          if (data.alerts && data.alerts.length > 0) {
+            data.alerts.forEach((alert: any) => {
+              dynamicAlerts.push({
+                label: `⚠️ NWS ALERT: ${alert.severity}`,
+                message: alert.event,
+                link: 'https://forecast.weather.gov/MapClick.php?lat=32.4434&lon=-110.7881',
+                source: 'National Weather Service'
+              });
+            });
+          }
+          
+          dynamicAlerts.push({
+            label: '🌤️ LIVE FORECAST',
+            message: `Mt. Lemmon Station: ${data.temp}°${data.tempUnit} and ${data.condition}. Wind: ${data.wind}.`,
+            link: 'https://forecast.weather.gov/MapClick.php?lat=32.4434&lon=-110.7881',
+            source: 'NWS api.weather.gov'
+          });
+          
+          dynamicAlerts.push({
+            label: '🔥 FIRE DANGER',
+            message: `Current USFS Fire Danger rating is ${data.fireDanger}.`,
+            link: 'https://www.fs.usda.gov/r03/coronado/alerts',
+            source: 'USFS Coronado',
+            isCritical: data.fireDanger === 'EXTREME' || data.fireDanger === 'HIGH'
+          });
+          
+          setAlertsList(dynamicAlerts);
+        }
+      } catch (e) {
+        // keep defaults if offline
+      }
+    };
+    
+    fetchWeather();
+    const fetchInterval = setInterval(fetchWeather, 10 * 60 * 1000);
+    return () => clearInterval(fetchInterval);
   }, []);
 
-  const activeAlert = FEED_ALERTS[currentIndex];
+  useEffect(() => {
+    if (alertsList.length <= 1) return;
+    const timer = setInterval(() => {
+      setCurrentIndex(prev => (prev + 1) % alertsList.length);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, [alertsList.length]);
+
+  const activeAlert = alertsList[currentIndex] || alertsList[0];
+  if (!activeAlert) return null;
+
+  const isEmergency = activeAlert.isCritical || activeAlert.label.includes('⚠️ NWS ALERT');
 
   return (
-    <div className="bg-neutral-900 border-b border-red-500/25 px-4 py-2 flex items-center justify-between text-[11px] font-bold tracking-wide relative overflow-hidden select-none z-40">
+    <div className={`border-b px-4 py-2 flex items-center justify-between text-[11px] font-bold tracking-wide relative overflow-hidden select-none z-40 transition-colors ${
+      isEmergency 
+        ? 'bg-red-700 border-red-500 text-white' 
+        : 'bg-neutral-900 border-red-500/25 text-neutral-300'
+    }`}>
       <div className="flex items-center gap-2.5 flex-1 min-w-0">
-        <span className="bg-red-500/10 border border-red-500/20 text-red-500 py-0.5 px-2 rounded-full flex items-center gap-1 uppercase text-[9px] flex-shrink-0 animate-pulse">
+        <span className={`py-0.5 px-2 rounded-full flex items-center gap-1 uppercase text-[9px] flex-shrink-0 animate-pulse ${
+          isEmergency ? 'bg-white/20 text-white border border-white/30' : 'bg-red-500/10 border border-red-500/20 text-red-500'
+        }`}>
           <AlertCircle size={10} />
-          <span>Active System Feed</span>
+          <span>{isEmergency ? 'CRITICAL ALERT' : 'Active System Feed'}</span>
         </span>
-        <div className="flex items-center gap-1.5 truncate text-neutral-300">
-          <span className="text-amber-500 uppercase">{activeAlert.label}:</span>
+        <div className="flex items-center gap-1.5 truncate">
+          <span className={`${isEmergency ? 'text-white font-black' : 'text-amber-500'} uppercase`}>{activeAlert.label}:</span>
           <span className="truncate">{activeAlert.message}</span>
         </div>
       </div>
 
-      <div className="flex items-center gap-3 flex-shrink-0 pl-4 border-l border-neutral-800">
-        <span className="text-[10px] text-neutral-500 italic hidden sm:inline">Source: {activeAlert.source}</span>
+      <div className={`flex items-center gap-3 flex-shrink-0 pl-4 border-l ${isEmergency ? 'border-red-500/50' : 'border-neutral-800'}`}>
+        <span className={`text-[10px] italic hidden sm:inline ${isEmergency ? 'text-red-200' : 'text-neutral-500'}`}>Source: {activeAlert.source}</span>
         <a
           href={activeAlert.link}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1 bg-red-600 hover:bg-red-700 text-white py-1 px-3 rounded-lg text-[9px] transition-colors"
+          className={`flex items-center gap-1 py-1 px-3 rounded-lg text-[9px] transition-colors ${
+            isEmergency 
+              ? 'bg-white text-red-800 hover:bg-neutral-100' 
+              : 'bg-red-600 hover:bg-red-700 text-white'
+          }`}
         >
           <span>Learn More</span>
           <ExternalLink size={10} />
