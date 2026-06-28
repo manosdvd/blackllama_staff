@@ -1,11 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { CheckSquare, Square, Download, Landmark, ArrowRight, UserCheck } from 'lucide-react';
-import { OperationalHUD } from '@/components/ui/OperationalHUD';
+import { CheckSquare, Square, Download, Landmark, ArrowRight, UserCheck, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase/client';
-import { RefreshCw } from 'lucide-react';
 
 interface ChecklistItem {
   id: string;
@@ -261,9 +259,6 @@ export default function DashboardPage() {
   // 4. DEFAULT STAFF DASHBOARD VIEW
   return (
     <div className="flex flex-col gap-6">
-      {/* Weather, Fire Danger, and Forest Alerts HUD */}
-      <OperationalHUD />
-
       {/* Main Grid: Welcome + Sidebar info */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         

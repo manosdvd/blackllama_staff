@@ -56,7 +56,7 @@ export async function GET() {
       }
     }
 
-    let activeAlerts: any[] = [];
+    let activeAlerts: Record<string, string>[] = [];
     let isCritical = false;
 
     // 2. Fetch Active Alerts for the Zone
@@ -70,7 +70,7 @@ export async function GET() {
       
       if (alertsRes.ok) {
         const alertsData = await alertsRes.json();
-        activeAlerts = alertsData.features.map((f: any) => ({
+        activeAlerts = alertsData.features.map((f: { properties: Record<string, string> }) => ({
           event: f.properties.event,
           severity: f.properties.severity,
           urgency: f.properties.urgency,
@@ -79,7 +79,7 @@ export async function GET() {
       }
       
       // Determine critical level
-      isCritical = activeAlerts.some((a: any) => 
+      isCritical = activeAlerts.some((a: Record<string, string>) => 
         a.severity === 'Severe' || 
         a.severity === 'Extreme' || 
         (a.event && (

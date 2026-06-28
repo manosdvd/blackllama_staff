@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ShieldCheck, UserCheck, Settings, RefreshCw, AlertOctagon, CheckCircle, XCircle } from 'lucide-react';
+import { ShieldCheck, UserCheck, Settings, RefreshCw, AlertOctagon, CheckCircle, XCircle, BellRing } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
+import { AlertsManager } from '@/components/admin/AlertsManager';
 
 interface Application {
   id: string;
@@ -65,7 +66,7 @@ const readStoredAuditLogs = () => {
 export default function AdminPortalPage() {
   const router = useRouter();
   const [authLoading, setAuthLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'queue' | 'logs' | 'rollover'>('queue');
+  const [activeTab, setActiveTab] = useState<'queue' | 'logs' | 'rollover' | 'alerts'>('queue');
   const [apps, setApps] = useState<Application[]>(readStoredApplications);
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>(readStoredAuditLogs);
   const [selectedAppId, setSelectedAppId] = useState<string | null>(null);
@@ -215,31 +216,30 @@ export default function AdminPortalPage() {
         </h2>
         
         {/* Navigation tabs */}
-        <div className="flex gap-1.5 border-t border-neutral-250/20 pt-4 mt-1">
-          <button
+        <div className="flex gap-2 overflow-x-auto pb-4">
+          <button 
             onClick={() => setActiveTab('queue')}
-            className={`py-2 px-4 rounded-xl text-xs font-bold transition-all ${
-              activeTab === 'queue' ? 'bg-emerald-800 text-white' : 'hover:bg-neutral-100 dark:hover:bg-neutral-800/40 text-neutral-500'
-            }`}
+            className={`px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 whitespace-nowrap transition-colors ${activeTab === 'queue' ? 'bg-emerald-800 text-white' : 'bg-white dark:bg-neutral-900 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 border border-neutral-200 dark:border-neutral-800'}`}
           >
-            Review Queue
+            <UserCheck size={16} /> Application Queue
           </button>
-          <button
+          <button 
+            onClick={() => setActiveTab('alerts')}
+            className={`px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 whitespace-nowrap transition-colors ${activeTab === 'alerts' ? 'bg-emerald-800 text-white' : 'bg-white dark:bg-neutral-900 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 border border-neutral-200 dark:border-neutral-800'}`}
+          >
+            <BellRing size={16} /> Camp Alerts
+          </button>
+          <button 
             onClick={() => setActiveTab('logs')}
-            className={`py-2 px-4 rounded-xl text-xs font-bold transition-all ${
-              activeTab === 'logs' ? 'bg-emerald-800 text-white' : 'hover:bg-neutral-100 dark:hover:bg-neutral-800/40 text-neutral-500'
-            }`}
+            className={`px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 whitespace-nowrap transition-colors ${activeTab === 'logs' ? 'bg-emerald-800 text-white' : 'bg-white dark:bg-neutral-900 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 border border-neutral-200 dark:border-neutral-800'}`}
           >
-            Audit Log Viewer
+            <ShieldCheck size={16} /> Audit Logs
           </button>
-          <button
+          <button 
             onClick={() => setActiveTab('rollover')}
-            className={`py-2 px-4 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-              activeTab === 'rollover' ? 'bg-red-800 text-white' : 'hover:bg-neutral-100 dark:hover:bg-neutral-800/40 text-neutral-500'
-            }`}
+            className={`px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 whitespace-nowrap transition-colors ${activeTab === 'rollover' ? 'bg-amber-600 text-white' : 'bg-white dark:bg-neutral-900 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 border border-neutral-200 dark:border-neutral-800'}`}
           >
-            <Settings size={13} />
-            <span>Seasonal Rollover</span>
+            <Settings size={16} /> Season Rollover
           </button>
         </div>
       </div>
@@ -351,6 +351,11 @@ export default function AdminPortalPage() {
             </div>
           )}
         </div>
+      )}
+
+      {/* Camp Alerts Tab */}
+      {activeTab === 'alerts' && (
+        <AlertsManager />
       )}
 
       {/* Audit Log Viewer Tab */}

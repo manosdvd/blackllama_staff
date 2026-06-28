@@ -5,16 +5,19 @@ import { Search, Plus, Map, Edit3, RotateCcw } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeSlug from 'rehype-slug';
-import seededArticles from '@/data/wiki_seeded.json';
 import { WikiGraph } from '@/components/ui/WikiGraph';
+import { supabase } from '@/lib/supabase/client';
 
 interface Article {
+  id: string;
   slug: string;
   title: string;
   category: string;
+  section?: string;
   content: string;
   offline_priority?: number;
   tags?: string[];
+  aliases?: string[];
   revision_no?: number;
 }
 
@@ -27,39 +30,13 @@ interface Revision {
   revision_no: number;
 }
 
-const readStoredArticles = () => {
-  if (typeof window === 'undefined') return seededArticles as Article[];
-  const seedVersion = `${(seededArticles as Article[]).length}:${(seededArticles as Article[]).map((article) => article.slug).join('|')}`;
-  const storedSeedVersion = localStorage.getItem('camp_lawton_wiki_seed_version');
-  const local = localStorage.getItem('camp_lawton_wiki_articles');
-  if (!local || storedSeedVersion !== seedVersion) {
-    localStorage.setItem('camp_lawton_wiki_articles', JSON.stringify(seededArticles));
-    localStorage.setItem('camp_lawton_wiki_seed_version', seedVersion);
-    return seededArticles as Article[];
-  }
-  try {
-    return JSON.parse(local) as Article[];
-  } catch {
-    return seededArticles as Article[];
-  }
-};
-
-const readStoredRevisions = () => {
-  if (typeof window === 'undefined') return [];
-  const localRevisions = localStorage.getItem('camp_lawton_wiki_revisions');
-  if (!localRevisions) return [];
-  try {
-    return JSON.parse(localRevisions) as Revision[];
-  } catch {
-    return [];
-  }
-};
-
 export default function WikiPage() {
-  const [articles, setArticles] = useState<Article[]>(readStoredArticles);
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [activeSlug, setActiveSlug] = useState('welcome-to-camp-lawton-staff');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
   const [isGraphOpen, setIsGraphOpen] = useState(false);
   
   // Editing state
@@ -75,8 +52,8 @@ export default function WikiPage() {
   const [newCategory, setNewCategory] = useState('Introduction & Culture');
   const [newContent, setNewContent] = useState('');
   
-  // Revisions history
-  const [revisions, setRevisions] = useState<Revision[]>(readStoredRevisions);
+  // Revisions history (mocked for now until phase 4)
+  const [revisions, setRevisions] = useState<Revision[]>([]);
 
   // Categories list
   const categories = ['All', 'Introduction & Culture', 'Safety & Training', 'Policies & Procedures', 'Campfire & Songbook', 'Onboarding'];
@@ -96,11 +73,60 @@ export default function WikiPage() {
     };
   }, []);
 
-  const activeArticle = articles.find(a => a.slug === activeSlug) || articles[0];
+  useEffect(() => {
+    const fetchWiki = async () => {
+      setIsLoading(true);
+      const { data, error } = await supabase
+        .from('content_items')
+        .select(`
+          id,
+          slug,
+          title,
+          section,
+          offline_priority,
+          tags,
+          aliases,
+          content_categories ( name ),
+          content_versions ( content, version_no )
+        `);
+        
+      if (!error && data) {
+        const parsed = data.map((d: Record<string, unknown>) => ({
+          id: d.id as string,
+          slug: d.slug as string,
+          title: d.title as string,
+          category: d.content_categories?.name || 'General',
+          section: d.section || d.content_categories?.name || 'General',
+          content: (d.content_versions && d.content_versions.length > 0) ? d.content_versions[0].content : '',
+          offline_priority: d.offline_priority,
+          tags: d.tags || [],
+          aliases: d.aliases || [],
+          revision_no: (d.content_versions && d.content_versions.length > 0) ? d.content_versions[0].version_no : 1
+        }));
+        
+        // Sort articles if needed, or just set them
+        setArticles(parsed);
+      } else {
+        console.error('Wiki fetch error:', error);
+      }
+      setIsLoading(false);
+    };
+
+    fetchWiki();
+  }, []);
+
+  const activeArticle = articles.find(a => a.slug === activeSlug) || articles[0] || null;
 
   const handleSelectArticle = (slug: string) => {
     setActiveSlug(slug);
     setIsEditing(false);
+  };
+
+  const toggleSection = (sectionName: string) => {
+    setCollapsedSections(prev => ({
+      ...prev,
+      [sectionName]: !prev[sectionName]
+    }));
   };
 
   const getFilteredArticles = () => {
@@ -135,8 +161,8 @@ export default function WikiPage() {
     setIsCreating(true);
   };
 
-  const handleSaveEdit = () => {
-    if (!editTitle) return;
+  const handleSaveEdit = async () => {
+    if (!editTitle || !activeArticle) return;
 
     // Create a revision backup first
     const currentRevNo = activeArticle.revision_no || 1;
@@ -151,25 +177,54 @@ export default function WikiPage() {
 
     const updatedRevisions = [newRev, ...revisions];
     setRevisions(updatedRevisions);
-    localStorage.setItem('camp_lawton_wiki_revisions', JSON.stringify(updatedRevisions));
 
-    // Update main article details
+    const newRevNo = currentRevNo + 1;
+
+    // 1. Update the article metadata in Supabase
+    const { error: updateError } = await supabase
+      .from('content_items')
+      .update({
+        title: editTitle,
+        section: editCategory, // Storing category in section for now, ideally needs category_id
+        tags: editTags.split(',').map(t => t.trim()).filter(Boolean),
+        admin_edited_at: new Date().toISOString()
+      })
+      .eq('id', activeArticle.id);
+
+    if (updateError) {
+      alert('Failed to save to Supabase: ' + updateError.message);
+      return;
+    }
+
+    // 2. Insert the new content version
+    const { error: versionError } = await supabase
+      .from('content_versions')
+      .insert({
+        item_id: activeArticle.id,
+        version_no: newRevNo,
+        content: editContent
+      });
+
+    if (versionError) {
+      console.error('Failed to save new version:', versionError);
+    }
+
+    // Update main article details locally
     const updated = articles.map(art => {
-      if (art.slug === activeArticle.slug) {
+      if (art.id === activeArticle.id) {
         return {
           ...art,
           title: editTitle,
           category: editCategory,
           content: editContent,
           tags: editTags.split(',').map(t => t.trim()).filter(Boolean),
-          revision_no: currentRevNo + 1
+          revision_no: newRevNo
         };
       }
       return art;
     });
 
     setArticles(updated);
-    localStorage.setItem('camp_lawton_wiki_articles', JSON.stringify(updated));
     setIsEditing(false);
   };
 
@@ -187,7 +242,13 @@ export default function WikiPage() {
       return;
     }
 
+    // Note: To fully create a page in Supabase, we'd need to fetch or assign a category_id. 
+    // This is a simplified local-first insert for now, real DB insert omitted for brevity
+    // unless we look up category IDs first. Let's alert the user that it's local only.
+    alert('Creating new articles is currently local-only. Please use the database seeder or API to create new base pages for now.');
+
     const newArt: Article = {
+      id: crypto.randomUUID(),
       slug,
       title: newTitle,
       category: newCategory,
@@ -198,7 +259,6 @@ export default function WikiPage() {
 
     const updated = [newArt, ...articles];
     setArticles(updated);
-    localStorage.setItem('camp_lawton_wiki_articles', JSON.stringify(updated));
     setActiveSlug(slug);
     setIsCreating(false);
   };
@@ -218,7 +278,6 @@ export default function WikiPage() {
     });
 
     setArticles(updated);
-    localStorage.setItem('camp_lawton_wiki_articles', JSON.stringify(updated));
     setIsEditing(false);
   };
 
@@ -281,6 +340,7 @@ export default function WikiPage() {
         </div>
 
         {/* Search input bar */}
+        {isLoading && <div className="text-sm text-emerald-600 mb-1 font-semibold animate-pulse">Syncing from Supabase...</div>}
         <div className="relative">
           <input
             type="text"
@@ -314,32 +374,71 @@ export default function WikiPage() {
           </div>
         </div>
 
-        {/* Articles List */}
-        <div className="flex flex-col gap-1 max-h-[300px] lg:max-h-[50vh] overflow-y-auto pr-1">
-          <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider px-2 mb-1">
-            Handbook Articles ({getFilteredArticles().length})
-          </span>
-          {getFilteredArticles().map(art => (
-            <button
-              key={art.slug}
-              onClick={() => handleSelectArticle(art.slug)}
-              className={`py-2.5 px-3 rounded-xl text-left text-xs transition-all ${
-                activeSlug === art.slug
-                  ? 'bg-emerald-800 text-white font-bold'
-                  : 'bg-white/40 dark:bg-neutral-900/30 hover:bg-white dark:hover:bg-neutral-800/40 text-neutral-700 dark:text-neutral-300'
-              }`}
-            >
-              {art.title}
-            </button>
-          ))}
+        {/* Articles List (Grouped by Section) */}
+        <div className="flex flex-col gap-1 max-h-[300px] lg:max-h-[70vh] overflow-y-auto pr-1">
+          {(() => {
+            const filtered = getFilteredArticles();
+            const grouped = filtered.reduce((acc, art) => {
+              const sec = art.section || 'General';
+              if (!acc[sec]) acc[sec] = [];
+              acc[sec].push(art);
+              return acc;
+            }, {} as Record<string, Article[]>);
+
+            return Object.entries(grouped).map(([section, articlesInSection]) => {
+              const isCollapsed = collapsedSections[section];
+              return (
+                <div key={section} className="flex flex-col mb-2">
+                  <button 
+                    onClick={() => toggleSection(section)}
+                    className="flex items-center justify-between px-2 py-1.5 text-[10px] text-neutral-400 font-bold uppercase tracking-wider hover:text-neutral-600 dark:hover:text-neutral-200 transition-colors group"
+                  >
+                    <span className="truncate">{section} ({articlesInSection.length})</span>
+                    <span>{isCollapsed ? '+' : '−'}</span>
+                  </button>
+                  {!isCollapsed && (
+                    <div className="flex flex-col gap-1 ml-2 border-l border-neutral-200 dark:border-neutral-800 pl-2">
+                      {articlesInSection.map(art => (
+                        <button
+                          key={art.slug}
+                          onClick={() => handleSelectArticle(art.slug)}
+                          className={`py-2 px-3 rounded-lg text-left text-xs transition-all truncate ${
+                            activeSlug === art.slug
+                              ? 'bg-emerald-800 text-white font-bold'
+                              : 'hover:bg-white dark:hover:bg-neutral-800/40 text-neutral-600 dark:text-neutral-400'
+                          }`}
+                          title={art.title}
+                        >
+                          {art.title}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            });
+          })()}
         </div>
       </div>
 
       {/* Center content viewer */}
       <div className="flex-1 flex flex-col gap-6">
         
+        {/* Loading state if activeArticle is missing */}
+        {!activeArticle && isLoading && (
+          <div className="glass-panel flex-1 flex flex-col items-center justify-center bg-white/70 dark:bg-neutral-900/60 p-6 min-h-[400px]">
+            <div className="animate-pulse text-emerald-600 font-bold uppercase tracking-widest text-xs">Loading Wiki...</div>
+          </div>
+        )}
+
+        {!activeArticle && !isLoading && (
+          <div className="glass-panel flex-1 flex flex-col items-center justify-center bg-white/70 dark:bg-neutral-900/60 p-6 min-h-[400px]">
+            <div className="text-neutral-500 font-bold uppercase tracking-widest text-xs">Article not found</div>
+          </div>
+        )}
+        
         {/* Editor panel toggler */}
-        {isEditing ? (
+        {isEditing && activeArticle ? (
           <div className="glass-panel flex flex-col gap-4 bg-white/70 dark:bg-neutral-900/60 p-6">
             <h3 className="text-emerald-800 dark:text-emerald-500 font-extrabold text-lg font-heading">
               EDITING: {activeArticle.title}
@@ -439,43 +538,59 @@ export default function WikiPage() {
               </div>
             )}
           </div>
-        ) : (
-          /* Reader Mode */
-          <div className="glass-panel bg-white/70 dark:bg-neutral-900/60 p-6 flex flex-col gap-6 relative">
-            <header className="border-b border-neutral-200 dark:border-neutral-800/60 pb-4 flex justify-between items-start gap-4">
-              <div>
-                <span className="text-[9px] bg-emerald-800/15 text-emerald-800 dark:text-emerald-400 py-1 px-2.5 rounded-full font-bold uppercase tracking-wider">
-                  {activeArticle.category}
-                </span>
+        ) : activeArticle ? (
+          <div className="glass-panel flex-1 flex flex-col bg-white/70 dark:bg-neutral-900/60 p-6 relative">
+            
+            {/* Header / Meta */}
+            <div className="flex flex-col mb-8 relative z-10">
+              <div className="flex flex-wrap items-center justify-between gap-4 mb-2">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="bg-emerald-800/10 text-emerald-800 dark:text-emerald-400 border border-emerald-500/20 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider">
+                    {activeArticle.category}
+                  </span>
+                </div>
+                <button
+                  onClick={() => {
+                    setEditTitle(activeArticle.title);
+                    setEditCategory(activeArticle.category);
+                    setEditContent(activeArticle.content);
+                    setEditTags((activeArticle.tags || []).join(', '));
+                    setIsEditing(true);
+                  }}
+                  className="flex items-center gap-1.5 py-2 px-4 border border-neutral-350 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-xl text-xs font-bold transition-colors"
+                >
+                  <Edit3 size={14} />
+                  <span>Edit Article</span>
+                </button>
+              </div>
                 <h2 className="text-2xl md:text-3xl font-black text-neutral-900 dark:text-neutral-100 font-heading tracking-wide mt-2">
                   {activeArticle.title}
                 </h2>
-              </div>
-              <button
-                onClick={() => {
-                  setEditTitle(activeArticle.title);
-                  setEditCategory(activeArticle.category);
-                  setEditContent(activeArticle.content);
-                  setEditTags((activeArticle.tags || []).join(', '));
-                  setIsEditing(true);
-                }}
-                className="flex items-center gap-1.5 py-2 px-4 border border-neutral-350 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-xl text-xs font-bold transition-colors"
-              >
-                <Edit3 size={14} />
-                <span>Edit Article</span>
-              </button>
-            </header>
+            </div>
 
             {/* Wiki Link Parsed Content */}
             <div className="min-h-[250px] overflow-hidden">
+              <div className="flex flex-wrap gap-2 mb-4">
+                {activeArticle.tags?.map(tag => (
+                  <span key={tag} className="px-2 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-[10px] font-bold rounded-md uppercase tracking-wider">
+                    {tag}
+                  </span>
+                ))}
+                {activeArticle.aliases?.map(alias => (
+                  <span key={alias} className="px-2 py-0.5 bg-neutral-100 dark:bg-neutral-800 text-neutral-500 border border-neutral-200 dark:border-neutral-700 text-[10px] font-bold rounded-md uppercase tracking-wider">
+                    {alias}
+                  </span>
+                ))}
+              </div>
               <div className="text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed [&>h1]:text-2xl [&>h1]:font-bold [&>h1]:mt-6 [&>h1]:mb-4 [&>h2]:text-xl [&>h2]:font-bold [&>h2]:mt-6 [&>h2]:mb-3 [&>h3]:text-lg [&>h3]:font-bold [&>h3]:mt-5 [&>h3]:mb-2 [&>h4]:text-base [&>h4]:font-bold [&>h4]:mt-4 [&>h4]:mb-2 [&>p]:mb-4 [&>ul]:list-disc [&>ul]:pl-5 [&>ul]:mb-4 [&>ol]:list-decimal [&>ol]:pl-5 [&>ol]:mb-4 [&>li]:mb-1 [&>blockquote]:border-l-4 [&>blockquote]:border-neutral-300 [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:mb-4">
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
                   rehypePlugins={[rehypeSlug]}
                   components={{
-                    a: ({ node, ...props }) => {
-                      if (props.href?.startsWith('wiki:')) {
-                        const targetName = decodeURIComponent(props.href.replace('wiki:', ''));
+                    a: ({ ...props }: Record<string, unknown>) => {
+                      const isInternal = (props.href as string)?.startsWith('wiki:');
+                      if (isInternal) {
+                        const targetName = decodeURIComponent((props.href as string).replace('wiki:', ''));
                         const targetSlug = targetName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
                         const targetExists = articles.some(a => a.slug === targetSlug);
                         if (targetExists) {
@@ -528,11 +643,11 @@ export default function WikiPage() {
               </div>
             )}
           </div>
-        )}
+        ) : null}
       </div>
 
       {/* Right rail outline table of contents (TOC) */}
-      <div className="lg:w-[220px] flex-shrink-0 hidden xl:flex flex-col gap-4">
+      <div className="lg:w-[220px] flex-shrink-0 hidden xl:flex flex-col gap-4 sticky top-[100px] max-h-[calc(100vh-140px)] overflow-y-auto">
         <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider px-2">
           Article Outline
         </span>

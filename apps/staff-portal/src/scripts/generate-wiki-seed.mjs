@@ -61,7 +61,7 @@ for (let line of lines) {
     const title = cleanHeading(match[2]);
     currentCategory = nextCategory(currentCategory, title);
     
-    const new_section = { level, title, lines: [], children: [], category: currentCategory };
+    const new_section = { level, title, lines: [], children: [], category: currentCategory, section: 'General' };
     
     while (stack.length > 0 && stack[stack.length - 1].level >= level) {
       stack.pop();
@@ -107,6 +107,7 @@ function process_node(node, parent_article = null) {
     current_article = {
       title: node.title,
       category: node.category,
+      section: node.section || 'General',
       content: node.lines.join('\n').trim(),
       slug: null, // assigned later
     };
@@ -123,6 +124,13 @@ function process_node(node, parent_article = null) {
   }
   
   for (const child of node.children) {
+    if (!is_standalone && level > 0) {
+      child.section = node.title;
+    } else if (parent_article) {
+      child.section = node.section;
+    } else {
+      child.section = child.title;
+    }
     process_node(child, is_standalone ? current_article : parent_article);
   }
 }
@@ -135,6 +143,7 @@ for (let article of articles) {
   article.slug = uniqueSlug(slugify(article.title), articles);
   article.offline_priority = inferOfflinePriority(article.title, article.content);
   article.tags = buildTags(article.title, article.content, article.category);
+  article.aliases = buildAliases(article.title, article.content);
   article.revision_no = 1;
 }
 
@@ -280,4 +289,26 @@ function buildTags(title, content, category) {
   }
 
   return Array.from(new Set(tags));
+}
+
+function buildAliases(title, content) {
+  const text = `${title}\n${content}`.toLowerCase();
+  const aliases = [];
+  
+  const rules = [
+    ['missing person', ['code blue', 'lost scout']],
+    ['safeguarding youth', ['youth protection', 'ypt', 'abuse']],
+    ['medical', ['first aid', 'injury', 'health lodge']],
+    ['severe weather', ['monsoon', 'lightning', 'thunderstorm']],
+    ['phones', ['cell phone', 'reception', 'wifi']],
+    ['fire safety', ['code red', 'wildfire', 'evacuation']],
+  ];
+
+  for (const [key, related] of rules) {
+    if (text.includes(key)) {
+      aliases.push(...related);
+    }
+  }
+
+  return Array.from(new Set(aliases));
 }

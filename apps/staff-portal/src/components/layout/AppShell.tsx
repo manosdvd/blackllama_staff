@@ -63,7 +63,6 @@ export function AppShell({ children }: AppShellProps) {
   const [isCalm, setIsCalm] = useState(readCalmMode);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [user, setUser] = useState<{ username: string; role: string } | null>(null);
-  const [authLoading, setAuthLoading] = useState(true);
   const [searchVal, setSearchVal] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [emergencyAlert, setEmergencyAlert] = useState<{ title: string; snippet: string } | null>(null);

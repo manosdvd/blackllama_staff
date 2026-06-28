@@ -76,8 +76,9 @@ export default function LoginPage() {
           setLoading(false);
         }
       }
-    } catch (err: any) {
-      setError(err.message || 'Authentication failed');
+    } catch (err: unknown) {
+      console.error("Authentication error:", err);
+      setError(err instanceof Error ? err.message : 'Authentication failed');
       setLoading(false);
     }
   };
