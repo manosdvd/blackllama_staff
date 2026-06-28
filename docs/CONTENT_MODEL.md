@@ -7,7 +7,7 @@ The staff portal relies on a relational data model in Supabase to maintain dynam
 
 ### 1. `profiles`
 - `id` (uuid, PK, references `auth.users`)
-- `role` (enum: Candidate, Staff, Admin)
+- `role` (enum: Candidate, Staff, Admin, Alumni)
 - `first_name`, `last_name`, `phone`
 
 ### 2. `content_categories`
@@ -22,6 +22,7 @@ The staff portal relies on a relational data model in Supabase to maintain dynam
 - `category_id` (references `content_categories`)
 - `tags`, `aliases` (text array)
 - `offline_priority` (int)
+- `visibility_roles` (text array, e.g., ['Public', 'Candidate', 'Staff', 'Alumni'])
 
 ### 4. `content_versions`
 - `id` (uuid, PK)

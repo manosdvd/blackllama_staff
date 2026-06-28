@@ -19,28 +19,33 @@ ALTER TABLE public.forum_threads ENABLE ROW LEVEL SECURITY;
 
 -- Policy: Everyone can read threads they are allowed to see
 -- (Leadership Chamber is restricted to Admins)
-CREATE POLICY "Staff can read permitted threads" 
+-- (Staff Only is restricted to Staff and Admin)
+CREATE POLICY "Staff and Alumni can read permitted threads" 
 ON public.forum_threads FOR SELECT 
 USING (
-    (category != 'Leadership Chamber' AND category != 'Adult Staff Room') 
+    (category != 'Leadership Chamber' AND category != 'Adult Staff Room' AND category != 'Staff Only') 
     OR 
     (auth.jwt() ->> 'role' = 'Admin' AND category = 'Leadership Chamber')
     OR
     ((auth.jwt() ->> 'age_classification') = 'adult' AND category = 'Adult Staff Room')
+    OR
+    (auth.jwt() ->> 'role' IN ('Staff', 'Admin') AND category = 'Staff Only')
 );
 
--- Policy: Authenticated staff can create threads in permitted categories
-CREATE POLICY "Staff can create permitted threads" 
+-- Policy: Authenticated users can create threads in permitted categories
+CREATE POLICY "Users can create permitted threads" 
 ON public.forum_threads FOR INSERT 
 WITH CHECK (
     auth.role() = 'authenticated' 
     AND 
     (
-        (category != 'Leadership Chamber' AND category != 'Adult Staff Room') 
+        (category != 'Leadership Chamber' AND category != 'Adult Staff Room' AND category != 'Staff Only') 
         OR 
         (auth.jwt() ->> 'role' = 'Admin' AND category = 'Leadership Chamber')
         OR
         ((auth.jwt() ->> 'age_classification') = 'adult' AND category = 'Adult Staff Room')
+        OR
+        (auth.jwt() ->> 'role' IN ('Staff', 'Admin') AND category = 'Staff Only')
     )
 );
 

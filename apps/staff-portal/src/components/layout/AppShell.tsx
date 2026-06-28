@@ -59,7 +59,7 @@ const NAV_ICON_DIRECTORY = <Users size={18} />;
 const NAV_ICON_ADMIN = <Lock size={18} />;
 
 export function AppShell({ children }: AppShellProps) {
-  const pathname = usePathname() || '/dashboard';
+  const pathname = usePathname() || '/';
   const router = useRouter();
   const [theme, setTheme] = useState<Theme>(readTheme);
   const [isCalm, setIsCalm] = useState(readCalmMode);
@@ -200,15 +200,17 @@ export function AppShell({ children }: AppShellProps) {
 
   const isStaffOrAdmin = user?.role === 'Staff' || user?.role === 'Admin';
   const isAdmin = user?.role === 'Admin';
+  const isAlumni = user?.role === 'Alumni';
+  const hasStaffAccess = isStaffOrAdmin || isAlumni;
 
   const navLinks = [
-    { href: '/dashboard', label: 'Welcome / Home', icon: NAV_ICON_HOME },
+    { href: '/', label: 'Welcome / Home', icon: NAV_ICON_HOME },
     { href: '/wiki', label: 'Handbook Wiki', icon: NAV_ICON_WIKI },
     { href: '/about', label: 'About Camp Lawton', icon: NAV_ICON_ABOUT },
     { href: '/training', label: 'Safety Training', icon: NAV_ICON_TRAINING },
     { href: '/policies', label: 'Policies & Procedures', icon: NAV_ICON_POLICIES },
     { href: '/onboarding', label: 'Onboarding Wizard', icon: NAV_ICON_ONBOARDING },
-    ...(isStaffOrAdmin
+    ...(hasStaffAccess
       ? [
           { href: '/forum', label: 'Staff Forum', icon: NAV_ICON_FORUM },
           { href: '/directory', label: 'Staff Directory', icon: NAV_ICON_DIRECTORY },
@@ -220,7 +222,7 @@ export function AppShell({ children }: AppShellProps) {
   ];
 
   // Derive current section from first path segment for mobile nav active state
-  const activeView = pathname.split('/')[1] || 'dashboard';
+  const activeView = pathname.split('/')[1] || '';
 
   const getHeading = () => {
     if (pathname.includes('/wiki')) return 'Handbook Wiki';
@@ -466,7 +468,7 @@ export function AppShell({ children }: AppShellProps) {
       <MobileBottomNav
         activeView={activeView}
         onViewChange={(v) => router.push(`/${v}`)}
-        showForum={isStaffOrAdmin}
+        showForum={hasStaffAccess}
       />
     </div>
   );
