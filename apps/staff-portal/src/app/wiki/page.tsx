@@ -6,7 +6,9 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeSlug from 'rehype-slug';
 import { WikiGraph } from '@/components/ui/WikiGraph';
-import { supabase } from '@/lib/supabase/client';
+import { createClient } from '@/utils/supabase/client';
+
+const supabase = createClient();
 
 interface Article {
   id: string;

@@ -1,7 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase/client';
+import { createClient } from '@/utils/supabase/client';
+
+const supabase = createClient();
 import { AlertOctagon, Plus, Trash2, ShieldAlert, CheckCircle, RefreshCw } from 'lucide-react';
 
 export interface SystemAlert {

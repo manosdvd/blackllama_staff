@@ -6,7 +6,9 @@ The long-term goal is a real-world, mobile-first, offline-first Progressive Web 
 
 ## Current Status
 
-This app is a working prototype, not the final production architecture.
+This application is actively being migrated from a prototype to its final production architecture. 
+
+We are currently transitioning the stack to use the Next.js App Router, `@supabase/ssr` for secure auth handling, and aligning the content structures with the Camp Lawton Blueprint.
 
 It currently includes useful experiments and early implementations for:
 
@@ -64,7 +66,7 @@ The target system should eventually use:
 - Parent/guardian support
 - Seasonal rollover tools
 
-The current Vite app should not be patched indefinitely into the final architecture. It should be used as a prototype and reference while the blueprint architecture is planned and built.
+We are actively executing this blueprint migration directly within the repository.
 
 ## Product North Star
 
@@ -134,13 +136,13 @@ That setup is useful for prototype testing, but it should not be considered the 
 
 ## Recommended Next Steps
 
-1. Restructure handbook/content seed data around the blueprint content model.
-2. Add honest offline/stale/draft state indicators to the prototype.
-3. Add a target architecture document.
-4. Add a security and safeguarding document.
-5. Begin a Next.js/TypeScript/Tailwind rebuild branch or app directory.
-6. Implement the Supabase data model and RLS policies from the blueprint.
-7. Validate security, safeguarding, offline behavior, and governance before any real launch.
+1. [x] Begin a Next.js/TypeScript/Tailwind rebuild branch or app directory.
+2. [x] Add a target architecture document.
+3. [x] Add a security and safeguarding document.
+4. [x] Implement the Supabase data model and RLS policies from the blueprint.
+5. [ ] Restructure handbook/content seed data around the blueprint content model.
+6. [ ] Add honest offline/stale/draft state indicators to the prototype.
+7. [ ] Validate security, safeguarding, offline behavior, and governance before any real launch.
 
 ## Bottom Line
 

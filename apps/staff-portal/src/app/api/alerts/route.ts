@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase/client';
+import { cookies } from 'next/headers';
+import { createClient } from '@/utils/supabase/server';
 
 export const runtime = 'edge';
 export const revalidate = 300; // Cache for 5 minutes
@@ -10,6 +11,9 @@ const ALERT_ZONE = 'AZZ504';
 const USFS_RSS_URL = 'https://www.fs.usda.gov/alerts/coronado/alerts-notices?format=xml';
 
 export async function GET() {
+  const cookieStore = await cookies();
+  const supabase = createClient(cookieStore);
+
   try {
     // 1. Fetch NWS Weather Observation
     let temp = '--';

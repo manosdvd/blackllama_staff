@@ -3,7 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import { CheckSquare, Square, Download, Landmark, ArrowRight, UserCheck, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
-import { supabase } from '@/lib/supabase/client';
+import { createClient } from '@/utils/supabase/client';
+
+const supabase = createClient();
 
 interface ChecklistItem {
   id: string;

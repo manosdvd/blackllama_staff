@@ -21,7 +21,7 @@ export async function POST() {
     const fileContent = fs.readFileSync(filePath, 'utf8');
     const seededArticles = JSON.parse(fileContent);
 
-    const articlesArray: any = Array.isArray(seededArticles) ? seededArticles : (seededArticles as Record<string, unknown>).default || [];
+    const articlesArray: Record<string, unknown>[] = Array.isArray(seededArticles) ? seededArticles : (seededArticles as Record<string, unknown>).default as Record<string, unknown>[] || [];
     const uniqueCategories = Array.from(new Set(articlesArray.map((a: Record<string, unknown>) => a.category as string)));
     for (const catName of uniqueCategories) {
       const { error } = await supabaseAdmin

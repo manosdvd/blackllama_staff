@@ -2,7 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { ShieldAlert, Plus, Send, RefreshCw } from 'lucide-react';
-import { supabase } from '@/lib/supabase/client';
+import { createClient } from '@/utils/supabase/client';
+
+const supabase = createClient();
 
 interface Thread {
   id: string;

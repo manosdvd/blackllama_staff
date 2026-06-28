@@ -26,7 +26,9 @@ import { EmergencyQuickAction } from '../ui/EmergencyQuickAction';
 import { MobileBottomNav } from './MobileBottomNav';
 import { performWeightedSearch, SearchResult } from '@/lib/search';
 import { GlobalHUD } from '../ui/GlobalHUD';
-import { supabase } from '@/lib/supabase/client';
+import { createClient } from '@/utils/supabase/client';
+
+const supabase = createClient();
 
 interface AppShellProps {
   children: React.ReactNode;

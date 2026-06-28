@@ -34,7 +34,7 @@ export function GlobalHUD() {
   useEffect(() => {
     let mounted = true;
     
-    const fetchHUDData = async (isInitial = false) => {
+    const fetchHUDData = async () => {
       if (isOffline) {
         if (mounted) setLoading(false);
         return;

@@ -3,7 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ShieldCheck, UserCheck, Settings, RefreshCw, AlertOctagon, CheckCircle, XCircle, BellRing } from 'lucide-react';
-import { supabase } from '@/lib/supabase/client';
+import { createClient } from '@/utils/supabase/client';
+
+const supabase = createClient();
 import { AlertsManager } from '@/components/admin/AlertsManager';
 
 interface Application {
