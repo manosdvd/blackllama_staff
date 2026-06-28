@@ -25,7 +25,7 @@ import { OfflineStatusBanner } from '../offline/OfflineStatusBanner';
 import { EmergencyQuickAction } from '../ui/EmergencyQuickAction';
 import { MobileBottomNav } from './MobileBottomNav';
 import { performWeightedSearch, SearchResult } from '@/lib/search';
-import { AlertsDashboardBar } from '../ui/AlertsDashboardBar';
+import { GlobalHUD } from '../ui/GlobalHUD';
 import { supabase } from '@/lib/supabase/client';
 
 interface AppShellProps {
@@ -247,7 +247,7 @@ export function AppShell({ children }: AppShellProps) {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <AlertsDashboardBar />
+      <GlobalHUD />
       <OfflineStatusBanner />
 
       <div className="flex-1 flex flex-col md:flex-row relative">
