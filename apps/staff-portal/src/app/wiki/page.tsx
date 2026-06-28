@@ -26,9 +26,12 @@ interface Revision {
 
 const readStoredArticles = () => {
   if (typeof window === 'undefined') return seededArticles as Article[];
+  const seedVersion = `${(seededArticles as Article[]).length}:${(seededArticles as Article[]).map((article) => article.slug).join('|')}`;
+  const storedSeedVersion = localStorage.getItem('camp_lawton_wiki_seed_version');
   const local = localStorage.getItem('camp_lawton_wiki_articles');
-  if (!local) {
+  if (!local || storedSeedVersion !== seedVersion) {
     localStorage.setItem('camp_lawton_wiki_articles', JSON.stringify(seededArticles));
+    localStorage.setItem('camp_lawton_wiki_seed_version', seedVersion);
     return seededArticles as Article[];
   }
   try {

@@ -34,7 +34,9 @@ export const metadata: Metadata = {
   description:
     'Camp Lawton staff handbook training, schedules, EAP alarm simulator, safety guides, packing list, campfire metronome songbook, and code of conduct portal.',
   icons: {
-    icon: '/favicon.svg'
+    icon: '/favicon.png',
+    shortcut: '/favicon.png',
+    apple: '/camp-logo.png'
   }
 };
 
