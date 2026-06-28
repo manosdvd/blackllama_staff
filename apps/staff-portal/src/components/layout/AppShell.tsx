@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   Home,
@@ -16,7 +17,6 @@ import {
   Sun,
   Leaf,
   LogOut,
-  User,
   Search,
   Lock,
   AlertTriangle
@@ -30,6 +30,30 @@ import { AlertsDashboardBar } from '../ui/AlertsDashboardBar';
 interface AppShellProps {
   children: React.ReactNode;
 }
+
+type Theme = 'light' | 'dark';
+
+const readTheme = (): Theme => {
+  if (typeof window === 'undefined') return 'dark';
+  const savedTheme = localStorage.getItem('lawton_theme');
+  return savedTheme === 'light' || savedTheme === 'dark' ? savedTheme : 'dark';
+};
+
+const readCalmMode = () => {
+  if (typeof window === 'undefined') return false;
+  return localStorage.getItem('camp_lawton_calm_mode') === 'true';
+};
+
+const readActiveUser = () => {
+  if (typeof window === 'undefined') return null;
+  const activeUser = localStorage.getItem('camp_lawton_active_user');
+  if (!activeUser) return null;
+  try {
+    return JSON.parse(activeUser) as { username: string; role: string };
+  } catch {
+    return null;
+  }
+};
 
 // ---- Static nav icon helpers (defined outside to avoid re-creation per render) ----
 const NAV_ICON_HOME = <Home size={18} />;
@@ -45,10 +69,10 @@ const NAV_ICON_ADMIN = <Lock size={18} />;
 export function AppShell({ children }: AppShellProps) {
   const pathname = usePathname() || '/dashboard';
   const router = useRouter();
-  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
-  const [isCalm, setIsCalm] = useState(false);
+  const [theme, setTheme] = useState<Theme>(readTheme);
+  const [isCalm, setIsCalm] = useState(readCalmMode);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-  const [user, setUser] = useState<{ username: string; role: string } | null>(null);
+  const [user, setUser] = useState<{ username: string; role: string } | null>(readActiveUser);
   const [searchVal, setSearchVal] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [emergencyAlert, setEmergencyAlert] = useState<{ title: string; snippet: string } | null>(null);
@@ -80,34 +104,20 @@ export function AppShell({ children }: AppShellProps) {
 
   useEffect(() => {
     try {
-      // Sync theme on mount
-      const savedTheme = (localStorage.getItem('lawton_theme') as 'light' | 'dark') || 'dark';
-      setTheme(savedTheme);
-      document.documentElement.setAttribute('data-theme', savedTheme);
-
-      // Sync calm mode
-      const calm = localStorage.getItem('camp_lawton_calm_mode') === 'true';
-      setIsCalm(calm);
-      if (calm) {
+      document.documentElement.setAttribute('data-theme', theme);
+      if (isCalm) {
         document.documentElement.classList.add('reduced-stimulation');
+      } else {
+        document.documentElement.classList.remove('reduced-stimulation');
       }
 
-      // Sync dummy user session from local storage for simulation
-      const activeUser = localStorage.getItem('camp_lawton_active_user');
-      if (activeUser) {
-        try {
-          setUser(JSON.parse(activeUser));
-        } catch {
-          // ignore corrupt JSON
-        }
-      } else {
-        // Redirect to login if not authenticated
+      if (!user) {
         router.push('/');
       }
     } catch {
       // localStorage unavailable (sandboxed iframe, etc.)
     }
-  }, [router]);
+  }, [isCalm, router, theme, user]);
 
   // Close user dropdown when clicking outside
   useEffect(() => {
@@ -226,10 +236,13 @@ export function AppShell({ children }: AppShellProps) {
         {/* Desktop Sidebar */}
         <aside className="hidden md:flex w-[280px] bg-white dark:bg-neutral-900 border-r border-neutral-200 dark:border-neutral-800 flex-col p-6 sticky top-0 h-screen select-none z-30">
           <div className="flex items-center gap-3 mb-8">
-            <img
+            <Image
               src="/camp-logo.png"
               alt="Camp Lawton"
+              width={48}
+              height={48}
               className="w-12 h-12 object-contain filter drop-shadow-md"
+              priority
             />
             <div className="flex flex-col">
               <span className="font-extrabold text-xl tracking-tight text-emerald-800 dark:text-emerald-500 font-heading">

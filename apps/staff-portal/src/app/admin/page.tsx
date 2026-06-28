@@ -22,11 +22,50 @@ interface AuditLog {
   details: string;
 }
 
+const initialApps: Application[] = [
+  { id: 'app1', name: 'Bobby Jenkins (Age 15)', roleChoice: 'CIT / Volunteer', submittedAt: '2026-06-25', status: 'Pending', notes: '', parentSigned: false },
+  { id: 'app2', name: 'Jimmy Tarleton (Age 22)', roleChoice: 'Scoutcraft Area Director', submittedAt: '2026-06-24', status: 'Approved', notes: 'NCS certified.', parentSigned: true },
+  { id: 'app3', name: 'Alice Peterson (Age 19)', roleChoice: 'Nature Instructor', submittedAt: '2026-06-23', status: 'Pending', notes: '', parentSigned: true }
+];
+
+const initialLogs: AuditLog[] = [
+  { id: 'log1', action: 'CREATE_SEASON', user: '@marylou_director', timestamp: '2026-06-01 09:00', details: 'Initialized Season Year 2026' },
+  { id: 'log2', action: 'UPDATE_RLS_POLICIES', user: '@marylou_director', timestamp: '2026-06-02 11:30', details: 'Hardened Row-Level Security on Candidate tables' }
+];
+
+const readStoredApplications = () => {
+  if (typeof window === 'undefined') return initialApps;
+  const localApps = localStorage.getItem('camp_lawton_admin_apps');
+  if (!localApps) {
+    localStorage.setItem('camp_lawton_admin_apps', JSON.stringify(initialApps));
+    return initialApps;
+  }
+  try {
+    return JSON.parse(localApps) as Application[];
+  } catch {
+    return initialApps;
+  }
+};
+
+const readStoredAuditLogs = () => {
+  if (typeof window === 'undefined') return initialLogs;
+  const localLogs = localStorage.getItem('camp_lawton_admin_audit_logs');
+  if (!localLogs) {
+    localStorage.setItem('camp_lawton_admin_audit_logs', JSON.stringify(initialLogs));
+    return initialLogs;
+  }
+  try {
+    return JSON.parse(localLogs) as AuditLog[];
+  } catch {
+    return initialLogs;
+  }
+};
+
 export default function AdminPortalPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'queue' | 'logs' | 'rollover'>('queue');
-  const [apps, setApps] = useState<Application[]>([]);
-  const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
+  const [apps, setApps] = useState<Application[]>(readStoredApplications);
+  const [auditLogs, setAuditLogs] = useState<AuditLog[]>(readStoredAuditLogs);
   const [selectedAppId, setSelectedAppId] = useState<string | null>(null);
   const [adminNotes, setAdminNotes] = useState('');
   const [statusToast, setStatusToast] = useState<string | null>(null);
@@ -51,44 +90,6 @@ export default function AdminPortalPage() {
       return;
     }
   }, [router]);
-
-  useEffect(() => {
-    // Seed initial mock applications
-    const initialApps: Application[] = [
-      { id: 'app1', name: 'Bobby Jenkins (Age 15)', roleChoice: 'CIT / Volunteer', submittedAt: '2026-06-25', status: 'Pending', notes: '', parentSigned: false },
-      { id: 'app2', name: 'Jimmy Tarleton (Age 22)', roleChoice: 'Scoutcraft Area Director', submittedAt: '2026-06-24', status: 'Approved', notes: 'NCS certified.', parentSigned: true },
-      { id: 'app3', name: 'Alice Peterson (Age 19)', roleChoice: 'Nature Instructor', submittedAt: '2026-06-23', status: 'Pending', notes: '', parentSigned: true }
-    ];
-
-    const localApps = localStorage.getItem('camp_lawton_admin_apps');
-    if (localApps) {
-      try {
-        setApps(JSON.parse(localApps));
-      } catch {
-        setApps(initialApps);
-      }
-    } else {
-      setApps(initialApps);
-      localStorage.setItem('camp_lawton_admin_apps', JSON.stringify(initialApps));
-    }
-
-    // Seed mock audit logs
-    const initialLogs: AuditLog[] = [
-      { id: 'log1', action: 'CREATE_SEASON', user: '@marylou_director', timestamp: '2026-06-01 09:00', details: 'Initialized Season Year 2026' },
-      { id: 'log2', action: 'UPDATE_RLS_POLICIES', user: '@marylou_director', timestamp: '2026-06-02 11:30', details: 'Hardened Row-Level Security on Candidate tables' }
-    ];
-    const localLogs = localStorage.getItem('camp_lawton_admin_audit_logs');
-    if (localLogs) {
-      try {
-        setAuditLogs(JSON.parse(localLogs));
-      } catch {
-        setAuditLogs(initialLogs);
-      }
-    } else {
-      setAuditLogs(initialLogs);
-      localStorage.setItem('camp_lawton_admin_audit_logs', JSON.stringify(initialLogs));
-    }
-  }, []);
 
   const handleUpdateStatus = (id: string, nextStatus: 'Approved' | 'Rejected') => {
     const updated = apps.map(a => {
@@ -192,7 +193,7 @@ export default function AdminPortalPage() {
               <h2 className="font-black text-base uppercase">Seasonal Rollover</h2>
             </div>
             <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed">
-              ⚠️ <strong>CRITICAL ACTION:</strong> This will close Season 2026, reset all active staff to "Returning Candidate", and archive all applications. This action cannot be undone.
+              ⚠️ <strong>CRITICAL ACTION:</strong> This will close Season 2026, reset all active staff to &quot;Returning Candidate&quot;, and archive all applications. This action cannot be undone.
             </p>
             <div className="flex gap-3 pt-2">
               <button onClick={() => setRolloverConfirmOpen(false)} className="flex-1 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 text-xs font-bold text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors flex items-center justify-center gap-1.5">
@@ -389,7 +390,7 @@ export default function AdminPortalPage() {
           <div className="bg-red-500/5 p-4 rounded-xl border border-red-500/20 text-xs text-red-650 dark:text-red-400 font-semibold leading-relaxed flex flex-col gap-2">
             <span><strong>⚠ IMPORTANT ROLES RULES:</strong></span>
             <ul className="list-disc list-inside space-y-1 pl-1">
-              <li>Active Staff are moved to "Returning Candidate" class role on rollover.</li>
+              <li>Active Staff are moved to &quot;Returning Candidate&quot; class role on rollover.</li>
               <li>A brand-new application wizard is required for the new season.</li>
               <li>All historical logs, reviews, and audits are locked as read-only.</li>
             </ul>

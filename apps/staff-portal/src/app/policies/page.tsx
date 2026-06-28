@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Shield, Search, CheckCircle } from 'lucide-react';
+import { Shield, Search } from 'lucide-react';
 
 interface Policy {
   id: string;

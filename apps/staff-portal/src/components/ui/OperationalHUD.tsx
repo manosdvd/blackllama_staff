@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Cloud, Flame, Trees } from 'lucide-react';
 import { useOffline } from '@/hooks/useOffline';
 
@@ -11,35 +11,39 @@ interface WeatherData {
   isCached: boolean;
 }
 
+const defaultWeather: WeatherData = {
+  temp: 72,
+  condition: 'Sunny / Mild',
+  updatedAt: '03:14 PM',
+  isCached: false
+};
+
+const readWeatherCache = () => {
+  if (typeof window === 'undefined') return defaultWeather;
+  try {
+    const saved = localStorage.getItem('camp_lawton_weather_cache');
+    if (saved) {
+      return { ...(JSON.parse(saved) as Omit<WeatherData, 'isCached'>), isCached: true };
+    }
+
+    const freshDefault = {
+      temp: defaultWeather.temp,
+      condition: defaultWeather.condition,
+      updatedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+    localStorage.setItem('camp_lawton_weather_cache', JSON.stringify(freshDefault));
+    return { ...freshDefault, isCached: false };
+  } catch {
+    return defaultWeather;
+  }
+};
+
 export function OperationalHUD() {
   const isOffline = useOffline();
-  const [weather, setWeather] = useState<WeatherData>({
-    temp: 72,
-    condition: 'Sunny / Mild',
-    updatedAt: '03:14 PM',
-    isCached: false
-  });
+  const [weather] = useState<WeatherData>(readWeatherCache);
 
   // In production this would be fetched from NWS API — static const for now
   const fireDanger: 'LOW' | 'MODERATE' | 'HIGH' | 'EXTREME' = 'HIGH';
-
-  useEffect(() => {
-    // Load cached weather on mount — in production, would hit NWS API
-    try {
-      const saved = localStorage.getItem('camp_lawton_weather_cache');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        setWeather({ ...parsed, isCached: true });
-      } else {
-        const defaultWeather = {
-          temp: 72,
-          condition: 'Sunny / Mild',
-          updatedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        };
-        localStorage.setItem('camp_lawton_weather_cache', JSON.stringify(defaultWeather));
-      }
-    } catch { /* ignore */ }
-  }, []);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">

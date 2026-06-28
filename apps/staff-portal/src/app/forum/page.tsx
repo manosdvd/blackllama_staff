@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { MessageSquare, ShieldAlert, Plus, Send } from 'lucide-react';
+import React, { useState } from 'react';
+import { ShieldAlert, Plus, Send } from 'lucide-react';
 
 interface Thread {
   id: string;
@@ -19,8 +19,57 @@ interface Reply {
   createdAt: string;
 }
 
+const defaultThreads: Thread[] = [
+  {
+    id: 't1',
+    category: 'General Staff Room',
+    title: 'Staff Week packing reminders',
+    author: '@marylou_director',
+    content: 'Hey everyone! Do not forget to bring warm sleeping gear. Temperatures drop down to 45°F at night on the mountain!',
+    createdAt: 'June 1, 2026',
+    replies: [
+      { author: '@jim_scoutcraft', content: 'Yes, heavy blankets are a lifesaver!', createdAt: 'June 1, 2026' }
+    ]
+  },
+  {
+    id: 't2',
+    category: 'Leadership Chamber',
+    title: '2026 Budget and Accreditation schedule',
+    author: '@marylou_director',
+    content: 'This thread contains planning for the National Camp Accreditation Program (NCAP) inspection schedules.',
+    createdAt: 'May 28, 2026',
+    replies: []
+  }
+];
+
+const readActiveRole = () => {
+  if (typeof window === 'undefined') return 'CIT';
+  const activeUser = localStorage.getItem('camp_lawton_active_user');
+  if (!activeUser) return 'CIT';
+  try {
+    return JSON.parse(activeUser).role || 'CIT';
+  } catch {
+    return 'CIT';
+  }
+};
+
+const readThreads = () => {
+  if (typeof window === 'undefined') return defaultThreads;
+  const local = localStorage.getItem('camp_lawton_forum_threads');
+  if (!local) {
+    localStorage.setItem('camp_lawton_forum_threads', JSON.stringify(defaultThreads));
+    return defaultThreads;
+  }
+  try {
+    return JSON.parse(local) as Thread[];
+  } catch {
+    localStorage.setItem('camp_lawton_forum_threads', JSON.stringify(defaultThreads));
+    return defaultThreads;
+  }
+};
+
 export default function ForumPage() {
-  const [threads, setThreads] = useState<Thread[]>([]);
+  const [threads, setThreads] = useState<Thread[]>(readThreads);
   const [activeCategory, setActiveCategory] = useState('General Staff Room');
   
   // Creation States
@@ -33,7 +82,7 @@ export default function ForumPage() {
   const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
 
   // Simulation user role
-  const [role, setRole] = useState('CIT'); // Default to CIT for strict safety testing
+  const [role] = useState(readActiveRole); // Default to CIT for strict safety testing
 
   const categories = [
     'General Staff Room',
@@ -49,57 +98,6 @@ export default function ForumPage() {
     'Trading Post',
     'Leadership Chamber' // Gated: Admins/Directors only
   ];
-
-  useEffect(() => {
-    // Sync dummy user role
-    const activeUser = localStorage.getItem('camp_lawton_active_user');
-    if (activeUser) {
-      try {
-        setRole(JSON.parse(activeUser).role);
-      } catch {
-        // ignore
-      }
-    }
-
-    // Load threads
-    const local = localStorage.getItem('camp_lawton_forum_threads');
-    if (local) {
-      try {
-        setThreads(JSON.parse(local));
-      } catch {
-        setupDefaultThreads();
-      }
-    } else {
-      setupDefaultThreads();
-    }
-  }, []);
-
-  const setupDefaultThreads = () => {
-    const defaults: Thread[] = [
-      {
-        id: 't1',
-        category: 'General Staff Room',
-        title: 'Staff Week packing reminders',
-        author: '@marylou_director',
-        content: 'Hey everyone! Do not forget to bring warm sleeping gear. Temperatures drop down to 45°F at night on the mountain!',
-        createdAt: 'June 1, 2026',
-        replies: [
-          { author: '@jim_scoutcraft', content: 'Yes, heavy blankets are a lifesaver!', createdAt: 'June 1, 2026' }
-        ]
-      },
-      {
-        id: 't2',
-        category: 'Leadership Chamber',
-        title: '2026 Budget and Accreditation schedule',
-        author: '@marylou_director',
-        content: 'This thread contains planning for the National Camp Accreditation Program (NCAP) inspection schedules.',
-        createdAt: 'May 28, 2026',
-        replies: []
-      }
-    ];
-    setThreads(defaults);
-    localStorage.setItem('camp_lawton_forum_threads', JSON.stringify(defaults));
-  };
 
   const isCategoryRestricted = (cat: string) => {
     if (cat === 'Leadership Chamber' && role !== 'Admin') {

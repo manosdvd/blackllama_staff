@@ -1,35 +1,55 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useOffline } from '@/hooks/useOffline';
 import { Save, ShieldAlert, CheckCircle, Smartphone } from 'lucide-react';
+
+type FormValue = string | boolean;
+type FormData = Record<string, FormValue>;
+
+interface ApplicationPayload {
+  id: string;
+  username: string;
+  submittedAt: string;
+  status: 'Pending';
+  formData: FormData;
+}
+
+const readDraft = () => {
+  if (typeof window === 'undefined') return {};
+  const draft = localStorage.getItem('camp_lawton_app_draft');
+  if (!draft) return {};
+  try {
+    return JSON.parse(draft) as FormData;
+  } catch {
+    return {};
+  }
+};
+
+const readPayloadList = (key: string) => {
+  const saved = localStorage.getItem(key);
+  if (!saved) return [];
+  try {
+    return JSON.parse(saved) as ApplicationPayload[];
+  } catch {
+    return [];
+  }
+};
 
 export default function OnboardingPage() {
   const isOffline = useOffline();
   const [currentStep, setCurrentStep] = useState(0);
-  const [formData, setFormData] = useState<Record<string, any>>({});
+  const [formData, setFormData] = useState<FormData>(readDraft);
   const [errors, setErrors] = useState<string[]>([]);
   const [submitted, setSubmitted] = useState(false);
   const [queuedOffline, setQueuedOffline] = useState(false);
 
-  useEffect(() => {
-    // Load draft
-    const draft = localStorage.getItem('camp_lawton_app_draft');
-    if (draft) {
-      try {
-        setFormData(JSON.parse(draft));
-      } catch {
-        // ignore
-      }
-    }
-  }, []);
-
-  const saveDraft = (data: Record<string, any>) => {
+  const saveDraft = (data: FormData) => {
     setFormData(data);
     localStorage.setItem('camp_lawton_app_draft', JSON.stringify(data));
   };
 
-  const handleInput = (id: string, value: any) => {
+  const handleInput = (id: string, value: FormValue) => {
     const updated = { ...formData, [id]: value };
     saveDraft(updated);
   };
@@ -123,7 +143,7 @@ export default function OnboardingPage() {
     };
 
     if (isOffline) {
-      const pending = JSON.parse(localStorage.getItem('camp_lawton_pending_submissions') || '[]');
+      const pending = readPayloadList('camp_lawton_pending_submissions');
       pending.push(appPayload);
       localStorage.setItem('camp_lawton_pending_submissions', JSON.stringify(pending));
 
@@ -131,7 +151,7 @@ export default function OnboardingPage() {
       setFormData({});
       setQueuedOffline(true);
     } else {
-      const apps = JSON.parse(localStorage.getItem('camp_lawton_applications') || '[]');
+      const apps = readPayloadList('camp_lawton_applications');
       apps.push(appPayload);
       localStorage.setItem('camp_lawton_applications', JSON.stringify(apps));
 

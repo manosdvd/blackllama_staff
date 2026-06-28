@@ -24,8 +24,33 @@ interface Revision {
   revision_no: number;
 }
 
+const readStoredArticles = () => {
+  if (typeof window === 'undefined') return seededArticles as Article[];
+  const local = localStorage.getItem('camp_lawton_wiki_articles');
+  if (!local) {
+    localStorage.setItem('camp_lawton_wiki_articles', JSON.stringify(seededArticles));
+    return seededArticles as Article[];
+  }
+  try {
+    return JSON.parse(local) as Article[];
+  } catch {
+    return seededArticles as Article[];
+  }
+};
+
+const readStoredRevisions = () => {
+  if (typeof window === 'undefined') return [];
+  const localRevisions = localStorage.getItem('camp_lawton_wiki_revisions');
+  if (!localRevisions) return [];
+  try {
+    return JSON.parse(localRevisions) as Revision[];
+  } catch {
+    return [];
+  }
+};
+
 export default function WikiPage() {
-  const [articles, setArticles] = useState<Article[]>(seededArticles as Article[]);
+  const [articles, setArticles] = useState<Article[]>(readStoredArticles);
   const [activeSlug, setActiveSlug] = useState('welcome-to-camp-lawton-staff');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -45,35 +70,12 @@ export default function WikiPage() {
   const [newContent, setNewContent] = useState('');
   
   // Revisions history
-  const [revisions, setRevisions] = useState<Revision[]>([]);
+  const [revisions, setRevisions] = useState<Revision[]>(readStoredRevisions);
 
   // Categories list
   const categories = ['All', 'Introduction & Culture', 'Safety & Training', 'Policies & Procedures', 'Campfire & Songbook', 'Onboarding'];
 
   useEffect(() => {
-    // Load articles from local storage or fallback to seededArticles
-    const local = localStorage.getItem('camp_lawton_wiki_articles');
-    if (local) {
-      try {
-        setArticles(JSON.parse(local));
-      } catch {
-        setArticles(seededArticles as Article[]);
-      }
-    } else {
-      setArticles(seededArticles as Article[]);
-      localStorage.setItem('camp_lawton_wiki_articles', JSON.stringify(seededArticles));
-    }
-
-    // Load revisions from local storage
-    const localRevisions = localStorage.getItem('camp_lawton_wiki_revisions');
-    if (localRevisions) {
-      try {
-        setRevisions(JSON.parse(localRevisions));
-      } catch {
-        // ignore
-      }
-    }
-    
     const handleGlobalNav = (e: Event) => {
       const slug = (e as CustomEvent).detail;
       if (slug) {

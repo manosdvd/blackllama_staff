@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { GraduationCap, CheckCircle, ArrowRight, Play, Square, Plus, Trash2, Smartphone, XCircle } from 'lucide-react';
+import { GraduationCap, CheckCircle, ArrowRight, Play, Square, Plus, Trash2, Smartphone } from 'lucide-react';
 
 interface Question {
   q: string;
@@ -98,15 +98,21 @@ export default function TrainingPage() {
       metronomeRef.current = setInterval(() => {
         setMetronomeTick(prev => !prev);
       }, intervalMs);
-    } else {
-      if (metronomeRef.current) clearInterval(metronomeRef.current);
-      setMetronomeTick(false);
     }
 
     return () => {
       if (metronomeRef.current) clearInterval(metronomeRef.current);
     };
   }, [isPlaying, bpm]);
+
+  const handleToggleMetronome = () => {
+    setIsPlaying((current) => {
+      if (current) {
+        setMetronomeTick(false);
+      }
+      return !current;
+    });
+  };
 
   const handleStartQuiz = () => {
     setActiveQuiz(true);
@@ -316,7 +322,7 @@ export default function TrainingPage() {
                 }`} />
                 <span className="text-[10px] text-neutral-400 font-bold">{bpm} BPM</span>
                 <button
-                  onClick={() => setIsPlaying(!isPlaying)}
+                  onClick={handleToggleMetronome}
                   className={`p-2 rounded-lg transition-colors ${
                     isPlaying ? 'bg-red-800 text-white' : 'bg-emerald-800 text-white'
                   }`}

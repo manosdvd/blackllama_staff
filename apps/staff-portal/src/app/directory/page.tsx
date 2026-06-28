@@ -99,7 +99,7 @@ export default function DirectoryPage() {
                   <div className="flex flex-col gap-2 text-xs leading-relaxed text-neutral-600 dark:text-neutral-350">
                     <div><strong>Hometown:</strong> {staff.hometown}</div>
                     <div><strong>Favorite Song:</strong> {staff.favSong}</div>
-                    <p className="italic text-neutral-500 mt-1">"{staff.bio}"</p>
+                    <p className="italic text-neutral-500 mt-1">&quot;{staff.bio}&quot;</p>
                   </div>
                 )}
               </div>

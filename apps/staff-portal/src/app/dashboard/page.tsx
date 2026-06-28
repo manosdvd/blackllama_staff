@@ -11,48 +11,55 @@ interface ChecklistItem {
   completed: boolean;
 }
 
+const defaultChecklist: ChecklistItem[] = [
+  { id: 'item1', text: 'Read the Code of Conduct in Policies', completed: false },
+  { id: 'item2', text: 'Complete the Child Safeguarding (YPT) Training', completed: false },
+  { id: 'item3', text: 'Complete and sign the 19-Section Application Form', completed: false },
+  { id: 'item4', text: 'Review the camp packing list', completed: false },
+  { id: 'item5', text: 'Pass the Safety Certification Quiz', completed: false }
+];
+
+const readChecklist = () => {
+  if (typeof window === 'undefined') return defaultChecklist;
+  const saved = localStorage.getItem('camp_lawton_dashboard_checklist');
+  if (!saved) return defaultChecklist;
+  try {
+    return JSON.parse(saved) as ChecklistItem[];
+  } catch {
+    return defaultChecklist;
+  }
+};
+
+const readParentCoSigned = () => {
+  if (typeof window === 'undefined') return false;
+  return localStorage.getItem('camp_lawton_parent_cosigned') === 'true';
+};
+
+const readActiveRole = () => {
+  if (typeof window === 'undefined') return 'Staff';
+  const activeUser = localStorage.getItem('camp_lawton_active_user');
+  if (!activeUser) return 'Staff';
+  try {
+    return JSON.parse(activeUser).role || 'Staff';
+  } catch {
+    return 'Staff';
+  }
+};
+
 export default function DashboardPage() {
-  const [role, setRole] = useState('Staff');
-  const [parentCoSigned, setParentCoSigned] = useState(false);
+  const [role, setRole] = useState(readActiveRole);
+  const [parentCoSigned, setParentCoSigned] = useState(readParentCoSigned);
   const [parentSignatureName, setParentSignatureName] = useState('');
   
-  const [checklist, setChecklist] = useState<ChecklistItem[]>([
-    { id: 'item1', text: 'Read the Code of Conduct in Policies', completed: false },
-    { id: 'item2', text: 'Complete the Child Safeguarding (YPT) Training', completed: false },
-    { id: 'item3', text: 'Complete and sign the 19-Section Application Form', completed: false },
-    { id: 'item4', text: 'Review the camp packing list', completed: false },
-    { id: 'item5', text: 'Pass the Safety Certification Quiz', completed: false }
-  ]);
+  const [checklist, setChecklist] = useState<ChecklistItem[]>(readChecklist);
 
   useEffect(() => {
-    // Read simulated user role
     const getRole = () => {
-      const activeUser = localStorage.getItem('camp_lawton_active_user');
-      if (activeUser) {
-        try {
-          setRole(JSON.parse(activeUser).role);
-        } catch {
-          setRole('Staff');
-        }
-      }
+      setRole(readActiveRole());
     };
-    getRole();
 
     // Listen for custom role-change event from AppShell dropdown
     window.addEventListener('role-change', getRole);
-
-    // Sync checklist state from localStorage
-    const saved = localStorage.getItem('camp_lawton_dashboard_checklist');
-    if (saved) {
-      try {
-        setChecklist(JSON.parse(saved));
-      } catch {
-        // ignore
-      }
-    }
-
-    const cosigned = localStorage.getItem('camp_lawton_parent_cosigned') === 'true';
-    setParentCoSigned(cosigned);
 
     return () => {
       window.removeEventListener('role-change', getRole);

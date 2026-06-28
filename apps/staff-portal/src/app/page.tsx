@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { ArrowRight, User, Lock } from 'lucide-react';
 
@@ -49,10 +50,13 @@ export default function LoginPage() {
 
       <div className="max-w-md w-full glass-panel bg-white/70 dark:bg-neutral-900/60 p-8 shadow-2xl relative z-10 flex flex-col gap-6 text-neutral-850 dark:text-neutral-200">
         <header className="text-center flex flex-col items-center gap-2">
-          <img
+          <Image
             src="/camp-logo.png"
             alt="Camp Lawton"
+            width={64}
+            height={64}
             className="w-16 h-16 object-contain filter drop-shadow-md"
+            priority
           />
           <h1 className="text-3xl font-black tracking-wide text-emerald-800 dark:text-emerald-500 font-heading mt-2">
             CAMP LAWTON

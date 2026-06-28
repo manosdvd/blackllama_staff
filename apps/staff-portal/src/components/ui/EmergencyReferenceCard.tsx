@@ -82,8 +82,8 @@ export function EmergencyReferenceCard() {
             <ol className="list-decimal list-inside text-sm text-neutral-300 space-y-3 leading-relaxed">
               <li><strong>Verify Absence:</strong> Double check latrines, trading post, campsite tents, and program areas.</li>
               <li><strong>Notify HQ:</strong> Call Program Director or Camp Commissioner on Radio Channel 1. Lock down camp exits.</li>
-              <li><strong>Mobilize Search:</strong> Form a staff search sweep starting at the camper's last known location.</li>
-              <li><strong>External Alert:</strong> The Camp Director will notify the Pima County Sheriff's Search and Rescue if the youth is not located within 30 minutes.</li>
+              <li><strong>Mobilize Search:</strong> Form a staff search sweep starting at the camper&apos;s last known location.</li>
+              <li><strong>External Alert:</strong> The Camp Director will notify the Pima County Sheriff&apos;s Search and Rescue if the youth is not located within 30 minutes.</li>
             </ol>
           </div>
         )}

@@ -4,12 +4,12 @@ import { useState, useEffect } from 'react';
  * React hook to listen to browser online/offline status in real time.
  */
 export function useOffline() {
-  const [isOffline, setIsOffline] = useState(false);
+  const [isOffline, setIsOffline] = useState(() => {
+    if (typeof navigator === 'undefined') return false;
+    return !navigator.onLine;
+  });
 
   useEffect(() => {
-    // Check initial state
-    setIsOffline(!navigator.onLine);
-
     const handleOnline = () => setIsOffline(false);
     const handleOffline = () => setIsOffline(true);
 
