@@ -19,8 +19,10 @@ import {
   LogOut,
   Search,
   Lock,
-  AlertTriangle
+  AlertTriangle,
+  Command as CommandIcon
 } from 'lucide-react';
+import { Command } from 'cmdk';
 import { OfflineStatusBanner } from '../offline/OfflineStatusBanner';
 import { EmergencyQuickAction } from '../ui/EmergencyQuickAction';
 import { MobileBottomNav } from './MobileBottomNav';
@@ -65,28 +67,54 @@ export function AppShell({ children }: AppShellProps) {
   const [isCalm, setIsCalm] = useState(readCalmMode);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [user, setUser] = useState<{ username: string; role: string } | null>(null);
+  
+  // CMDK Command Palette state
+  const [isCmdkOpen, setIsCmdkOpen] = useState(false);
   const [searchVal, setSearchVal] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  
   const [emergencyAlert, setEmergencyAlert] = useState<{ title: string; snippet: string } | null>(null);
 
   // Ref for click-outside detection on user dropdown
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const handleSearchChange = (val: string) => {
-    setSearchVal(val);
-    if (val.trim().length > 0) {
-      setSearchResults(performWeightedSearch(val));
-    } else {
+  // CMDK Keyboard shortcut Cmd+K
+  useEffect(() => {
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      const isModifierPressed = e.metaKey || e.ctrlKey;
+      if (isModifierPressed && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setIsCmdkOpen((prev) => !prev);
+      }
+    };
+    document.addEventListener('keydown', handleGlobalKeyDown);
+    return () => document.removeEventListener('keydown', handleGlobalKeyDown);
+  }, []);
+
+  // Debounced search logic for CMDK
+  useEffect(() => {
+    if (!searchVal) {
       setSearchResults([]);
+      return;
     }
-  };
+    setIsSearching(true);
+    const delayTimer = setTimeout(() => {
+      try {
+        setSearchResults(performWeightedSearch(searchVal));
+      } finally {
+        setIsSearching(false);
+      }
+    }, 300);
+    return () => clearTimeout(delayTimer);
+  }, [searchVal]);
 
   const handleSearchResultClick = (res: SearchResult) => {
+    setIsCmdkOpen(false);
     setSearchVal('');
     setSearchResults([]);
 
     if (res.type === 'emergency') {
-      // Show inline emergency modal instead of blocking browser alert()
       setEmergencyAlert({ title: res.title, snippet: res.snippet });
     } else {
       router.push(`/wiki?slug=${res.slug}`);
@@ -103,7 +131,7 @@ export function AppShell({ children }: AppShellProps) {
         document.documentElement.classList.remove('reduced-stimulation');
       }
     } catch {
-      // localStorage unavailable (sandboxed iframe, etc.)
+      // localStorage unavailable
     }
   }, [isCalm, theme]);
 
@@ -112,7 +140,6 @@ export function AppShell({ children }: AppShellProps) {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         setUser(null);
-        setAuthLoading(false);
         router.push('/');
         return;
       }
@@ -128,7 +155,6 @@ export function AppShell({ children }: AppShellProps) {
       } else {
         setUser({ username: session.user.email?.split('@')[0] || 'Unknown', role: 'Candidate' });
       }
-      setAuthLoading(false);
     };
     
     fetchUser();
@@ -163,8 +189,6 @@ export function AppShell({ children }: AppShellProps) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        setSearchResults([]);
-        setSearchVal('');
         setEmergencyAlert(null);
         setUserDropdownOpen(false);
       }
@@ -221,7 +245,6 @@ export function AppShell({ children }: AppShellProps) {
       : []),
   ];
 
-  // Derive current section from first path segment for mobile nav active state
   const activeView = pathname.split('/')[1] || '';
 
   const getHeading = () => {
@@ -254,7 +277,6 @@ export function AppShell({ children }: AppShellProps) {
       <OfflineStatusBanner />
 
       <div className="flex-1 flex flex-col md:flex-row relative">
-        {/* Desktop Sidebar */}
         <aside className="hidden md:flex w-[280px] bg-white dark:bg-neutral-900 border-r border-neutral-200 dark:border-neutral-800 flex-col p-6 sticky top-0 h-screen select-none z-30">
           <div className="flex items-center gap-3 mb-8">
             <Image
@@ -296,7 +318,6 @@ export function AppShell({ children }: AppShellProps) {
             })}
           </nav>
 
-          {/* Sidebar Footer Controls */}
           <div className="border-t border-neutral-200 dark:border-neutral-800 pt-4 mt-4 flex items-center justify-between">
             <button
               onClick={toggleTheme}
@@ -321,7 +342,6 @@ export function AppShell({ children }: AppShellProps) {
           </div>
         </aside>
 
-        {/* Main Content Pane */}
         <main className="flex-1 flex flex-col min-w-0 pb-[80px] md:pb-6">
           <header className="px-6 md:px-8 py-5 border-b border-neutral-200 dark:border-neutral-800/40 flex items-center justify-between gap-4 bg-white/40 dark:bg-neutral-950/20 backdrop-blur-md sticky top-0 z-20">
             <div>
@@ -333,52 +353,20 @@ export function AppShell({ children }: AppShellProps) {
               </p>
             </div>
 
-            {/* Global Weighted Search Bar */}
+            {/* CMDK Trigger Button */}
             <div className="relative max-w-[260px] w-full hidden md:block">
-              <div className="flex items-center gap-2 px-3 py-2 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-full text-xs">
-                <Search size={14} className="text-neutral-400" aria-hidden="true" />
-                <input
-                  type="search"
-                  aria-label="Search handbook and emergency protocols"
-                  placeholder="Search handbook & emergency..."
-                  value={searchVal}
-                  onChange={(e) => handleSearchChange(e.target.value)}
-                  className="bg-transparent border-none outline-none w-full text-neutral-800 dark:text-neutral-200 placeholder-neutral-400 text-xs"
-                />
-              </div>
-
-              {/* Search dropdown results */}
-              {searchResults.length > 0 && (
-                <div
-                  role="listbox"
-                  aria-label="Search results"
-                  className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xl z-50 overflow-hidden max-h-[300px] overflow-y-auto py-1"
-                >
-                  {searchResults.map((res) => (
-                    <button
-                      key={`${res.type}-${res.slug}`}
-                      role="option"
-                      aria-selected="false"
-                      onClick={() => handleSearchResultClick(res)}
-                      className="w-full text-left px-4 py-3 hover:bg-neutral-100 dark:hover:bg-neutral-800 border-b border-neutral-100 dark:border-neutral-800/40 last:border-b-0 flex flex-col gap-1 transition-colors"
-                    >
-                      <div className="flex justify-between items-center">
-                        <span className="font-extrabold text-[11px] text-neutral-800 dark:text-neutral-200 truncate pr-2">{res.title}</span>
-                        <span className={`text-[8px] font-black uppercase py-0.5 px-2 rounded-full flex-shrink-0 ${
-                          res.type === 'emergency'
-                            ? 'bg-red-500/15 text-red-500'
-                            : res.type === 'safeguarding'
-                            ? 'bg-amber-500/15 text-amber-500'
-                            : 'bg-emerald-500/15 text-emerald-500'
-                        }`}>
-                          {res.type}
-                        </span>
-                      </div>
-                      <p className="text-[10px] text-neutral-400 line-clamp-1">{res.snippet}</p>
-                    </button>
-                  ))}
+              <button
+                onClick={() => setIsCmdkOpen(true)}
+                className="w-full flex items-center justify-between px-3 py-2 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 hover:border-emerald-500/40 transition-colors rounded-full text-xs text-neutral-500 dark:text-neutral-400"
+              >
+                <div className="flex items-center gap-2">
+                  <Search size={14} />
+                  <span>Search handbook...</span>
                 </div>
-              )}
+                <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-mono bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded shadow-sm text-neutral-500 dark:text-neutral-300">
+                  ⌘K
+                </kbd>
+              </button>
             </div>
 
             {/* Profile widget */}
@@ -457,6 +445,73 @@ export function AppShell({ children }: AppShellProps) {
             >
               Acknowledged — Close
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* CMDK Command Palette Modal */}
+      {isCmdkOpen && (
+        <div className="fixed inset-0 z-[150] flex items-start justify-center pt-[15vh] bg-gray-950/40 backdrop-blur-sm p-4">
+          <div className="w-full max-w-xl overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-2xl transition-all">
+            <Command label="Global Command Palette" className="w-full" shouldFilter={false}>
+              <div className="flex items-center border-b border-neutral-200 dark:border-neutral-800 px-4 py-3 gap-2">
+                <Search size={16} className="text-neutral-400" />
+                <Command.Input
+                  autoFocus
+                  value={searchVal}
+                  onValueChange={setSearchVal}
+                  className="w-full bg-transparent text-sm outline-none text-neutral-800 dark:text-neutral-100 placeholder-neutral-400"
+                  placeholder="Search wiki, forums, or emergency procedures..."
+                />
+                <button
+                  onClick={() => setIsCmdkOpen(false)}
+                  className="text-xs font-mono text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200"
+                >
+                  ESC
+                </button>
+              </div>
+
+              <Command.List className="max-h-[350px] overflow-y-auto p-2 scrollbar-thin">
+                {isSearching && <div className="p-4 text-xs text-center text-neutral-400">Searching index...</div>}
+                {!isSearching && searchResults.length === 0 && searchVal && (
+                  <div className="p-4 text-xs text-center text-neutral-400">No matching documents found.</div>
+                )}
+                {!isSearching && !searchVal && (
+                  <div className="p-4 text-xs text-center text-neutral-400 flex flex-col gap-1 items-center">
+                    <span>Start typing to search the handbook...</span>
+                    <span className="bg-neutral-100 dark:bg-neutral-800 px-2 py-1 rounded text-[10px] mt-2">
+                      Try searching &quot;bear&quot; or &quot;fire&quot;
+                    </span>
+                  </div>
+                )}
+
+                {searchResults.length > 0 && (
+                  <Command.Group heading="Search Results" className="text-[10px] text-neutral-400 px-2 py-2 font-bold uppercase tracking-wider">
+                    {searchResults.map((res) => (
+                      <Command.Item
+                        key={`${res.type}-${res.slug}`}
+                        onSelect={() => handleSearchResultClick(res)}
+                        className="flex flex-col gap-1 px-3 py-2.5 text-sm rounded-lg cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 aria-selected:bg-neutral-100 dark:aria-selected:bg-neutral-800 text-neutral-700 dark:text-neutral-200 select-none transition-colors mt-1"
+                      >
+                        <div className="flex justify-between items-center w-full">
+                          <span className="font-bold text-[13px] text-neutral-800 dark:text-neutral-200 truncate pr-2">{res.title}</span>
+                          <span className={`text-[8px] font-black uppercase py-0.5 px-2 rounded-full flex-shrink-0 ${
+                            res.type === 'emergency'
+                              ? 'bg-red-500/15 text-red-500'
+                              : res.type === 'safeguarding'
+                              ? 'bg-amber-500/15 text-amber-500'
+                              : 'bg-emerald-500/15 text-emerald-500'
+                          }`}>
+                            {res.type}
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-neutral-500 line-clamp-1">{res.snippet}</p>
+                      </Command.Item>
+                    ))}
+                  </Command.Group>
+                )}
+              </Command.List>
+            </Command>
           </div>
         </div>
       )}

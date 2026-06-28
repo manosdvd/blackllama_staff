@@ -5,6 +5,7 @@ import { Search, Plus, Map, Edit3, RotateCcw } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeSlug from 'rehype-slug';
+import rehypeSanitize from 'rehype-sanitize';
 import { WikiGraph } from '@/components/ui/WikiGraph';
 import { createClient } from '@/utils/supabase/client';
 
@@ -312,6 +313,40 @@ export default function WikiPage() {
       });
   };
 
+  const outlineHeadings = getOutlineHeadings();
+  const headingIdsJoined = outlineHeadings.map(h => h.id).join(',');
+
+  const [activeHeadingId, setActiveHeadingId] = useState<string>('');
+
+  useEffect(() => {
+    if (!headingIdsJoined) {
+      setActiveHeadingId('');
+      return;
+    }
+    
+    const timeout = setTimeout(() => {
+      const ids = headingIdsJoined.split(',');
+      const elements = ids.map(id => document.getElementById(id)).filter(Boolean) as HTMLElement[];
+      if (elements.length === 0) return;
+
+      const observer = new IntersectionObserver((entries) => {
+        const intersecting = entries.filter(entry => entry.isIntersecting);
+        if (intersecting.length > 0) {
+          intersecting.sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+          setActiveHeadingId(intersecting[0].target.id);
+        }
+      }, {
+        rootMargin: '-80px 0px -80% 0px'
+      });
+
+      elements.forEach(el => observer.observe(el));
+
+      return () => observer.disconnect();
+    }, 100);
+
+    return () => clearTimeout(timeout);
+  }, [headingIdsJoined, activeArticle?.slug]);
+
   return (
     <div className="flex flex-col lg:flex-row gap-6 relative">
       {/* Sidebar navigation list */}
@@ -587,7 +622,7 @@ export default function WikiPage() {
               <div className="text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed [&>h1]:text-2xl [&>h1]:font-bold [&>h1]:mt-6 [&>h1]:mb-4 [&>h2]:text-xl [&>h2]:font-bold [&>h2]:mt-6 [&>h2]:mb-3 [&>h3]:text-lg [&>h3]:font-bold [&>h3]:mt-5 [&>h3]:mb-2 [&>h4]:text-base [&>h4]:font-bold [&>h4]:mt-4 [&>h4]:mb-2 [&>p]:mb-4 [&>ul]:list-disc [&>ul]:pl-5 [&>ul]:mb-4 [&>ol]:list-decimal [&>ol]:pl-5 [&>ol]:mb-4 [&>li]:mb-1 [&>blockquote]:border-l-4 [&>blockquote]:border-neutral-300 [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:mb-4">
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
-                  rehypePlugins={[rehypeSlug]}
+                  rehypePlugins={[rehypeSlug, rehypeSanitize]}
                   components={{
                     a: ({ ...props }: Record<string, unknown>) => {
                       const isInternal = (props.href as string)?.startsWith('wiki:');
@@ -653,15 +688,22 @@ export default function WikiPage() {
         <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider px-2">
           Article Outline
         </span>
-        {getOutlineHeadings().length > 0 ? (
-          <nav className="flex flex-col gap-2 border-l border-neutral-200 dark:border-neutral-850 pl-3 py-1">
-            {getOutlineHeadings().map((h, idx) => (
+        {outlineHeadings.length > 0 ? (
+          <nav className="flex flex-col gap-2 border-l border-neutral-200 dark:border-neutral-850 pl-3 py-1 relative">
+            {outlineHeadings.map((h, idx) => (
               <a
                 key={idx}
                 href={`#${h.id}`}
-                className="text-xs text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 transition-colors leading-normal"
+                className={`text-xs transition-colors leading-normal relative ${
+                  activeHeadingId === h.id
+                    ? 'text-emerald-600 dark:text-emerald-400 font-bold'
+                    : 'text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200'
+                }`}
                 title={`Jump to ${h.label}`}
               >
+                {activeHeadingId === h.id && (
+                  <span className="absolute -left-[13px] top-1/2 -translate-y-1/2 w-0.5 h-4 bg-emerald-600 dark:bg-emerald-500 rounded-full" />
+                )}
                 {h.label}
               </a>
             ))}
