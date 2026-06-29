@@ -78,6 +78,35 @@ export function GlobalHUD() {
   // Combined Ops & CampLife fetch
   useEffect(() => {
     let mounted = true;
+    
+    // SWR: Instantly load from cache to paint immediately
+    if (!opsData) {
+      const cached = localStorage.getItem('ops_hud_cache');
+      if (cached) {
+        try {
+          const { data } = JSON.parse(cached);
+          setOpsData(data);
+          if ((data as any).weather) setWeather((data as any).weather);
+        } catch {}
+      }
+    }
+    
+    if (campLifeItems.length === 0) {
+      const cached = localStorage.getItem('camp_life_ticker_cache');
+      if (cached) {
+        try {
+          const { items } = JSON.parse(cached);
+          if (Array.isArray(items) && items.length > 0) {
+            setCampLifeItems(items);
+          } else {
+            setCampLifeItems(CAMP_LIFE_LOCAL_ITEMS);
+          }
+        } catch {}
+      } else {
+        setCampLifeItems(CAMP_LIFE_LOCAL_ITEMS);
+      }
+    }
+
     const fetchHUDData = async () => {
       if (isOffline) return;
 
@@ -178,6 +207,9 @@ export function GlobalHUD() {
 
   const nextTicker = () => setTickerIndex(i => (i + 1) % tickerItems.length);
   const prevTicker = () => setTickerIndex(i => (i - 1 + tickerItems.length) % tickerItems.length);
+
+  const nextCampLife = () => setCampLifeIndex(i => (i + 1) % (campLifeItems.length || 1));
+  const prevCampLife = () => setCampLifeIndex(i => (i - 1 + campLifeItems.length) % (campLifeItems.length || 1));
 
   return (
     <div className={`w-full flex flex-col md:flex-row items-stretch border-b z-50 relative shadow-md transition-colors ${
@@ -289,22 +321,32 @@ export function GlobalHUD() {
         )}
 
         {activeCampLifeItem && (
-          <a
-            href={activeCampLifeItem.sourceUrl || '#'}
-            target={activeCampLifeItem.sourceUrl ? '_blank' : undefined}
-            rel={activeCampLifeItem.sourceUrl ? 'noopener noreferrer' : undefined}
-            className="flex-1 flex items-center gap-2 px-4 py-2 min-w-0 border-t border-neutral-800 bg-black/20 hover:bg-white/5 transition-colors group"
-          >
-            <span className="text-[9px] font-black uppercase tracking-widest text-emerald-400 flex-shrink-0">
-              {activeCampLifeItem.label}
-            </span>
-            <span className="text-xs font-semibold text-neutral-300 group-hover:text-white truncate transition-colors block flex-1">
-              {activeCampLifeItem.text}
-            </span>
-            <span className="text-[10px] text-neutral-500 flex-shrink-0 hidden sm:inline group-hover:text-neutral-400 transition-colors">
-              · {activeCampLifeItem.sourceName}
-            </span>
-          </a>
+          <div className="flex-1 flex items-center justify-between px-4 py-2 min-w-0 border-t border-neutral-800 bg-black/20 group">
+            <a
+              href={activeCampLifeItem.sourceUrl || '#'}
+              target={activeCampLifeItem.sourceUrl ? '_blank' : undefined}
+              rel={activeCampLifeItem.sourceUrl ? 'noopener noreferrer' : undefined}
+              className="flex-1 flex items-center gap-2 min-w-0 hover:bg-white/5 transition-colors rounded-sm pr-2"
+            >
+              <span className="text-[9px] font-black uppercase tracking-widest text-emerald-400 flex-shrink-0">
+                {activeCampLifeItem.label}
+              </span>
+              <span className="text-xs font-semibold text-neutral-300 group-hover:text-white truncate transition-colors block flex-1">
+                {activeCampLifeItem.text}
+              </span>
+              <span className="text-[10px] text-neutral-500 flex-shrink-0 hidden sm:inline group-hover:text-neutral-400 transition-colors">
+                · {activeCampLifeItem.sourceName}
+              </span>
+            </a>
+            
+            {campLifeItems.length > 1 && (
+              <div className="flex items-center gap-1 text-neutral-400 flex-shrink-0 ml-2">
+                <button onClick={prevCampLife} className="p-0.5 hover:bg-neutral-700 hover:text-white rounded transition-colors"><ChevronLeft size={12} /></button>
+                <span className="text-[9px] opacity-60 font-mono hidden sm:inline">{campLifeIndex + 1}/{campLifeItems.length}</span>
+                <button onClick={nextCampLife} className="p-0.5 hover:bg-neutral-700 hover:text-white rounded transition-colors"><ChevronRight size={12} /></button>
+              </div>
+            )}
+          </div>
         )}
       </div>
 

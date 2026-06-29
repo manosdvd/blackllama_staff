@@ -2,10 +2,20 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { Search, Plus, Map, Edit3, RotateCcw, Menu, WifiOff, AlertTriangle } from 'lucide-react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import rehypeSlug from 'rehype-slug';
-import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
+import dynamic from 'next/dynamic';
+
+const MarkdownViewer = dynamic(() => import('./MarkdownViewer'), { 
+  ssr: false, 
+  loading: () => (
+    <div className="animate-pulse space-y-4 py-4 opacity-50">
+      <div className="h-6 bg-neutral-800 rounded w-1/3"></div>
+      <div className="h-4 bg-neutral-800 rounded w-full"></div>
+      <div className="h-4 bg-neutral-800 rounded w-5/6"></div>
+      <div className="h-4 bg-neutral-800 rounded w-4/6"></div>
+    </div>
+  )
+});
+
 import { WikiGraph } from '@/components/ui/WikiGraph';
 import { createClient } from '@/utils/supabase/client';
 import { Article, saveArticlesToIDB, loadArticlesFromIDB } from '@/lib/wiki/idb';
@@ -36,13 +46,7 @@ const categories = [
   'Onboarding',
 ];
 
-const sanitizeSchema = {
-  ...defaultSchema,
-  protocols: {
-    ...defaultSchema.protocols,
-    href: [...(defaultSchema.protocols?.href || []), 'wiki'],
-  },
-};
+
 
 const slugify = (value: string) =>
   value
@@ -599,26 +603,26 @@ export function WikiClient({ initialArticles }: WikiClientProps) {
                 [&>table>thead>tr>th]:border [&>table>thead>tr>th]:border-neutral-300 dark:[&>table>thead>tr>th]:border-neutral-700 [&>table>thead>tr>th]:p-2 [&>table>thead>tr>th]:bg-neutral-100 dark:[&>table>thead>tr>th]:bg-neutral-800
                 [&>table>tbody>tr>td]:border [&>table>tbody>tr>td]:border-neutral-300 dark:[&>table>tbody>tr>td]:border-neutral-700 [&>table>tbody>tr>td]:p-2
                 w-full break-words max-w-full">
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}
-                  rehypePlugins={[rehypeSlug, [rehypeSanitize, sanitizeSchema]]}
-                  components={{
-                    a: ({ href, children, ...props }) => {
-                      const safeHref = typeof href === 'string' ? href : '';
-                      if (safeHref.startsWith('wiki:')) {
-                        const targetName = decodeURIComponent(safeHref.replace('wiki:', ''));
-                        const targetSlug = slugify(targetName);
-                        if (articles.some((a) => a.slug === targetSlug)) {
-                          return <button onClick={() => handleSelectArticle(targetSlug)} className="text-emerald-700 dark:text-emerald-400 hover:underline font-bold inline">{children}</button>;
-                        }
-                        return <button onClick={() => handleTriggerCreateUnresolved(targetName)} className="text-red-500 hover:text-red-600 font-bold border-b-2 border-dashed border-red-500 cursor-pointer inline" title="Click to create">{children} ❓</button>;
-                      }
-                      return <a {...props} href={href} className="text-emerald-600 hover:underline" target="_blank" rel="noopener noreferrer">{children}</a>;
-                    },
-                  }}
-                >
-                  {preprocessMarkdown(activeArticle.content)}
-                </ReactMarkdown>
+              <div className="prose prose-invert max-w-none 
+                  prose-headings:text-neutral-200 prose-headings:font-bebas prose-headings:tracking-wide
+                  prose-h1:text-4xl prose-h2:text-3xl prose-h3:text-2xl
+                  prose-a:text-emerald-400 hover:prose-a:text-emerald-300
+                  prose-strong:text-neutral-200
+                  prose-code:text-amber-300 prose-code:bg-black/50 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded
+                  prose-pre:bg-neutral-900/50 prose-pre:border prose-pre:border-neutral-800
+                  prose-blockquote:border-l-emerald-500 prose-blockquote:bg-emerald-950/20 prose-blockquote:py-1 prose-blockquote:px-4 prose-blockquote:rounded-r
+                  prose-hr:border-neutral-800
+                  prose-img:rounded-lg prose-img:border prose-img:border-neutral-800
+                  prose-th:text-neutral-300 prose-th:border-neutral-800 prose-td:border-neutral-800"
+                  style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 800px' }}
+              >
+                <MarkdownViewer 
+                  content={preprocessMarkdown(activeArticle.content)}
+                  articles={articles}
+                  handleSelectArticle={handleSelectArticle}
+                  handleTriggerCreateUnresolved={handleTriggerCreateUnresolved}
+                  slugify={slugify}
+                />
               </div>
             </div>
 

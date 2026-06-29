@@ -307,6 +307,36 @@ function dedupeItems(items: any[]) {
   return result;
 }
 
+function interleaveItems(items: any[]) {
+  const grouped: Record<string, any[]> = {};
+  for (const item of items) {
+    if (!grouped[item.sourceName]) grouped[item.sourceName] = [];
+    grouped[item.sourceName].push(item);
+  }
+  
+  for (const source in grouped) {
+    grouped[source].sort((a, b) => (b.score || 0) - (a.score || 0));
+  }
+  
+  const result = [];
+  const keys = Object.keys(grouped);
+  let hasMore = true;
+  let idx = 0;
+  
+  while (hasMore) {
+    hasMore = false;
+    for (const key of keys) {
+      if (grouped[key].length > idx) {
+        result.push(grouped[key][idx]);
+        hasMore = true;
+      }
+    }
+    idx++;
+  }
+  
+  return result;
+}
+
 export async function GET() {
   try {
     const settled = await Promise.allSettled([
@@ -322,7 +352,8 @@ export async function GET() {
       .slice(0, 18);
 
     const localItems = normalizeLocalItems();
-    const items = dedupeItems([...liveItems, ...localItems]).slice(0, 24);
+    let items = dedupeItems([...liveItems, ...localItems]);
+    items = interleaveItems(items).slice(0, 24);
 
     return NextResponse.json(
       {
