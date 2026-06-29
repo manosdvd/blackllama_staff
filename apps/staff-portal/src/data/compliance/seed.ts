@@ -1,0 +1,75 @@
+import { ComplianceRequirement } from '@/types/compliance';
+
+export const complianceRequirementsSeed: ComplianceRequirement[] = [
+  {
+    id: 'SCOUTING-YPT-001',
+    title: 'Safeguarding Youth / Youth Protection',
+    category: 'youth_protection',
+    authority: ['scouting_america'],
+    officialLinks: [
+      {
+        label: 'Scouting America Youth Protection information',
+        url: 'https://www.scouting.org/training/youth-protection/',
+        purpose: 'official_policy',
+      },
+      {
+        label: 'My.Scouting.org training hub',
+        url: 'https://my.scouting.org/',
+        purpose: 'official_training',
+      },
+    ],
+    appCanCertify: false,
+    appCanTeachSupplemental: true,
+    appliesTo: ['all camp staff where required', 'all registered adult leaders'],
+    requiredEvidence: ['certificate or official completion record', 'completion date', 'expiration date if available'],
+    timing: 'Before registration/service; renew according to current Scouting America policy and certificate expiration.',
+    blockingRule: 'hard_block if missing, unverified, or expired before/during season',
+    expirationRule: 'Use certificate expiration when present; otherwise require annual season review.',
+    seasonalReviewRequired: true,
+    privacyLevel: 'admin_only',
+  },
+  {
+    id: 'NCAP-SQ-402-LONGTERM-001',
+    title: 'Long-term camp staff training hours',
+    category: 'training',
+    authority: ['ncap', 'council'],
+    officialLinks: [
+      {
+        label: '2026 NCAP Standards',
+        url: 'https://www.scouting.org/wp-content/uploads/2025/12/2026-NCAP-Standards-v2.pdf',
+        purpose: 'official_policy',
+      },
+    ],
+    appCanCertify: true,
+    appCanTeachSupplemental: true,
+    appliesTo: ['long-term camp staff'],
+    requiredEvidence: ['training agenda', 'attendance roster', 'hours log', 'NCS-trained supervisor record'],
+    timing: 'Before long-term camp program operation.',
+    blockingRule: 'hard_block if required instructional hours are incomplete',
+    expirationRule: 'Season-specific.',
+    seasonalReviewRequired: true,
+    privacyLevel: 'admin_only',
+  },
+  {
+    id: 'NCAP-HS-503-001',
+    title: 'Annual Health and Medical Record',
+    category: 'health_forms',
+    authority: ['scouting_america', 'ncap', 'council'],
+    officialLinks: [
+      {
+        label: 'Scouting America AHMR',
+        url: 'https://www.scouting.org/health-and-safety/ahmr/',
+        purpose: 'form',
+      },
+    ],
+    appCanCertify: false,
+    appCanTeachSupplemental: false,
+    appliesTo: ['all staff', 'participants', 'adult leaders'],
+    requiredEvidence: ['received status', 'parts present', 'provider signature where Part C is required'],
+    timing: 'Before/on arrival; accessible while person is in attendance.',
+    blockingRule: 'hard_block if missing required AHMR parts',
+    expirationRule: 'Use current AHMR/council rules; Part C generally current within 12 months for long-term use.',
+    seasonalReviewRequired: true,
+    privacyLevel: 'health_confidential',
+  },
+];

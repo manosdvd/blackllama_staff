@@ -48,7 +48,7 @@ async function runSeed() {
     catData?.forEach(c => { catMap[c.name] = c.id; });
 
     for (const article of articlesArray) {
-      const categoryId = catMap[article.category];
+      const categoryId = catMap[article.category as keyof typeof catMap];
       
       const itemPayload = {
         slug: article.slug,

@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Cloud, Wind, Droplets, ExternalLink, RefreshCw, ChevronLeft, ChevronRight, AlertTriangle, Info, BellRing, Flame, ShieldAlert } from 'lucide-react';
+import { Cloud, Wind, Droplets, ExternalLink, RefreshCw, ChevronLeft, ChevronRight, AlertTriangle, AlertCircle, Info, WifiOff, ShieldAlert } from 'lucide-react';
 import { useOffline } from '@/hooks/useOffline';
 import { OpsFeedItem, OpsHudResponse } from '@/lib/ops/build-hud';
+import { CampLifeTickerItem } from '@/data/ticker/campLifeLocal';
 
 function getTickerColor(source?: string) {
   switch (source) {
@@ -25,6 +26,8 @@ export function GlobalHUD() {
   const [opsData, setOpsData] = useState<OpsHudResponse | null>(null);
   
   const [tickerIndex, setTickerIndex] = useState(0);
+  const [campLifeItems, setCampLifeItems] = useState<CampLifeTickerItem[]>([]);
+  const [campLifeIndex, setCampLifeIndex] = useState(0);
 
   // Weather fetch
   useEffect(() => {
@@ -72,11 +75,12 @@ export function GlobalHUD() {
     return () => { mounted = false; clearInterval(interval); };
   }, [isOffline]);
 
-  // Ops API fetch
+  // Combined Ops & CampLife fetch
   useEffect(() => {
     let mounted = true;
-    const fetchOps = async () => {
+    const fetchHUDData = async () => {
       if (isOffline) return;
+
       try {
         const res = await fetch('/api/ops/hud');
         if (res.ok) {
@@ -85,13 +89,74 @@ export function GlobalHUD() {
             setOpsData(data);
             setTickerIndex(0);
           }
+          if ((data as any).weather) {
+            setWeather((data as any).weather);
+          }
+          
+          localStorage.setItem('ops_hud_cache', JSON.stringify({
+            savedAt: new Date().toISOString(),
+            data
+          }));
         }
-      } catch (e) {}
+      } catch (err) {
+        console.error('Failed to fetch operational HUD, falling back to cache');
+        const cached = localStorage.getItem('ops_hud_cache');
+        if (cached) {
+          try {
+            const { data } = JSON.parse(cached);
+            setOpsData(data);
+            if ((data as any).weather) setWeather((data as any).weather);
+          } catch {
+            // ignore
+          }
+        }
+      }
+
+      try {
+        const campLifeRes = await fetch('/api/camp-life');
+        if (campLifeRes.ok) {
+          const campLifeData = await campLifeRes.json();
+          const items = Array.isArray(campLifeData.items) ? campLifeData.items : [];
+          setCampLifeItems(items);
+          localStorage.setItem('camp_life_ticker_cache', JSON.stringify({
+            savedAt: new Date().toISOString(),
+            items,
+          }));
+        }
+      } catch {
+        try {
+          const cached = JSON.parse(localStorage.getItem('camp_life_ticker_cache') || 'null');
+          if (Array.isArray(cached?.items)) {
+            setCampLifeItems(cached.items);
+          }
+        } catch {
+          // ignore cache parse failure
+        }
+      }
     };
-    fetchOps();
-    const interval = setInterval(fetchOps, 60 * 1000); // 1 minute poll for live updates
+
+    fetchHUDData();
+    const interval = setInterval(fetchHUDData, 60 * 1000);
     return () => { mounted = false; clearInterval(interval); };
   }, [isOffline]);
+
+  // Rotations
+  useEffect(() => {
+    const items = opsData?.tickerItems || [];
+    if (items.length <= 1) return;
+    const interval = setInterval(() => {
+      setTickerIndex(prev => (prev + 1) % items.length);
+    }, 8000);
+    return () => clearInterval(interval);
+  }, [opsData?.tickerItems]);
+
+  useEffect(() => {
+    if (campLifeItems.length <= 1) return;
+    const timer = setInterval(() => {
+      setCampLifeIndex((current) => (current + 1) % campLifeItems.length);
+    }, 12000);
+    return () => clearInterval(timer);
+  }, [campLifeItems.length]);
 
   if (isOffline && !opsData) {
     return (
@@ -107,6 +172,7 @@ export function GlobalHUD() {
   const isEmergency = priorityItems.some(i => i.severity === 'critical' || i.severity === 'admin-evacuation-review');
 
   const currentTickerItem = tickerItems[tickerIndex] || null;
+  const activeCampLifeItem = campLifeItems.length ? campLifeItems[campLifeIndex % campLifeItems.length] : null;
 
   const nextTicker = () => setTickerIndex(i => (i + 1) % tickerItems.length);
   const prevTicker = () => setTickerIndex(i => (i - 1 + tickerItems.length) % tickerItems.length);
@@ -187,37 +253,58 @@ export function GlobalHUD() {
         )}
       </div>
 
-      {/* 3. TICKER RAIL */}
-      {tickerItems.length > 0 && (
-        <div className="flex flex-col justify-center px-4 py-3 min-w-[300px] flex-1">
-          <div className="flex items-center justify-between gap-1.5 text-[10px] font-black uppercase tracking-widest text-neutral-400 mb-1">
-            <span>Ticker & Context</span>
-            {tickerItems.length > 1 && (
-              <div className="flex items-center gap-1">
-                <button onClick={prevTicker} className="p-0.5 hover:bg-neutral-800 rounded transition-colors"><ChevronLeft size={12} /></button>
-                <span className="text-[9px] opacity-60 font-mono">{tickerIndex + 1}/{tickerItems.length}</span>
-                <button onClick={nextTicker} className="p-0.5 hover:bg-neutral-800 rounded transition-colors"><ChevronRight size={12} /></button>
-              </div>
-            )}
+      {/* 3. TICKER RAIL & CAMPLIFE */}
+      <div className="flex flex-col md:flex-row flex-1">
+        {tickerItems.length > 0 && (
+          <div className="flex flex-col justify-center px-4 py-3 min-w-[300px] flex-1">
+            <div className="flex items-center justify-between gap-1.5 text-[10px] font-black uppercase tracking-widest text-neutral-400 mb-1">
+              <span>Ticker & Context</span>
+              {tickerItems.length > 1 && (
+                <div className="flex items-center gap-1">
+                  <button onClick={prevTicker} className="p-0.5 hover:bg-neutral-800 rounded transition-colors"><ChevronLeft size={12} /></button>
+                  <span className="text-[9px] opacity-60 font-mono">{tickerIndex + 1}/{tickerItems.length}</span>
+                  <button onClick={nextTicker} className="p-0.5 hover:bg-neutral-800 rounded transition-colors"><ChevronRight size={12} /></button>
+                </div>
+              )}
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider flex-shrink-0 ${getTickerColor(currentTickerItem?.source)}`}>
+                {currentTickerItem?.sourceLabel}
+              </span>
+              <a 
+                href={currentTickerItem?.sourceUrl} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-xs text-neutral-300 hover:text-white truncate transition-colors flex-1 block group flex items-center gap-1.5"
+                title="View source"
+              >
+                {currentTickerItem?.title}
+                <ExternalLink size={10} className="opacity-0 group-hover:opacity-50 transition-opacity flex-shrink-0" />
+              </a>
+            </div>
           </div>
-          
-          <div className="flex items-center gap-2">
-            <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider flex-shrink-0 ${getTickerColor(currentTickerItem?.source)}`}>
-              {currentTickerItem?.sourceLabel}
+        )}
+
+        {activeCampLifeItem && (
+          <a
+            href={activeCampLifeItem.sourceUrl || '#'}
+            target={activeCampLifeItem.sourceUrl ? '_blank' : undefined}
+            rel={activeCampLifeItem.sourceUrl ? 'noopener noreferrer' : undefined}
+            className="flex-1 flex items-center gap-2 px-4 py-2 min-w-0 border-t md:border-t-0 md:border-l border-neutral-800 bg-black/20 hover:bg-white/5 transition-colors group"
+          >
+            <span className="text-[9px] font-black uppercase tracking-widest text-emerald-400 flex-shrink-0">
+              {activeCampLifeItem.label}
             </span>
-            <a 
-              href={currentTickerItem?.sourceUrl} 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="text-xs text-neutral-300 hover:text-white truncate transition-colors flex-1 block group flex items-center gap-1.5"
-              title="View source"
-            >
-              {currentTickerItem?.title}
-              <ExternalLink size={10} className="opacity-0 group-hover:opacity-50 transition-opacity flex-shrink-0" />
-            </a>
-          </div>
-        </div>
-      )}
+            <span className="text-xs font-semibold text-neutral-300 group-hover:text-white truncate transition-colors block flex-1">
+              {activeCampLifeItem.text}
+            </span>
+            <span className="text-[10px] text-neutral-500 flex-shrink-0 hidden sm:inline group-hover:text-neutral-400 transition-colors">
+              · {activeCampLifeItem.sourceName}
+            </span>
+          </a>
+        )}
+      </div>
 
     </div>
   );
