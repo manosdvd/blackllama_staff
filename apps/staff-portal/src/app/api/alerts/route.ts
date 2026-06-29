@@ -29,9 +29,14 @@ export async function GET() {
       if (obsRes.ok) {
         const obsData = await obsRes.json();
         const p = obsData.properties;
-        if (p.temperature?.value !== null) temp = Math.round((p.temperature.value * 9/5) + 32).toString();
-        if (p.windSpeed?.value !== null) wind = Math.round(p.windSpeed.value * 0.621371).toString();
-        if (p.relativeHumidity?.value !== null) humidity = Math.round(p.relativeHumidity.value).toString();
+        if (p.temperature?.value !== null && p.temperature?.value !== undefined) temp = Math.round((p.temperature.value * 9/5) + 32).toString();
+        if (p.windSpeed?.value !== null && p.windSpeed?.value !== undefined) wind = Math.round(p.windSpeed.value * 0.621371).toString();
+        if (p.relativeHumidity?.value !== null && p.relativeHumidity?.value !== undefined) humidity = Math.round(p.relativeHumidity.value).toString();
+        
+        // If NWS returns 200 OK but data is empty, force fallback
+        if (temp === '--') {
+          throw new Error('NWS returned empty data');
+        }
       } else {
         throw new Error('NWS returned non-200');
       }
