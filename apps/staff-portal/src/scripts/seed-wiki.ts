@@ -1,17 +1,25 @@
-import { NextResponse } from 'next/server';
-// Wait, this is an API route, so we should check auth on the server.
 import { createClient } from '@supabase/supabase-js';
 import fs from 'fs';
 import path from 'path';
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
-);
 
-export async function POST() {
+function createSupabaseAdmin() {
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!supabaseUrl) {
+    throw new Error('SUPABASE_URL is required.');
+  }
+
+  if (!serviceRoleKey) {
+    throw new Error('SUPABASE_SERVICE_ROLE_KEY is required.');
+  }
+
+  return createClient(supabaseUrl, serviceRoleKey);
+}
+
+async function runSeed() {
   try {
-    // 1. In a real app we'd verify the user is an Admin here via token.
-    // For this seed script, we will just proceed with the service role client.
+    const supabaseAdmin = createSupabaseAdmin();
     
     let categoriesUpserted = 0;
     let articlesUpserted = 0;
@@ -35,12 +43,10 @@ export async function POST() {
       }
     }
 
-    // Fetch category UUIDs map
     const { data: catData } = await supabaseAdmin.from('content_categories').select('id, name');
     const catMap: Record<string, string> = {};
     catData?.forEach(c => { catMap[c.name] = c.id; });
 
-    // 3. Upsert articles
     for (const article of articlesArray) {
       const categoryId = catMap[article.category];
       
@@ -56,10 +62,6 @@ export async function POST() {
         source_key: article.slug,
       };
 
-      // We use onConflict: 'slug' to update existing seed records
-      // NOTE: In the future, we should avoid overwriting if admin_edited_at is NOT NULL.
-      // For this script, we'll just upsert and overwrite.
-      
       const { data: itemData, error: itemError } = await supabaseAdmin
         .from('content_items')
         .upsert(itemPayload, { onConflict: 'slug', ignoreDuplicates: false })
@@ -73,7 +75,6 @@ export async function POST() {
       
       if (itemData) {
         articlesUpserted++;
-        // 4. Create version record
         await supabaseAdmin
           .from('content_versions')
           .insert({
@@ -84,17 +85,15 @@ export async function POST() {
       }
     }
 
-    return NextResponse.json({
-      success: true,
-      message: `Seeding complete. ${categoriesUpserted} categories and ${articlesUpserted} articles upserted.`,
-      debug: {
-        totalParsed: articlesArray.length,
-        errors
-      }
-    });
-
+    console.log(`Seeding complete. ${categoriesUpserted} categories and ${articlesUpserted} articles upserted.`);
+    if (errors.length > 0) {
+      console.warn('Errors encountered:', errors);
+    }
   } catch (err: unknown) {
     const errorMsg = err instanceof Error ? err.message : 'Unknown error';
-    return NextResponse.json({ success: false, error: errorMsg }, { status: 500 });
+    console.error('Seed failed:', errorMsg);
   }
 }
+
+// Run the seeder function
+runSeed();
