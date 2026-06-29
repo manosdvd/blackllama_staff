@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Cloud, Wind, Droplets, ExternalLink, RefreshCw, ChevronLeft, ChevronRight, AlertTriangle, AlertCircle, Info, WifiOff, ShieldAlert } from 'lucide-react';
 import { useOffline } from '@/hooks/useOffline';
 import { OpsFeedItem, OpsHudResponse } from '@/lib/ops/build-hud';
-import { CampLifeTickerItem } from '@/data/ticker/campLifeLocal';
+import { CampLifeTickerItem, CAMP_LIFE_LOCAL_ITEMS } from '@/data/ticker/campLifeLocal';
 
 function getTickerColor(source?: string) {
   switch (source) {
@@ -126,11 +126,13 @@ export function GlobalHUD() {
       } catch {
         try {
           const cached = JSON.parse(localStorage.getItem('camp_life_ticker_cache') || 'null');
-          if (Array.isArray(cached?.items)) {
+          if (Array.isArray(cached?.items) && cached.items.length > 0) {
             setCampLifeItems(cached.items);
+          } else {
+            setCampLifeItems(CAMP_LIFE_LOCAL_ITEMS);
           }
         } catch {
-          // ignore cache parse failure
+          setCampLifeItems(CAMP_LIFE_LOCAL_ITEMS);
         }
       }
     };
@@ -254,9 +256,9 @@ export function GlobalHUD() {
       </div>
 
       {/* 3. TICKER RAIL & CAMPLIFE */}
-      <div className="flex flex-col md:flex-row flex-1">
+      <div className="flex flex-col flex-1 min-w-0">
         {tickerItems.length > 0 && (
-          <div className="flex flex-col justify-center px-4 py-3 min-w-[300px] flex-1">
+          <div className="flex flex-col justify-center px-4 py-2 flex-1 min-w-0 border-b border-neutral-800/50">
             <div className="flex items-center justify-between gap-1.5 text-[10px] font-black uppercase tracking-widest text-neutral-400 mb-1">
               <span>Ticker & Context</span>
               {tickerItems.length > 1 && (
@@ -291,7 +293,7 @@ export function GlobalHUD() {
             href={activeCampLifeItem.sourceUrl || '#'}
             target={activeCampLifeItem.sourceUrl ? '_blank' : undefined}
             rel={activeCampLifeItem.sourceUrl ? 'noopener noreferrer' : undefined}
-            className="flex-1 flex items-center gap-2 px-4 py-2 min-w-0 border-t md:border-t-0 md:border-l border-neutral-800 bg-black/20 hover:bg-white/5 transition-colors group"
+            className="flex-1 flex items-center gap-2 px-4 py-2 min-w-0 border-t border-neutral-800 bg-black/20 hover:bg-white/5 transition-colors group"
           >
             <span className="text-[9px] font-black uppercase tracking-widest text-emerald-400 flex-shrink-0">
               {activeCampLifeItem.label}
