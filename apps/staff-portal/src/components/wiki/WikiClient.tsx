@@ -625,8 +625,9 @@ export function WikiClient({ initialArticles }: WikiClientProps) {
                 />
               </div>
             </div>
+          </div>
 
-            {backlinks.length > 0 && (
+          {backlinks.length > 0 && (
               <div className="border-t border-neutral-200 dark:border-neutral-800/60 pt-6 mt-6">
                 <h4 className="text-[10px] font-bold text-neutral-400 uppercase tracking-wide mb-3 flex items-center gap-2">
                   <Map size={12} /> Related Topics
