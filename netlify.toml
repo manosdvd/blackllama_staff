@@ -2,6 +2,11 @@
   command = "npm run build"
   publish = "dist"
 
+[build.environment]
+  # Supabase project URL and anon keys are intentionally embedded in the static
+  # browser bundle. Authorization must still be enforced by Supabase RLS.
+  SECRETS_SCAN_OMIT_KEYS = "SUPABASE_URL,SUPABASE_ANON_KEY,NEXT_PUBLIC_SUPABASE_URL,NEXT_PUBLIC_SUPABASE_ANON_KEY,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY"
+
 [functions]
   directory = "legacy/netlify/functions"
   node_bundler = "esbuild"
