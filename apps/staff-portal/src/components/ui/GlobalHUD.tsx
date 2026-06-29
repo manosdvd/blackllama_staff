@@ -41,13 +41,83 @@ export function GlobalHUD() {
       }
       
       try {
-        const res = await fetch('/api/alerts');
+        const { createClient } = await import('@/utils/supabase/client');
+        const supabase = createClient();
+        
+        let temp = '--', wind = '--', humidity = '--', stationName = 'QSLA3 (Scout Camp RAWS)';
+        
+        // 1. Weather
+        try {
+          const obsRes = await fetch('https://api.weather.gov/stations/QSLA3/observations/latest', { headers: { 'User-Agent': 'CampLawtonStaffPortal/1.0' } });
+          if (obsRes.ok) {
+            const obsData = await obsRes.json();
+            const p = obsData.properties;
+            if (p.temperature?.value !== null && p.temperature?.value !== undefined) temp = Math.round((p.temperature.value * 9/5) + 32).toString();
+            if (p.windSpeed?.value !== null && p.windSpeed?.value !== undefined) wind = Math.round(p.windSpeed.value * 0.621371).toString();
+            if (p.relativeHumidity?.value !== null && p.relativeHumidity?.value !== undefined) humidity = Math.round(p.relativeHumidity.value).toString();
+            if (temp === '--') throw new Error('NWS empty');
+          } else throw new Error('NWS non-200');
+        } catch (e) {
+          try {
+            const omRes = await fetch('https://api.open-meteo.com/v1/forecast?latitude=32.39806&longitude=-110.725&current=temperature_2m,relative_humidity_2m,wind_speed_10m&temperature_unit=fahrenheit&wind_speed_unit=mph');
+            if (omRes.ok) {
+              const omData = await omRes.json();
+              temp = Math.round(omData.current.temperature_2m).toString();
+              wind = Math.round(omData.current.wind_speed_10m).toString();
+              humidity = Math.round(omData.current.relative_humidity_2m).toString();
+              stationName = 'OpenMeteo (Backup)';
+            }
+          } catch(err) {}
+        }
+
+        const activeAlerts: UnifiedAlert[] = [];
+        
+        // 2. NWS Alerts
+        try {
+          const alertsRes = await fetch('https://api.weather.gov/alerts/active?zone=AZZ504', { headers: { 'User-Agent': 'CampLawtonStaffPortal/1.0' } });
+          if (alertsRes.ok) {
+            const alertsData = await alertsRes.json();
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            alertsData.features.forEach((f: any) => {
+              activeAlerts.push({
+                id: `nws-${f.properties.id || Math.random().toString()}`,
+                source: 'NWS',
+                title: f.properties.event,
+                description: f.properties.headline || f.properties.description,
+                severity: f.properties.severity === 'Severe' || f.properties.severity === 'Extreme' ? 'Severe' : 'Warning',
+                link: 'https://forecast.weather.gov/MapClick.php?zoneid=AZZ504'
+              });
+            });
+          }
+        } catch(e) {}
+
+        // 3. Camp Alerts
+        try {
+          const { data: campAlerts } = await supabase.from('camp_alerts').select('*').eq('is_active', true).order('created_at', { ascending: false });
+          if (campAlerts) {
+            campAlerts.forEach(a => {
+              activeAlerts.push({
+                id: a.id,
+                source: 'CAMP',
+                title: a.title,
+                description: a.description || '',
+                severity: a.severity || 'Info',
+                link: '#'
+              });
+            });
+          }
+        } catch(e) {}
+
         if (!mounted) return;
 
-        if (res.ok) {
-          const json = await res.json();
-          setData(json);
-        }
+        const isCritical = activeAlerts.some(a => a.severity === 'Severe' || (a.title && a.title.toLowerCase().includes('red flag')));
+        
+        setData({
+          weather: { station: stationName, temp, tempUnit: 'F', wind: `${wind} mph`, humidity: `${humidity}%` },
+          alerts: activeAlerts,
+          isCritical,
+          updatedAt: new Date().toISOString()
+        });
       } catch (e) {
         console.error('Failed to fetch HUD data', e);
       } finally {
@@ -55,8 +125,8 @@ export function GlobalHUD() {
       }
     };
 
-    fetchHUDData(true);
-    const interval = setInterval(() => fetchHUDData(false), 5 * 60 * 1000); // Poll every 5 minutes
+    fetchHUDData();
+    const interval = setInterval(fetchHUDData, 5 * 60 * 1000); // Poll every 5 minutes
     return () => {
       mounted = false;
       clearInterval(interval);
