@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { buildOpsHud } from '@/lib/ops/build-hud';
 
+export const dynamic = 'force-static';
+
 export async function GET() {
   try {
     const hud = await buildOpsHud();

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-export const runtime = 'edge';
+export const dynamic = 'force-static';
 export const revalidate = 600; // Cache for 10 minutes (600 seconds)
 
 const NWS_URL = 'https://api.weather.gov';

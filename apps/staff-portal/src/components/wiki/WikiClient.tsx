@@ -119,24 +119,63 @@ export function WikiClient({ initialArticles }: WikiClientProps) {
     return () => window.removeEventListener('wiki-navigate', handleGlobalNav);
   }, []);
 
-  // Offline Sync Logic
+  // Offline & Online Sync Logic
   useEffect(() => {
-    const syncIDB = async () => {
+    const fetchAndSync = async () => {
+      setIsSyncing(true);
       if (isOffline) {
-        setIsSyncing(true);
         const cached = await loadArticlesFromIDB();
         if (cached && cached.length > 0) {
           setArticles(cached);
         }
-        setIsSyncing(false);
-      } else if (initialArticles && initialArticles.length > 0) {
-        // Online: Ensure state matches fresh props and update IDB cache
-        setArticles(initialArticles);
-        await saveArticlesToIDB(initialArticles);
+      } else {
+        const { data, error } = await supabase
+          .from('content_items')
+          .select(`
+            id,
+            slug,
+            title,
+            section,
+            offline_priority,
+            tags,
+            aliases,
+            content_categories ( name ),
+            content_versions ( content, version_no )
+          `);
+
+        if (!error && data) {
+          const normalize = (row: any): Article => {
+            const category = Array.isArray(row.content_categories) ? row.content_categories[0] : row.content_categories;
+            const version = Array.isArray(row.content_versions) ? row.content_versions[0] : row.content_versions;
+            const categoryName = category?.name || 'General';
+            return {
+              id: row.id,
+              slug: row.slug,
+              title: row.title,
+              category: categoryName,
+              section: row.section || categoryName,
+              content: version?.content || '',
+              offline_priority: row.offline_priority ?? 0,
+              tags: row.tags || [],
+              aliases: row.aliases || [],
+              revision_no: version?.version_no || 1,
+            };
+          };
+          const fetchedArticles = data.map(normalize);
+          setArticles(fetchedArticles);
+          await saveArticlesToIDB(fetchedArticles);
+        } else {
+          console.error('Wiki client fetch error:', error);
+          const cached = await loadArticlesFromIDB();
+          if (cached && cached.length > 0) {
+            setArticles(cached);
+          }
+        }
       }
+      setIsSyncing(false);
     };
-    syncIDB();
-  }, [initialArticles, isOffline]);
+    fetchAndSync();
+  }, [isOffline]);
 
   const activeArticle = articles.find((article) => article.slug === activeSlug) || articles[0] || null;
 

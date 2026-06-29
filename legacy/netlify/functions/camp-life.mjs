@@ -1,9 +1,4 @@
-import { NextResponse } from 'next/server';
-import { CAMP_LIFE_LOCAL_ITEMS } from '@/data/ticker/campLifeLocal';
-
-export const dynamic = 'force-static';
-
-const SOURCE_TTL_MINUTES: Record<string, number> = {
+const SOURCE_TTL_MINUTES = {
   'on-scouting': 60,
   'scouting-newsroom': 180,
   'scout-life': 180,
@@ -74,6 +69,74 @@ const RSS_SOURCES = [
   },
 ];
 
+const LOCAL_ITEMS = [
+  {
+    id: 'local-good-turn-trash',
+    lane: 'camp-life-local',
+    label: 'GOOD TURN',
+    text: 'Pick up three pieces of trash before flags. Quiet service still counts.',
+    sourceName: 'Camp Lawton',
+    score: 10,
+  },
+  {
+    id: 'local-scout-law-helpful',
+    lane: 'evergreen',
+    label: 'SCOUT LAW',
+    text: 'Helpful · Look for one small job nobody asked you to do.',
+    sourceName: 'Camp Lawton',
+    score: 10,
+  },
+  {
+    id: 'local-word-cairn',
+    lane: 'camp-life-local',
+    label: 'WORD OF THE DAY',
+    text: 'Cairn · A stack of stones used as a trail marker.',
+    sourceName: 'Camp Lawton',
+    score: 9,
+  },
+  {
+    id: 'local-riddle-map',
+    lane: 'camp-life-local',
+    label: 'RIDDLE',
+    text: 'I have lakes with no water and roads with no cars. What am I?',
+    answer: 'A map.',
+    sourceName: 'Camp Lawton',
+    score: 8,
+  },
+  {
+    id: 'local-lnt-wildlife',
+    lane: 'evergreen',
+    label: 'OUTDOOR ETHIC',
+    text: 'Respect wildlife. Watch from a distance and let animals stay wild.',
+    sourceName: 'Leave No Trace prompt',
+    score: 9,
+  },
+  {
+    id: 'local-camp-tip-cotton',
+    lane: 'camp-life-local',
+    label: 'CAMP TIP',
+    text: 'Cotton gets cold fast when wet. Wool and synthetics are better on the mountain.',
+    sourceName: 'Camp Lawton',
+    score: 9,
+  },
+  {
+    id: 'local-joke-fog',
+    lane: 'camp-life-local',
+    label: 'DAD JOKE',
+    text: 'I tried to catch fog yesterday. Mist.',
+    sourceName: 'Camp Lawton approved joke',
+    score: 7,
+  },
+  {
+    id: 'local-nature-ponderosa',
+    lane: 'camp-life-local',
+    label: 'NATURE NUGGET',
+    text: 'Warm ponderosa pine bark can smell a little like vanilla or butterscotch.',
+    sourceName: 'Camp Lawton',
+    score: 8,
+  },
+];
+
 const BLOCKED_TERMS = [
   'abuse', 'assault', 'bankruptcy', 'death', 'died', 'killed', 'murder', 'suicide',
   'sex', 'sexual', 'nsfw', 'porn', 'onlyfans', 'alcohol', 'beer', 'weed', 'marijuana',
@@ -89,7 +152,7 @@ const BOOST_TERMS = [
   'forest', 'water', 'leave no trace', 'outdoor ethic',
 ];
 
-function minutesFromNow(minutes: number) {
+function minutesFromNow(minutes) {
   return new Date(Date.now() + minutes * 60 * 1000).toISOString();
 }
 
@@ -121,7 +184,7 @@ function slugify(value = '') {
     .slice(0, 80);
 }
 
-function tickerText(title: string, description: string) {
+function tickerText(title, description) {
   const cleanTitle = stripHtml(title);
   const cleanDescription = stripHtml(description);
   const combined = cleanTitle || cleanDescription;
@@ -144,11 +207,11 @@ function scoreText(text = '') {
   return score;
 }
 
-function parseRssItems(xml: string) {
+function parseRssItems(xml) {
   const itemBlocks = [...xml.matchAll(/<item[\s\S]*?<\/item>/gi)].map((m) => m[0]);
 
   return itemBlocks.slice(0, 10).map((block) => {
-    const get = (tag: string) => {
+    const get = (tag) => {
       const match = block.match(new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, 'i'));
       return match ? stripHtml(match[1]) : '';
     };
@@ -162,7 +225,7 @@ function parseRssItems(xml: string) {
   });
 }
 
-async function fetchText(url: string, options: RequestInit = {}) {
+async function fetchText(url, options = {}) {
   const res = await fetch(url, {
     ...options,
     headers: {
@@ -175,7 +238,7 @@ async function fetchText(url: string, options: RequestInit = {}) {
   return res.text();
 }
 
-async function fetchJson(url: string, options: RequestInit = {}) {
+async function fetchJson(url, options = {}) {
   const res = await fetch(url, {
     ...options,
     headers: {
@@ -188,7 +251,7 @@ async function fetchJson(url: string, options: RequestInit = {}) {
   return res.json();
 }
 
-function normalizeRssItem(source: any, item: any) {
+function normalizeRssItem(source, item) {
   const text = tickerText(item.title, item.description);
   const combined = `${item.title} ${item.description}`;
   if (!text || isBlocked(combined)) return null;
@@ -213,7 +276,7 @@ function normalizeRssItem(source: any, item: any) {
   };
 }
 
-async function fetchRssSource(source: any) {
+async function fetchRssSource(source) {
   try {
     const xml = await fetchText(source.url);
     return parseRssItems(xml)
@@ -287,7 +350,7 @@ async function fetchTrivia() {
 
 function normalizeLocalItems() {
   const fetchedAt = new Date().toISOString();
-  return CAMP_LIFE_LOCAL_ITEMS.map((item) => ({
+  return LOCAL_ITEMS.map((item) => ({
     ...item,
     fetchedAt,
     expiresAt: minutesFromNow(24 * 60),
@@ -295,7 +358,7 @@ function normalizeLocalItems() {
   }));
 }
 
-function dedupeItems(items: any[]) {
+function dedupeItems(items) {
   const seen = new Set();
   const result = [];
   for (const item of items) {
@@ -307,7 +370,7 @@ function dedupeItems(items: any[]) {
   return result;
 }
 
-export async function GET() {
+export default async function campLifeFeed() {
   try {
     const settled = await Promise.allSettled([
       ...RSS_SOURCES.map(fetchRssSource),
@@ -317,14 +380,14 @@ export async function GET() {
 
     const liveItems = settled
       .flatMap((result) => (result.status === 'fulfilled' ? result.value : []))
-      .filter((item: any) => item && item.safe)
-      .sort((a: any, b: any) => (b.score || 0) - (a.score || 0))
+      .filter((item) => item && item.safe)
+      .sort((a, b) => (b.score || 0) - (a.score || 0))
       .slice(0, 18);
 
     const localItems = normalizeLocalItems();
     const items = dedupeItems([...liveItems, ...localItems]).slice(0, 24);
 
-    return NextResponse.json(
+    return Response.json(
       {
         generatedAt: new Date().toISOString(),
         stale: false,
@@ -342,7 +405,7 @@ export async function GET() {
     console.error('Failed to build camp life feed', error);
 
     const localItems = normalizeLocalItems();
-    return NextResponse.json(
+    return Response.json(
       {
         generatedAt: new Date().toISOString(),
         stale: true,
@@ -359,3 +422,7 @@ export async function GET() {
     );
   }
 }
+
+export const config = {
+  path: '/api/camp-life',
+};
