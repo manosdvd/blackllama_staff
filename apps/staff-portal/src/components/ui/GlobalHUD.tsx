@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Cloud, Wind, Droplets, ExternalLink, RefreshCw, ChevronLeft, ChevronRight, AlertTriangle, AlertCircle, Info, WifiOff, ShieldAlert } from 'lucide-react';
+import { Cloud, Wind, Droplets, ExternalLink, RefreshCw, ChevronLeft, ChevronRight, AlertTriangle, AlertCircle, Info, WifiOff, ShieldAlert, Clock, MapPin, History } from 'lucide-react';
 import { useOffline } from '@/hooks/useOffline';
 import { OpsFeedItem, OpsHudResponse } from '@/lib/ops/build-hud';
 import { CampLifeTickerItem, CAMP_LIFE_LOCAL_ITEMS } from '@/data/ticker/campLifeLocal';
@@ -21,14 +21,21 @@ function getTickerColor(source?: string) {
 
 export function GlobalHUD() {
   const isOffline = useOffline();
-  const [weather, setWeather] = useState({ station: 'QSLA3', temp: '--', tempUnit: 'F', wind: '-- mph', humidity: '--%' });
+  const [weather, setWeather] = useState({ station: 'QSLA3', temp: '--', tempUnit: 'F', wind: '-- mph', humidity: '--%', fetchedAt: '' });
   const [weatherLoading, setWeatherLoading] = useState(true);
+  const [now, setNow] = useState(new Date());
   const [opsData, setOpsData] = useState<OpsHudResponse | null>(null);
   
   const [priorityIndex, setPriorityIndex] = useState(0);
   const [tickerIndex, setTickerIndex] = useState(0);
   const [campLifeItems, setCampLifeItems] = useState<CampLifeTickerItem[]>([]);
   const [campLifeIndex, setCampLifeIndex] = useState(0);
+
+  // Clock tick
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 10000);
+    return () => clearInterval(timer);
+  }, []);
 
   // Weather fetch
   useEffect(() => {
@@ -50,7 +57,7 @@ export function GlobalHUD() {
           if (temp === '--') throw new Error('NWS empty');
         } else throw new Error('NWS non-200');
         
-        if (mounted) setWeather({ station: stationName, temp, tempUnit: 'F', wind: `${wind} mph`, humidity: `${humidity}%` });
+        if (mounted) setWeather({ station: stationName, temp, tempUnit: 'F', wind: `${wind} mph`, humidity: `${humidity}%`, fetchedAt: new Date().toISOString() });
       } catch (e) {
         try {
           const omRes = await fetch('https://api.open-meteo.com/v1/forecast?latitude=32.39806&longitude=-110.725&current=temperature_2m,relative_humidity_2m,wind_speed_10m&temperature_unit=fahrenheit&wind_speed_unit=mph');
@@ -62,7 +69,8 @@ export function GlobalHUD() {
                 temp: Math.round(omData.current.temperature_2m).toString(),
                 tempUnit: 'F',
                 wind: `${Math.round(omData.current.wind_speed_10m)} mph`,
-                humidity: `${Math.round(omData.current.relative_humidity_2m)}%`
+                humidity: `${Math.round(omData.current.relative_humidity_2m)}%`,
+                fetchedAt: new Date().toISOString()
               });
             }
           }
@@ -223,10 +231,12 @@ export function GlobalHUD() {
   const prevCampLife = () => setCampLifeIndex(i => (i - 1 + campLifeItems.length) % (campLifeItems.length || 1));
 
   return (
-    <div className={`w-full flex flex-col md:flex-row items-stretch border-b z-50 relative shadow-md transition-colors ${
-      isEmergency ? 'bg-red-950 border-red-500' : 'bg-neutral-950 dark:bg-black border-neutral-800'
-    }`}>
+    <div className="w-full flex flex-col z-50 relative shadow-md">
       
+      {/* ROW 1: Weather & Priority */}
+      <div className={`w-full flex flex-col md:flex-row items-stretch transition-colors border-b ${
+        isEmergency ? 'bg-red-950 border-red-500' : 'bg-neutral-950 dark:bg-black border-neutral-800'
+      }`}>
       {/* 1. WEATHER & CONDITIONS */}
       <a 
         href="https://forecast.weather.gov/MapClick.php?lat=32.39806&lon=-110.725"
@@ -251,6 +261,17 @@ export function GlobalHUD() {
               <span className="flex items-center gap-1"><Wind size={12}/> {weather.wind}</span>
               <span className="flex items-center gap-1"><Droplets size={12}/> {weather.humidity}</span>
             </div>
+          </div>
+        </div>
+
+        <div className={`hidden sm:flex flex-col justify-center pl-4 ml-2 border-l ${isEmergency ? 'border-red-900/50' : 'border-neutral-800'}`}>
+          <div className={`flex items-center gap-1.5 text-[9px] font-mono ${isEmergency ? 'text-red-300/80' : 'text-neutral-500'}`}>
+            <MapPin size={10} /> 32.398°N, -110.725°W | Elev 7,950 ft
+          </div>
+          <div className={`flex items-center gap-1.5 text-[9px] font-mono mt-1 ${isEmergency ? 'text-red-300/80' : 'text-neutral-500'}`}>
+            <Clock size={10} /> {now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            <span className="mx-1 opacity-50">•</span>
+            <History size={10} /> {weather.fetchedAt ? `${Math.max(0, Math.floor((now.getTime() - new Date(weather.fetchedAt).getTime()) / 60000))}m ago` : 'updating...'}
           </div>
         </div>
       </a>
@@ -309,10 +330,13 @@ export function GlobalHUD() {
         )}
       </div>
 
-      {/* 3. TICKER RAIL & CAMPLIFE */}
-      <div className="flex flex-col flex-1 min-w-0">
+      {/* ROW 2: TICKER RAIL & CAMPLIFE */}
+      <div className={`w-full flex flex-col md:flex-row items-stretch transition-colors ${
+        isEmergency ? 'bg-red-950/80 border-red-900/50' : 'bg-neutral-900/80 dark:bg-black border-neutral-800/50'
+      }`}>
+        
         {tickerItems.length > 0 && (
-          <div className="flex flex-col justify-center px-4 py-2 flex-1 min-w-0 border-b border-neutral-800/50">
+          <div className="flex flex-col justify-center px-4 py-2 flex-1 min-w-0 md:border-r border-b md:border-b-0 border-neutral-800/50">
             <div className="flex items-center justify-between gap-1.5 text-[10px] font-black uppercase tracking-widest text-neutral-400 mb-1">
               <span>Ticker & Context</span>
               {tickerItems.length > 1 && (
@@ -343,7 +367,7 @@ export function GlobalHUD() {
         )}
 
         {activeCampLifeItem && (
-          <div className="flex-1 flex items-center justify-between px-4 py-2 min-w-0 border-t border-neutral-800 bg-black/20 group">
+          <div className="flex-1 flex items-center justify-between px-4 py-2 min-w-0 bg-black/20 group">
             <a
               href={activeCampLifeItem.sourceUrl || '#'}
               target={activeCampLifeItem.sourceUrl ? '_blank' : undefined}
