@@ -154,14 +154,20 @@ export function GlobalHUD() {
     }`}>
       
       {/* 1. WEATHER & CONDITIONS */}
-      <div className={`flex items-center gap-4 px-4 py-3 md:border-r ${isEmergency ? 'border-red-900/50' : 'border-neutral-800'} flex-shrink-0`}>
-        <div className={`p-2 rounded-xl flex items-center justify-center ${isEmergency ? 'bg-red-500/20 text-red-400' : 'bg-sky-500/10 text-sky-400'}`}>
+      <a 
+        href="https://forecast.weather.gov/MapClick.php?lat=32.39806&lon=-110.725"
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`flex items-center gap-4 px-4 py-3 md:border-r ${isEmergency ? 'border-red-900/50 hover:bg-red-900/20' : 'border-neutral-800 hover:bg-white/5'} flex-shrink-0 transition-colors cursor-pointer group`}
+      >
+        <div className={`p-2 rounded-xl flex items-center justify-center ${isEmergency ? 'bg-red-500/20 text-red-400 group-hover:bg-red-500/30' : 'bg-sky-500/10 text-sky-400 group-hover:bg-sky-500/20'} transition-colors`}>
           <Cloud size={24} />
         </div>
         <div className="flex flex-col">
-          <div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-neutral-400">
+          <div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-neutral-400 group-hover:text-neutral-300 transition-colors">
             <span>{data?.weather.station || 'WEATHER STATION'}</span>
             {loading && <RefreshCw size={10} className="animate-spin text-sky-500" />}
+            <ExternalLink size={10} className="opacity-0 group-hover:opacity-100 transition-opacity" />
           </div>
           <div className="flex items-center gap-3 mt-0.5">
             <span className={`text-xl font-black font-heading tracking-tight ${isEmergency ? 'text-red-100' : 'text-neutral-100'}`}>
@@ -173,7 +179,7 @@ export function GlobalHUD() {
             </div>
           </div>
         </div>
-      </div>
+      </a>
 
       {/* 2. CAMP ALERTS (Internal Admin Broadcasts) */}
       {campAlerts.length > 0 && (
