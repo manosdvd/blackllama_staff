@@ -25,6 +25,7 @@ export function GlobalHUD() {
   const [weatherLoading, setWeatherLoading] = useState(true);
   const [opsData, setOpsData] = useState<OpsHudResponse | null>(null);
   
+  const [priorityIndex, setPriorityIndex] = useState(0);
   const [tickerIndex, setTickerIndex] = useState(0);
   const [campLifeItems, setCampLifeItems] = useState<CampLifeTickerItem[]>([]);
   const [campLifeIndex, setCampLifeIndex] = useState(0);
@@ -116,7 +117,6 @@ export function GlobalHUD() {
           const data: OpsHudResponse = await res.json();
           if (mounted) {
             setOpsData(data);
-            setTickerIndex(0);
           }
           if ((data as any).weather) {
             setWeather((data as any).weather);
@@ -173,13 +173,22 @@ export function GlobalHUD() {
 
   // Rotations
   useEffect(() => {
-    const items = opsData?.tickerItems || [];
-    if (items.length <= 1) return;
-    const interval = setInterval(() => {
-      setTickerIndex(prev => (prev + 1) % items.length);
+    const tickerItems = opsData?.tickerItems || [];
+    if (tickerItems.length <= 1) return;
+    const timer = setInterval(() => {
+      setTickerIndex((current) => (current + 1) % tickerItems.length);
     }, 8000);
-    return () => clearInterval(interval);
-  }, [opsData?.tickerItems]);
+    return () => clearInterval(timer);
+  }, [opsData?.tickerItems?.length]);
+
+  useEffect(() => {
+    const pItems = opsData?.priorityItems || [];
+    if (pItems.length <= 1) return;
+    const timer = setInterval(() => {
+      setPriorityIndex((current) => (current + 1) % pItems.length);
+    }, 15000);
+    return () => clearInterval(timer);
+  }, [opsData?.priorityItems?.length]);
 
   useEffect(() => {
     if (campLifeItems.length <= 1) return;
@@ -198,15 +207,17 @@ export function GlobalHUD() {
   }
 
   const priorityItems = opsData?.priorityItems || [];
-  const tickerItems = opsData?.tickerItems || [];
-  const topPriority = priorityItems[0];
+  const activePriority = priorityItems.length ? priorityItems[priorityIndex % priorityItems.length] : undefined;
   const isEmergency = priorityItems.some(i => i.severity === 'critical' || i.severity === 'admin-evacuation-review');
-
-  const currentTickerItem = tickerItems[tickerIndex] || null;
+  const tickerItems = opsData?.tickerItems || [];
+  const currentTickerItem = tickerItems.length ? tickerItems[tickerIndex % tickerItems.length] : undefined;
   const activeCampLifeItem = campLifeItems.length ? campLifeItems[campLifeIndex % campLifeItems.length] : null;
 
   const nextTicker = () => setTickerIndex(i => (i + 1) % tickerItems.length);
   const prevTicker = () => setTickerIndex(i => (i - 1 + tickerItems.length) % tickerItems.length);
+
+  const nextPriority = () => setPriorityIndex(i => (i + 1) % (priorityItems.length || 1));
+  const prevPriority = () => setPriorityIndex(i => (i - 1 + priorityItems.length) % (priorityItems.length || 1));
 
   const nextCampLife = () => setCampLifeIndex(i => (i + 1) % (campLifeItems.length || 1));
   const prevCampLife = () => setCampLifeIndex(i => (i - 1 + campLifeItems.length) % (campLifeItems.length || 1));
@@ -246,37 +257,48 @@ export function GlobalHUD() {
 
       {/* 2. PRIORITY BAR */}
       <div className={`${priorityItems.length > 0 ? 'flex-1 min-w-0' : 'flex-none'} flex flex-col justify-center px-4 py-3 md:border-r ${isEmergency ? 'border-red-900/50 bg-red-900/10' : 'border-neutral-800/50 bg-black/10'}`}>
-        <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-400 mb-1">
-          {priorityItems.length > 0 ? (
-            <>
-              <AlertTriangle size={10} className={isEmergency ? 'text-red-500 animate-pulse' : 'text-amber-500'} />
-              <span className={isEmergency ? 'text-red-400' : 'text-amber-500'}>
-                Priority Alerts ({priorityItems.length})
-              </span>
-            </>
-          ) : (
-            <>
-              <ShieldAlert size={10} className="text-emerald-500" />
-              <span>Status Normal</span>
-            </>
+        <div className="flex items-center justify-between gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-400 mb-1">
+          <div className="flex items-center gap-2">
+            {priorityItems.length > 0 ? (
+              <>
+                <AlertTriangle size={10} className={isEmergency ? 'text-red-500 animate-pulse' : 'text-amber-500'} />
+                <span className={isEmergency ? 'text-red-400' : 'text-amber-500'}>
+                  Priority Alerts
+                </span>
+              </>
+            ) : (
+              <>
+                <ShieldAlert size={10} className="text-emerald-500" />
+                <span>Status Normal</span>
+              </>
+            )}
+          </div>
+          {priorityItems.length > 1 && (
+            <div className="flex items-center gap-1">
+              <button onClick={prevPriority} className="p-0.5 hover:bg-neutral-800 rounded transition-colors text-neutral-400"><ChevronLeft size={12} /></button>
+              <span className="text-[9px] opacity-60 font-mono text-neutral-400">{priorityIndex + 1}/{priorityItems.length}</span>
+              <button onClick={nextPriority} className="p-0.5 hover:bg-neutral-800 rounded transition-colors text-neutral-400"><ChevronRight size={12} /></button>
+            </div>
           )}
         </div>
         
-        {topPriority ? (
+        {activePriority ? (
           <div className="flex items-center gap-2">
             <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider flex-shrink-0 ${
-              topPriority.severity === 'critical' || topPriority.severity === 'admin-evacuation-review' || topPriority.severity === 'critical-safety'
+              activePriority.severity === 'critical' || activePriority.severity === 'admin-evacuation-review' || activePriority.severity === 'critical-safety'
                 ? 'bg-red-500/20 text-red-400 border border-red-500/30'
-                : topPriority.severity === 'persistent-news-check'
+                : activePriority.severity === 'persistent-news-check'
                 ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30'
+                : activePriority.severity === 'reference'
+                ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
                 : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
             }`}>
-              {topPriority.severity === 'persistent-news-check' ? 'NEWS CHECK' : topPriority.sourceLabel}
+              {activePriority.severity === 'persistent-news-check' ? 'NEWS CHECK' : activePriority.sourceLabel}
             </span>
-            <span className={`text-sm font-bold truncate ${isEmergency ? 'text-red-100' : 'text-white'}`}>
-              {topPriority.title}
+            <span className={`text-sm font-bold truncate ${activePriority.severity === 'critical' ? 'text-red-100' : 'text-white'}`}>
+              {activePriority.title}
             </span>
-            <a href={topPriority.sourceUrl} target="_blank" rel="noopener noreferrer" className="ml-auto flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-neutral-400 hover:text-white transition-colors flex-shrink-0">
+            <a href={activePriority.sourceUrl} target="_blank" rel="noopener noreferrer" className="ml-auto flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-neutral-400 hover:text-white transition-colors flex-shrink-0">
               Source <ExternalLink size={10} />
             </a>
           </div>

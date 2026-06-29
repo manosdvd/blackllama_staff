@@ -20,7 +20,8 @@ import {
   Search,
   Lock,
   AlertTriangle,
-  Command as CommandIcon
+  Command as CommandIcon,
+  ExternalLink
 } from 'lucide-react';
 import { Command } from 'cmdk';
 import { OfflineStatusBanner } from '../offline/OfflineStatusBanner';
@@ -59,6 +60,7 @@ const NAV_ICON_ONBOARDING = <Briefcase size={18} />;
 const NAV_ICON_FORUM = <MessageSquare size={18} />;
 const NAV_ICON_DIRECTORY = <Users size={18} />;
 const NAV_ICON_ADMIN = <Lock size={18} />;
+const NAV_ICON_LINKS = <ExternalLink size={18} />;
 
 export function AppShell({ children }: AppShellProps) {
   const pathname = usePathname() || '/';
@@ -233,6 +235,7 @@ export function AppShell({ children }: AppShellProps) {
     { href: '/about', label: 'About Camp Lawton', icon: NAV_ICON_ABOUT },
     { href: '/training', label: 'Safety Training', icon: NAV_ICON_TRAINING },
     { href: '/policies', label: 'Policies & Procedures', icon: NAV_ICON_POLICIES },
+    { href: '/links', label: 'External Links', icon: NAV_ICON_LINKS },
     { href: '/onboarding', label: 'Onboarding Wizard', icon: NAV_ICON_ONBOARDING },
     ...(hasStaffAccess
       ? [

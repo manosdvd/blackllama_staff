@@ -176,52 +176,6 @@ function dedupeItems(items: OpsFeedItem[]) {
   });
 }
 
-function getStaticTickerItems(): OpsFeedItem[] {
-  return [
-    {
-      id: 'static-azgfd-wildlife',
-      source: 'azgfd',
-      sourceLabel: 'AZGFD',
-      sourceConfidence: 'reference',
-      title: 'Living with Wildlife Reference',
-      shortLabel: 'Wildlife Ref',
-      category: 'wildlife',
-      severity: 'reference',
-      persistent: false,
-      ticker: true,
-      sourceUrl: 'https://www.azgfd.com/wildlife-conservation/living-with-wildlife/',
-      regionMatch: true
-    },
-    {
-      id: 'static-az511-roads',
-      source: 'az511',
-      sourceLabel: 'AZ511',
-      sourceConfidence: 'link-only',
-      title: 'Arizona Road Status (AZ511)',
-      shortLabel: 'Roads',
-      category: 'road',
-      severity: 'reference',
-      persistent: false,
-      ticker: true,
-      sourceUrl: 'https://www.az511.gov/',
-      regionMatch: true
-    },
-    {
-      id: 'static-usfs-coronado',
-      source: 'usfs',
-      sourceLabel: 'USFS',
-      sourceConfidence: 'reference',
-      title: 'Coronado National Forest Alerts',
-      shortLabel: 'USFS Alerts',
-      category: 'general',
-      severity: 'reference',
-      persistent: false,
-      ticker: true,
-      sourceUrl: 'https://www.fs.usda.gov/r03/coronado/alerts',
-      regionMatch: true
-    }
-  ];
-}
 
 // Fetchers
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -426,11 +380,10 @@ export async function buildOpsHud(): Promise<OpsHudResponse> {
     ...wfigsPerimeters,
     ...wfigsIncidents,
     ...gdeltNews,
-    ...getStaticTickerItems(),
   ]).filter((item) => item.regionMatch);
 
-  const priorityItems = sortPriorityItems(allItems.filter((item) => isPersistent(item.severity)));
-  const tickerItems = sortTickerItems(allItems.filter((item) => !isPersistent(item.severity) || item.ticker));
+  const priorityItems = sortPriorityItems(allItems);
+  const tickerItems: OpsFeedItem[] = [];
 
   return {
     generatedAt,

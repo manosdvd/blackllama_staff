@@ -352,8 +352,21 @@ export async function GET() {
       .slice(0, 18);
 
     const localItems = normalizeLocalItems();
-    let items = dedupeItems([...liveItems, ...localItems]);
-    items = interleaveItems(items).slice(0, 24);
+    
+    // Dedupe and interleave live items first to prioritize them
+    const dedupedLive = dedupeItems(liveItems);
+    const interleavedLive = interleaveItems(dedupedLive);
+    
+    // Dedupe local items and filter out any that somehow match live items
+    const dedupedLocal = dedupeItems(localItems).filter(
+      l => !interleavedLive.some(live => 
+        `${live.label}:${live.text}`.toLowerCase() === `${l.label}:${l.text}`.toLowerCase()
+      )
+    );
+    const interleavedLocal = interleaveItems(dedupedLocal);
+    
+    // Combine with live items first
+    const items = [...interleavedLive, ...interleavedLocal].slice(0, 24);
 
     return NextResponse.json(
       {
